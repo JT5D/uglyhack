@@ -10,6 +10,8 @@ var v = new THREE.Vector3();
 var repulsiveForce = 0.2;
 var attractiveForce = 0.00001;
 
+var postprocessing = { enabled: true };
+
 function initArtistGraph() {
 
 	if ( !Detector.webgl ) {
@@ -64,6 +66,9 @@ function initArtistGraph() {
 	
 	initScene();
 	
+	initPostprocessing();
+	renderer.autoClear = false;
+	
 	animate();
 }
 
@@ -83,6 +88,59 @@ function initScene() {
 	scene.addLight(pointLight);
 	
 	nodes = new Array();
+}
+
+function initPostprocessing() {
+	 
+	postprocessing.scene = new THREE.Scene();
+
+	postprocessing.camera = new THREE.Camera();
+	postprocessing.camera.projectionMatrix = THREE.Matrix4.makeOrtho( window.innerWidth / - 2, window.innerWidth / 2,  window.innerHeight / 2, window.innerHeight / - 2, -10000, 10000 );
+	postprocessing.camera.position.z = 100;
+
+	var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat };
+	postprocessing.rtTexture1 = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, pars );
+	postprocessing.rtTexture2 = new THREE.WebGLRenderTarget( 512, 512, pars );
+	postprocessing.rtTexture3 = new THREE.WebGLRenderTarget( 512, 512, pars );
+
+	var screen_shader = THREE.ShaderUtils.lib["screen"];
+	var screen_uniforms = THREE.UniformsUtils.clone( screen_shader.uniforms );
+
+	screen_uniforms["tDiffuse"].texture = postprocessing.rtTexture1;
+	screen_uniforms["opacity"].value = 1.0;
+
+	postprocessing.materialScreen = new THREE.MeshShaderMaterial( {
+
+		uniforms: screen_uniforms,
+		vertexShader: screen_shader.vertexShader,
+		fragmentShader: screen_shader.fragmentShader,
+		blending: THREE.AdditiveBlending,
+		transparent: true
+
+	} );
+
+	var convolution_shader = THREE.ShaderUtils.lib["convolution"];
+	var convolution_uniforms = THREE.UniformsUtils.clone( convolution_shader.uniforms );
+
+	postprocessing.blurx = new THREE.Vector2( 0.001953125, 0.0 ),
+	postprocessing.blury = new THREE.Vector2( 0.0, 0.001953125 );
+
+	convolution_uniforms["tDiffuse"].texture = postprocessing.rtTexture1;
+	convolution_uniforms["uImageIncrement"].value = postprocessing.blurx;
+	convolution_uniforms["cKernel"].value = THREE.ShaderUtils.buildKernel( 4.0 );
+
+	postprocessing.materialConvolution = new THREE.MeshShaderMaterial( {
+
+		uniforms: convolution_uniforms,
+		vertexShader:   "#define KERNEL_SIZE 25.0\n" + convolution_shader.vertexShader,
+		fragmentShader: "#define KERNEL_SIZE 25\n"   + convolution_shader.fragmentShader
+
+	} );
+
+	postprocessing.quad = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), postprocessing.materialConvolution );
+	postprocessing.quad.position.z = -500;
+	postprocessing.scene.addObject( postprocessing.quad );
+
 }
 
 function getRootNode(_screenName) {
@@ -186,7 +244,51 @@ function animate() {
 		
 	}
 	
-	renderer.render( scene, camera );
+	renderer.clear();
+	 
+	if ( postprocessing.enabled ) {
+
+		// Render scene into texture
+
+		renderer.render( scene, camera, postprocessing.rtTexture1, true );
+
+		// Render quad with blured scene into texture (convolution pass 1)
+
+		postprocessing.quad.materials = [ postprocessing.materialConvolution ];
+
+		postprocessing.materialConvolution.uniforms.tDiffuse.texture = postprocessing.rtTexture1;
+		postprocessing.materialConvolution.uniforms.uImageIncrement.value = postprocessing.blurx;
+
+		renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTexture2, true );
+
+		// Render quad with blured scene into texture (convolution pass 2)
+
+		postprocessing.materialConvolution.uniforms.tDiffuse.texture = postprocessing.rtTexture2;
+		postprocessing.materialConvolution.uniforms.uImageIncrement.value = postprocessing.blury;
+
+		renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTexture3, true );
+
+		// Render original scene with superimposed blur to texture
+
+		postprocessing.quad.materials = [ postprocessing.materialScreen ];
+
+		postprocessing.materialScreen.uniforms.tDiffuse.texture = postprocessing.rtTexture3;
+		postprocessing.materialScreen.uniforms.opacity.value = 1.13;
+
+		renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTexture1, false );
+
+		// Render to screen
+
+		postprocessing.materialScreen.uniforms.tDiffuse.texture = postprocessing.rtTexture1;
+		renderer.render( postprocessing.scene, postprocessing.camera );
+
+	} else {
+
+		renderer.render( scene, camera );
+
+	}
+
+
 	requestAnimationFrame( animate );
 }
 
@@ -216,18 +318,22 @@ function createNode(screenName, followsIndex) {
 }
 
 function createFollow(node, followsIndex) {
+	var followsNode = nodes[followsIndex]; 
+	
 	var geometry = new THREE.Geometry();
-	geometry.vertices.push( new THREE.Vertex( nodes[followsIndex].object.position ) );
-	geometry.vertices.push( new THREE.Vertex(node.object.position ) );
+	geometry.vertices.push( new THREE.Vertex( followsNode.object.position ) );
+	geometry.vertices.push( new THREE.Vertex( node.object.position ) );
 	
 	var line = new THREE.Line(geometry, lineMaterial);
 	scene.addChild(line);
 	
+	node.object.scale.addScalar(0.01);
 	node.follows.push({
 		index: followsIndex,
 		line: line
 	});
-	nodes[followsIndex].followers.push(node.id);
+	followsNode.object.scale.addScalar(0.01);
+	followsNode.followers.push(node.id);
 }
 
 function getNodeIndexByScreenName(screenName) {
@@ -246,6 +352,8 @@ function doRepulsion(nodeMe, nodeOther) {
 		//divide by its own length to make strength fade with distance
 		var len = v.length();
 		v = v.divideScalar(len*len);
+		
+		v = v.multiplyScalar(nodeOther.object.scale.x)
 		
 		//apply repulsiveForce
 		v = v.multiplyScalar(repulsiveForce);
