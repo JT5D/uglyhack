@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+		<script>
+			var movers = new Array();
+			var mouseX = -1;
+			var mouseY = -1;
+			var canvas;
+			var ctx;
+			var doDraw = false;
+			var paintCol;
+			
+			function mousemove(e) {
+				mouseX = e.pageX;
+				mouseY = e.pageY;
+			};
+			
+			function mouseout(e) {
+				mouseX = -1;
+				mouseY = -1;
+			};
+			
+			function mousedown(e) {
+				for(var i = 0; i < movers.length; i++) {
+					movers[i].setPos(mouseX, mouseY);
+				}
+				doDraw = true;
+			};
+			
+			function mouseup(e) {
+				paintCol = randomColor();
+				doDraw = false;
+			};
+			
+			function windowResize() {
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+			}
+			
+			function randomColor() {
+				return 'rgba(' + Math.round(Math.random()*200) + ',' + Math.round(Math.random()*200) + ',' + Math.round(Math.random()*200) + ',0.04)'
+			}
+			
+			function init() {
+				canvas = document.getElementById("canvas");
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				ctx = canvas.getContext("2d");
+				ctx.lineWidth = 1;
+				paintCol = randomColor();
+
+				try {
+					for(var i = 0; i < 250; i++) {
+						movers[i] = new Mover(i);
+						movers[i].randomizePos();
+					}
+					draw();
+				} catch(e) {
+					alert(e);
+				}
+			}
+			
+			function draw() {
+				if(doDraw) {
+					ctx.strokeStyle = paintCol;
+					for(var i = 0; i < movers.length; i++) {
+						movers[i].update();
+					}
+				}
+				setTimeout(draw, 5);
+			}			
+			
+			function Mover(i) {
+				this.x = 0;
+				this.y = 0;
+				this.dx = 0;
+				this.dy = 0;
+				this.w = 1;
+				this.h = 1;
+				this.bounce = 0.9;
+				this.friction = 0.995;
+				this.gravity = 0.02;
+				this.index = i;
+				
+				this.randomizePos = function() {
+					this.x = Math.random()*canvas.width;
+					this.y = Math.random()*canvas.height;
+					this.dx = Math.random()-0.5;
+					this.dy = Math.random()-0.5;
+				};
+				
+				this.setPos = function(xx, yy) {
+					this.x = xx + Math.random()*10;
+					this.y = yy + Math.random()*10;
+					this.dx = Math.random()-0.5;
+					this.dy = Math.random()-0.5;
+				};
+				
+				this.update = function() {
+					ctx.beginPath();
+					ctx.moveTo(this.x, this.y);
+
+					this.x += this.dx;
+					this.y += this.dy;
+					
+					if(this.x < 0) {
+						this.dx = -this.dx*this.bounce;
+						this.x = 0;
+					} else if(this.x + this.w >= canvas.width) {
+						this.dx = -this.dx*this.bounce;
+						this.x = canvas.width - this.w;
+					} else {
+						this.dx = this.dx*this.friction;
+					}
+					
+					if(this.y < 0) {
+						this.dy = -this.dy*this.bounce;
+						this.y = 0;
+					} else if(this.y + this.h >= canvas.height)   {
+						this.dy = -this.dy*this.bounce;
+						this.y = canvas.height - this.h;
+					} else {
+						this.dy = this.dy * this.friction + this.gravity;
+					}
+					if(mouseX != -1 && mouseY != -1) {
+						this.calculateAttraction();
+					}
+					
+					ctx.lineTo(this.x, this.y);
+					ctx.stroke();
+					ctx.closePath();
+				};
+				
+				this.getDistance = function(xdist, ydist) {
+					return Math.sqrt(xdist*xdist + ydist*ydist);
+				};
+				
+				this.getAngle = function(xdist, ydist) {
+					return Math.atan2(ydist, xdist) + Math.PI;
+				};
+				
+				this.calculateAttraction = function() {
+					var	xx = mouseX;
+					var	yy = mouseY;
+					var	power = 10.0;
+					
+					var xdist = (this.x + this.w) - xx;
+					var ydist = (this.y + this.h) - yy;
+					var dist = this.getDistance(xdist, ydist);
+					if(dist > 20) {
+						var angle = this.getAngle(xdist, ydist);
+						var xPow = Math.cos(angle)*(1/dist)*power
+						var yPow = Math.sin(angle)*(1/dist)*power
+						
+						this.dx += xPow;
+						this.dy += yPow;
+					}
+				}
+			}
+		</script>
+	</head>
+	<body onload="init();" onResize="windowResize();" style="overflow-x: hidden; overflow-y: hidden; position: absolute; top: 0px; left: 0px">
+		<canvas id="canvas" onmousemove="mousemove(event);" onmouseout="mouseout(event);" onmousedown="mousedown(event)" onmouseup="mouseup(event)"/>
+	</body>
+</html>
