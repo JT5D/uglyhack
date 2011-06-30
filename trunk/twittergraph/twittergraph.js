@@ -3,7 +3,7 @@ var nodes = new Array();
 
 var cubeMaterial = new THREE.MeshFaceMaterial();
 var textMaterial;
-var lineMaterial = new THREE.LineBasicMaterial( { color: 0xFFFFFF } );
+var lineMaterial = new THREE.LineBasicMaterial( { color: 0x777777 } );
 
 var v = new THREE.Vector3();
 
@@ -62,7 +62,7 @@ function initTwitterGraph() {
 		];
 	var reflectionCube = THREE.ImageUtils.loadTextureCube( urls );
 	
-	textMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, envMap: reflectionCube } );
+	textMaterial = new THREE.MeshLambertMaterial( { color: 0xffffaa, envMap: reflectionCube } );
 	
 	initScene();
 	
