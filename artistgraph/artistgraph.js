@@ -3,12 +3,24 @@ var nodes = new Array();
 
 var cubeMaterial = new THREE.MeshFaceMaterial();
 var textMaterial;
-var lineMaterial = new THREE.LineBasicMaterial( { color: 0x777777 } );
+
+var lineMaterials = new Array();
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x222222 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x333333 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x444444 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x555555 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x666666 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x777777, linewidth:2 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x888888, linewidth:2 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x999999, linewidth:2 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0xAAAAAA, linewidth:2 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0xBBBBBB, linewidth:2 } ));
+lineMaterials.push(new THREE.LineBasicMaterial( { color: 0xCCCCCC, linewidth:3 } ));
 
 var v = new THREE.Vector3();
 
 var repulsiveForce = 0.2;
-var attractiveForce = 0.00001;
+var attractiveForce = 0.00002;
 
 var postprocessing = { enabled: true };
 
@@ -156,7 +168,7 @@ function getRootNode(_screenName) {
 			theViewport.setLoading(false);
 			if(data.similarartists) {
 				$.each(data.similarartists.artist, function(i) {
-					createNode(this.name, 0);
+					createNode(this.name, this.match, 0);
 				});
 				
 				var store = Ext.data.StoreManager.lookup('artistStore');
@@ -188,9 +200,9 @@ function getArtistData(_screenName) {
 					$.each(data.similarartists.artist, function(i) {
 						var newNodeIndex = getNodeIndexByScreenName(this.name);
 						if(newNodeIndex == -1) {
-							createNode(this.name, nodeIndex);
+							createNode(this.name, this.match, nodeIndex);
 						} else {
-							createFollow(nodes[newNodeIndex], nodeIndex);
+							createFollow(nodes[newNodeIndex], nodeIndex, this.match);
 						}
 					});
 					
@@ -227,7 +239,7 @@ function animate() {
 		var follows = nodes[i].follows;
 		if(follows.length > 0) {
 			for(var j = 0; j < follows.length; j++) {
-				doAttraction(nodes[i], nodes[follows[j].index]);
+				doAttraction(nodes[i], nodes[follows[j].index], follows[j].strength);
 			}
 		}
 		
@@ -235,7 +247,7 @@ function animate() {
 		var followers = nodes[i].followers;
 		if(followers.length > 0) {
 			for(var j = 0; j < followers.length; j++) {
-				doAttraction(nodes[i], nodes[followers[j]]);
+				doAttraction(nodes[i], nodes[followers[j].index], followers[j].strength);
 			}
 		}
 		
@@ -302,7 +314,7 @@ function animate() {
 	requestAnimationFrame( animate );
 }
 
-function createNode(screenName, followsIndex) {
+function createNode(screenName, strength, followsIndex) {
 	
 	var showText = screenName.replace(/[^a-z|0-9|\s]/gi, "_");
 	var text = new THREE.Mesh(new THREE.TextGeometry(showText, {size: 5, height: 2, curveSegments: 1}), textMaterial);
@@ -320,30 +332,38 @@ function createNode(screenName, followsIndex) {
 	};
 
 	if(followsIndex != null) {
-		createFollow(node, followsIndex);
+		createFollow(node, followsIndex, strength);
 		text.position.addSelf(nodes[followsIndex].object.position);
 	}
 	scene.addChild(text);
 	nodes.push(node);
 }
 
-function createFollow(node, followsIndex) {
+function createFollow(node, followsIndex, strength) {
 	var followsNode = nodes[followsIndex]; 
 	
 	var geometry = new THREE.Geometry();
 	geometry.vertices.push( new THREE.Vertex( followsNode.object.position ) );
 	geometry.vertices.push( new THREE.Vertex( node.object.position ) );
 	
-	var line = new THREE.Line(geometry, lineMaterial);
+	var lineMaterialIndex = Math.floor(strength*10);
+	var line = new THREE.Line(geometry, lineMaterials[lineMaterialIndex]);
 	scene.addChild(line);
+	
+	var strengthFloat = parseFloat(strength);
 	
 	node.object.scale.addScalar(0.01);
 	node.follows.push({
 		index: followsIndex,
-		line: line
+		line: line,
+		strength: strengthFloat
 	});
+	
 	followsNode.object.scale.addScalar(0.01);
-	followsNode.followers.push(node.id);
+	followsNode.followers.push({
+		index: node.id,
+		strength: strengthFloat
+	});
 }
 
 function getNodeIndexByScreenName(screenName) {
@@ -372,7 +392,7 @@ function doRepulsion(nodeMe, nodeOther) {
 	}
 }
 
-function doAttraction(nodeMe, nodeOther) {
+function doAttraction(nodeMe, nodeOther, strength) {
 	v.sub(nodeOther.object.position, nodeMe.object.position);
 	
 	if(!v.isZero()) {
@@ -381,6 +401,9 @@ function doAttraction(nodeMe, nodeOther) {
 		
 		//apply attractiveForce
 		v = v.multiplyScalar(attractiveForce);
+		
+		//apply strength
+		v = v.multiplyScalar(strength);
 		
 		nodeMe.speed.addSelf(v);
 	}
