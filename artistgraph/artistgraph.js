@@ -151,13 +151,18 @@ function getRootNode(_screenName) {
 	$.ajax({
 		url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&artist=' + _screenName + '&api_key=17033506c053ed85b1e3cc72711ce0a2&format=json',
 		dataType: 'jsonp',
-		timeout: 6000,
+		timeout: 15000,
 		success: function(data) {
 			theViewport.setLoading(false);
 			if(data.similarartists) {
 				$.each(data.similarartists.artist, function(i) {
 					createNode(this.name, 0);
 				});
+				
+				var store = Ext.data.StoreManager.lookup('artistStore');
+				store.loadData(nodes.slice());
+				store.sort('screenName', 'ASC');
+				
 			} else {
 				Ext.Msg.alert('Error', 'Could not get artist ' + _screenName + ' from Last.fm.');
 			}
@@ -176,7 +181,7 @@ function getArtistData(_screenName) {
 		$.ajax({
 			url: 'http://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&artist=' + _screenName + '&api_key=17033506c053ed85b1e3cc72711ce0a2&format=json',
 			dataType: 'jsonp',
-			timeout: 6000,
+			timeout: 15000,
 			success: function(data) {
 				theViewport.setLoading(false);
 				if(data.similarartists) {
@@ -188,6 +193,11 @@ function getArtistData(_screenName) {
 							createFollow(nodes[newNodeIndex], nodeIndex);
 						}
 					});
+					
+					var store = Ext.data.StoreManager.lookup('artistStore');
+					store.loadData(nodes.slice());
+					store.sort('screenName', 'ASC');
+					
 				} else {
 					Ext.Msg.alert('Error', 'Could not get artist ' + _screenName + ' from Last.fm.');
 				}
@@ -306,7 +316,7 @@ function createNode(screenName, followsIndex) {
 		object: text,
 		speed: new THREE.Vector3(),
 		follows: [],
-		followers: [],
+		followers: []
 	};
 
 	if(followsIndex != null) {
