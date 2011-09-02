@@ -3,6 +3,7 @@ var nodes = new Array();
 
 var cubeMaterial = new THREE.MeshFaceMaterial();
 var textMaterial;
+var textRedMaterial;
 
 var lineMaterials = new Array();
 lineMaterials.push(new THREE.LineBasicMaterial( { color: 0x222222 } ));
@@ -75,6 +76,7 @@ function initArtistGraph() {
 	var reflectionCube = THREE.ImageUtils.loadTextureCube( urls );
 	
 	textMaterial = new THREE.MeshLambertMaterial( { color: 0xffffaa, envMap: reflectionCube } );
+	textRedMaterial = new THREE.MeshLambertMaterial( { color: 0xff5555, envMap: reflectionCube } );
 	
 	initScene();
 	
@@ -364,6 +366,11 @@ function createFollow(node, followsIndex, strength) {
 		index: node.id,
 		strength: strengthFloat
 	});
+}
+
+function setNodeSelected(screenName, selected) {
+	var idx = getNodeIndexByScreenName(screenName);
+	nodes[idx].object.materials[0] = selected ? textRedMaterial : textMaterial;
 }
 
 function getNodeIndexByScreenName(screenName) {
