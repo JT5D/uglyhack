@@ -352,14 +352,14 @@ function createFollow(node, followsIndex, strength) {
 	
 	var strengthFloat = parseFloat(strength);
 	
-	node.object.scale.addScalar(0.01);
+	node.object.scale.addScalar(0.1*strengthFloat);
 	node.follows.push({
 		index: followsIndex,
 		line: line,
 		strength: strengthFloat
 	});
 	
-	followsNode.object.scale.addScalar(0.01);
+	followsNode.object.scale.addScalar(0.1*strengthFloat);
 	followsNode.followers.push({
 		index: node.id,
 		strength: strengthFloat
