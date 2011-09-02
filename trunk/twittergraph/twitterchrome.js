@@ -4,7 +4,18 @@ var theViewport;
 
 Ext.onReady(function() {
 
-	var twName = 'DanielPettersso';
+	Ext.define('Artist', {
+	    extend: 'Ext.data.Model',
+	    fields: [
+	        {name: 'screenName', type: 'string'}
+	    ]
+	});
+	
+	Ext.create('Ext.data.Store', {
+	    storeId:'artistStore',
+	    model: 'Artist',
+	    data: []
+	});
 
 	Ext.QuickTips.init();
     theViewport = Ext.create('Ext.Viewport', {
@@ -17,55 +28,19 @@ Ext.onReady(function() {
 			padding: 2,
             collapsible: true,
             title: 'TwitterGraph <a href="http://uglyhack.appspot.com/artistgraph/">ArtistGraph</a>',
-            height: 99,
+            height: 65,
 			layout: {
 				type: 'hbox',
 				align: 'stretch'
 			},
 			items: [{
 					flex: 1,
-					layout: {
-						type: 'hbox'
-					},
 					html: 'Powered by <a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a>,' + 
 					'<a href="http://www.sencha.com/products/extjs" target="_blank">Ext JS</a>, ' + 
 					'<a href="http://www.jquery.com" target="_blank">jQuery</a> and ' + 
 					'<a href="http://www.twitter.com" target="_blank">Twitter</a>. ' + 
 					'Made by <a href="mailto:daniel.g.pettersson@gmail.com">Daniel Pettersson</a></br>' +
-					'MOVE mouse & press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan</br></br>',
-					items: [
-						{
-							xtype: 'textfield',
-							name: 'TwitterName',
-							value: 'DanielPettersso',
-							fieldLabel: 'TwitterName',
-							listeners: {
-								change: function(field, value){
-									twName = value;
-								}
-							}
-						},
-						{
-							xtype: 'button',
-							text: 'Set',
-							tooltip: 'Sets the entered Twitter username as root node in a new graph.',
-							handler: function(){
-								initScene();
-								getRootNode(twName);
-							}
-							
-						},
-						{
-							xtype: 'button',
-							text: 'Add',
-							tooltip: 'Adds the entered Twitter username to the graph. Name must exist already exist in the graph.',
-							handler: function(){
-								getTwitterData(twName);
-							}
-							
-						}
-					]
-					
+					'MOVE mouse & press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan</br></br>'
 				},
 				{
 					flex: 1,
@@ -77,13 +52,39 @@ Ext.onReady(function() {
             border: false,
 			html: '<div id="scene" />'
         },{
+			region: 'west',
+			width: 200,
+			items: [
+				Ext.create('Ext.grid.Panel', {
+				    title: 'Click in list to add to graph',
+				    store: Ext.data.StoreManager.lookup('artistStore'),
+				    autoScroll: true,
+				    height: '100%',
+				    columns: [
+				        { header: 'Name',  dataIndex: 'screenName', flex: 1 }
+				    ],
+				    listeners: {
+				    	select: function(me, record, index) {
+				    		getTwitterData(record.data.screenName);
+				    	}
+				    }
+				})
+			]
+		},{
 			region: 'south',
 			html: '<div id="statusText" />',
 			height: 20
 		}]
     });
-	initTwitterGraph();
-	getRootNode('DanielPettersso');
+    
+	Ext.MessageBox.prompt('Twitter', 
+	 	'Please enter any Twitter username', 
+		function(button, text) {
+			if (button == 'ok'){
+				initTwitterGraph();
+           		getRootNode(text);
+			}
+    });
 	
 	
 });

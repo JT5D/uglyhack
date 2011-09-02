@@ -151,12 +151,16 @@ function getRootNode(_screenName) {
 	$.ajax({
 		url: 'http://api.twitter.com/1/statuses/friends/' + _screenName + '.json',
 		dataType: 'jsonp',
-		timeout: 6000,
+		timeout: 15000,
 		success: function(data) {
 			theViewport.setLoading(false);
 			$.each(data, function(i) {
 				createNode(this.screen_name, 0);
 			});
+			
+			var store = Ext.data.StoreManager.lookup('artistStore');
+			store.loadData(nodes.slice());
+			store.sort('screenName', 'ASC');
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			theViewport.setLoading(false);
@@ -175,7 +179,7 @@ function getTwitterData(_screenName) {
 		$.ajax({
 			url: 'http://api.twitter.com/1/statuses/friends/' + _screenName + '.json',
 			dataType: 'jsonp',
-			timeout: 6000,
+			timeout: 15000,
 			success: function(data) {
 				theViewport.setLoading(false);
 				$.each(data, function(i) {
@@ -187,6 +191,9 @@ function getTwitterData(_screenName) {
 					}
 				});
 				getTwitterRate();
+				var store = Ext.data.StoreManager.lookup('artistStore');
+				store.loadData(nodes.slice());
+				store.sort('screenName', 'ASC');
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				theViewport.setLoading(false);
@@ -313,7 +320,7 @@ function createNode(screenName, followsIndex) {
 		object: text,
 		speed: new THREE.Vector3(),
 		follows: [],
-		followers: [],
+		followers: []
 	};
 
 	if(followsIndex != null) {

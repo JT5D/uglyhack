@@ -4,7 +4,18 @@ var theViewport;
 
 Ext.onReady(function() {
 
-	var twName = 'Metallica';
+	Ext.define('Artist', {
+	    extend: 'Ext.data.Model',
+	    fields: [
+	        {name: 'screenName', type: 'string'}
+	    ]
+	});
+	
+	Ext.create('Ext.data.Store', {
+	    storeId:'artistStore',
+	    model: 'Artist',
+	    data: []
+	});
 
 	Ext.QuickTips.init();
     theViewport = Ext.create('Ext.Viewport', {
@@ -17,53 +28,19 @@ Ext.onReady(function() {
 			padding: 2,
             collapsible: true,
             title: 'ArtistGraph <a href="http://uglyhack.appspot.com/twittergraph/">TwitterGraph</a>',
-            height: 99,
+            height: 65,
 			layout: {
 				type: 'hbox',
 				align: 'stretch'
 			},
 			items: [{
 					flex: 1,
-					layout: {
-						type: 'hbox'
-					},
 					html: 'Powered by <a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a>,' + 
 					'<a href="http://www.sencha.com/products/extjs" target="_blank">Ext JS</a>, ' + 
 					'<a href="http://www.jquery.com" target="_blank">jQuery</a> and ' + 
 					'<a href="http://www.lastfm.com" target="_blank">last.fm</a>. ' + 
 					'Made by <a href="mailto:daniel.g.pettersson@gmail.com">Daniel Pettersson</a></br>' +
-					'MOVE mouse & press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan</br></br>',
-					items: [
-						{
-							xtype: 'textfield',
-							value: twName,
-							fieldLabel: 'AristName',
-							listeners: {
-								change: function(field, value){
-									twName = value;
-								}
-							}
-						},
-						{
-							xtype: 'button',
-							text: 'Set',
-							tooltip: 'Sets the entered artist name as root node in a new graph.',
-							handler: function(){
-								initScene();
-								getRootNode(twName);
-							}
-							
-						},
-						{
-							xtype: 'button',
-							text: 'Add',
-							tooltip: 'Adds the entered artist name to the graph. Name must exist already exist in the graph.',
-							handler: function(){
-								getArtistData(twName);
-							}
-							
-						}
-					]
+					'MOVE mouse & press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan</br></br>'
 					
 				},
 				{
@@ -76,13 +53,34 @@ Ext.onReady(function() {
             border: false,
 			html: '<div id="scene" />'
         },{
-			region: 'south',
-			html: '<div id="statusText" />',
-			height: 20
+			region: 'west',
+			width: 200,
+			items: [
+				Ext.create('Ext.grid.Panel', {
+				    title: 'Click in list to add to graph',
+				    store: Ext.data.StoreManager.lookup('artistStore'),
+				    autoScroll: true,
+				    height: '100%',
+				    columns: [
+				        { header: 'Name',  dataIndex: 'screenName', flex: 1 }
+				    ],
+				    listeners: {
+				    	select: function(me, record, index) {
+				    		getArtistData(record.data.screenName);
+				    	}
+				    }
+				})
+			]
 		}]
     });
-	initArtistGraph();
-	getRootNode(twName);
 	
+	Ext.MessageBox.prompt('Artist', 
+	 	'Please enter your most favourite artist in the whole wide world', 
+		function(button, text) {
+			if (button == 'ok'){
+				initArtistGraph();
+           		getRootNode(text);
+			}
+    });
 	
 });
