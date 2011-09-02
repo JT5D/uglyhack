@@ -66,6 +66,12 @@ Ext.onReady(function() {
 				    listeners: {
 				    	select: function(me, record, index) {
 				    		getTwitterData(record.data.screenName);
+				    	},
+				    	itemmouseenter: function(me, record) {
+				    		setNodeSelected(record.data.screenName, true);				    		
+				    	},
+				    	itemmouseleave: function(me, record) {
+				    		setNodeSelected(record.data.screenName, false);
 				    	}
 				    }
 				})

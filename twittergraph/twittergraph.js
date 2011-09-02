@@ -3,6 +3,8 @@ var nodes = new Array();
 
 var cubeMaterial = new THREE.MeshFaceMaterial();
 var textMaterial;
+var textRedMaterial;
+
 var lineMaterial = new THREE.LineBasicMaterial( { color: 0x777777 } );
 
 var v = new THREE.Vector3();
@@ -63,6 +65,7 @@ function initTwitterGraph() {
 	var reflectionCube = THREE.ImageUtils.loadTextureCube( urls );
 	
 	textMaterial = new THREE.MeshLambertMaterial( { color: 0xffffaa, envMap: reflectionCube } );
+	textRedMaterial = new THREE.MeshLambertMaterial( { color: 0xff5555, envMap: reflectionCube } );
 	
 	initScene();
 	
@@ -348,6 +351,11 @@ function createFollow(node, followsIndex) {
 	});
 	followsNode.object.scale.addScalar(0.02);
 	followsNode.followers.push(node.id);
+}
+
+function setNodeSelected(screenName, selected) {
+	var idx = getNodeIndexByScreenName(screenName);
+	nodes[idx].object.materials[0] = selected ? textRedMaterial : textMaterial;
 }
 
 function getNodeIndexByScreenName(screenName) {
