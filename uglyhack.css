@@ -1,0 +1,151 @@
+* {
+	margin: 0;
+	padding: 0
+}
+
+img {
+	border: none
+}
+
+body {
+	background: url( black_linen_v2.png );
+	font: normal normal normal 14px/ 1.4em Georgia;
+	color: #FFFFFF;
+	text-shadow: 1px 1px 1px black
+}
+
+h1 {
+	font-size: 84px;
+	line-height: 1em;
+	font-weight: normal;
+	text-align: left;
+	text-shadow: 2px 3px 3px black;
+	padding-bottom: 10px;
+}
+
+h2 {
+	font-size: 28px;
+	line-height: 1em;
+	font-weight: normal;
+	font-style: italic;
+	text-align: left;
+	padding-right: 20px
+}
+
+h3 {
+	font-size: 18px;
+	line-height: 1em;
+	font-weight: normal;
+	text-align: left;
+	margin-bottom: .5em
+}
+
+#subtitle {
+	position: absolute;
+	right: 0;
+	top: 20px;
+	text-align: right
+}
+
+section {
+	width: 950px;
+	margin: 0 auto 0 auto;
+	position: relative;
+}
+
+article {
+	float: left;
+	padding: 10px;
+	margin: 20px 0;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 25px;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+}
+
+canvas {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0
+}
+
+a {
+	color: #ffffff;
+	text-decoration: none
+}
+
+p {
+	margin-bottom: 1em
+}
+
+li {
+	list-style-type: none;
+	float: left;
+	margin: 10px;
+	-moz-transition: all .2s ease-in;
+	-webkit-transition: all .1s ease-in;
+	-o-transition: all .1s ease-in;
+	transition: all .1s ease-in;
+}
+
+li:hover {
+	-moz-transform: scale(1.1, 1.1);
+	-webkit-transform: scale(1.1, 1.1);
+	-o-transform: scale(1.1, 1.1);
+	transform: scale(1.1, 1.1);
+}
+
+li div {
+	border: 4px solid white;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	-webkit-box-shadow: 3px 7px 9px rgba(0, 0, 0, 1);
+	-moz-box-shadow: 3px 7px 9px rgba(0, 0, 0, 1);
+	box-shadow: 3px 7px 9px rgba(0, 0, 0, 1);
+	background: white url( spinner.gif ) no-repeat 50% 50%;
+}
+
+li div img {
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	width: 280px;
+	height: 200px;
+}
+
+.fadeable {
+	opacity: 0;
+	-moz-transition: opacity 1.0s ease-in;
+	-webkit-transition: opacity 1.0s ease-in;
+	-o-transition: opacity 1.0s ease-in;
+	transition: opacity 1.0s ease-in;
+}
+
+.headersquare {
+	border-radius: 0px 0px 25px 25px;
+	-moz-border-radius: 0px 0px 25px 25px;
+	-webkit-border-radius: 0px 0px 25px 25px;
+	background: rgba(255, 255, 255, 0.1);
+	padding: 10px;
+}
+
+ul {
+	margin-bottom: 1em;
+	width: 930px
+}
+
+footer {
+	clear: both;
+	width: 930px;
+	margin: 0 auto 2em auto;
+	color: #888;
+	position: relative;
+	padding: 10px 0 0 20px
+}
+
+footer p {
+	margin: 0
+}
