@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8" />
+	<title>Uglyhack</title>	
+	
+	<LINK href="uglyhack.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<section>
+	<div class="headersquare">
+	<h1><img src="http://www.w3.org/html/logo/badge/html5-badge-h-solo.png" alt="HTML5" /> Uglyhack</h1>
+	<h2 id="subtitle">"Stuff without purpose"</h2>
+	</div>
+	<article>
+		<ul>
+			<li>
+				<a href="twittergraph/">
+					<h3>Twittergraph</h3>
+					<div>
+						<img class="fadeable" src="twittergraph/logo.jpg"/>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="artistgraph/">
+					<h3>Artistgraph</h3>
+					<div>
+						<img class="fadeable" src="artistgraph/logo.jpg"/>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="3d/">
+					<h3>My first 3d</h3>
+					<div>
+						<img class="fadeable" src="3d/logo.jpg"/>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="chaosdraw/">
+					<h3>Chaosdraw</h3>
+					<div>
+						<img class="fadeable" src="chaosdraw/logo.jpg"/>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="shake/">
+					<h3>Shake</h3>
+					<div>
+						<img class="fadeable" src="shake/logo.jpg"/>
+					</div>
+				</a>
+			</li>
+		</ul>
+	</article>
+	
+	<script>
+	
+	window.addEventListener( 'load', function() {
+		
+		var t = 0;
+		var images = document.getElementsByTagName( 'img' );
+			for ( i = 0; i < images.length; i++ ) {
+				if( images[ i ].className == 'fadeable' ) {
+					( function( i, t ) { setTimeout( function(){ i.style.opacity = 1; }, t ) } )( images[ i ], t );
+					t += 300;
+				}
+			}
+		}, false );
+	</script>
+	
+	<footer>
+		Made by Daniel Pettersson. Code at <a href="http://code.google.com/p/uglyhack/">Google Code</a>
+	</footer>
+
+</section>
+</body>
