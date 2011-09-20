@@ -77,6 +77,43 @@ Ext.onReady(function() {
 				    }
 				})
 			]
+		},{
+			region: 'east',
+			width: 200,
+			items: [{
+				fieldLabel: 'repulsiveForce',
+				value: 0.2,
+			    increment: 0.01,
+			    minValue: 0,
+			    maxValue: 1.0,
+			    decimalPrecision: 2,
+				listeners: {
+			        change: function(me, value) {
+						repulsiveForce = value;
+					}
+				}
+			},{
+				fieldLabel: 'attractiveForce',
+				value: 0.00002,
+			    increment: 0.000001,
+			    minValue: 0,
+			    maxValue: 0.0001,
+			    decimalPrecision: 6,
+				listeners: {
+			        change: function(me, value) {
+						attractiveForce = value;
+					}
+				}
+			}],
+			defaults: {
+				xtype: 'slider',
+				labelAlign: 'top',
+				width: 180,
+			    value: 50,
+			    increment: 10,
+			    minValue: 0,
+			    maxValue: 200
+			}
 		}]
     });
 	
