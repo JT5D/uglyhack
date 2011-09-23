@@ -39,7 +39,7 @@
 				
 				var len = movers.length;
 				for(var j = len; j < params.numLines + len; j++) {
-					movers[j] = new Mover(j, col);
+					movers[j] = new Mover(j, col, params.lineWidth);
 					movers[j].setPos(mouseX, mouseY);
 				}
 				doDraw = true;
@@ -79,9 +79,7 @@
 				gui.add(params, 'gravity').min(0.0).max(0.1).step(0.01);
 				gui.add(params, 'opacity').min(0.0).max(0.5).step(0.02);
 				gui.add(params, 'numLines').min(1).max(1000).step(1);
-				gui.add(params, 'lineWidth').min(1).max(100).step(1).onChange(function(newValue) {
-					  ctx.lineWidth = params.lineWidth;
-				});
+				gui.add(params, 'lineWidth').min(1).max(100).step(1);
 				gui.add(params, 'bgFade').min(0).max(0.5).step(0.01).onChange(function(newValue) {
 					  ctx.fillStyle = bgColor();
 				});
@@ -103,7 +101,7 @@
 				requestAnimationFrame( draw );
 			}			
 			
-			function Mover(i, col) {
+			function Mover(i, col, lineWidth) {
 				this.x = 0;
 				this.y = 0;
 				this.dx = 0;
@@ -111,6 +109,7 @@
 				this.index = i;
 				this.dead = false;
 				this.col = col;
+				this.lineWidth = lineWidth;
 				
 				this.setPos = function(xx, yy) {
 					this.x = xx + Math.random()*20-10;
@@ -128,6 +127,7 @@
 					}
 
 					ctx.strokeStyle = this.col;
+					ctx.lineWidth = this.lineWidth;
 					ctx.beginPath();
 					ctx.moveTo(this.x, this.y);
 
@@ -207,10 +207,15 @@
 				padding: 0;
 				overflow: hidden;
 			}
+			.overlay {
+				position: absolute;
+				padding: 5px;
+			}
 		</style>		
 
 	</head>
 	<body onload="init();" onResize="windowResize();">
+		<div class="overlay"><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/cubevideo/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>
 		<canvas id="canvas" onmousemove="mousemove(event);" onmouseout="mouseout(event);" onmousedown="mousedown(event)" onmouseup="mouseup(event)"/>
 	</body>
 </html>
