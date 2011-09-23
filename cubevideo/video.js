@@ -1,7 +1,7 @@
-var renderer, scene, camera, texture, video, mesh;
+var renderer, scene, camera, texture, video, mesh, skyboxMesh;
 
 var postprocessing = { enabled: true };
-var params = { reflection: false, postprocessing_blur: 0.002953125, postprocessing_opacity: 1.13 };
+var params = { reflection: false, postprocessing_blur: 0.002953125, postprocessing_opacity: 1.13, skybox: true };
 
 $(document).ready(function() {
 
@@ -76,23 +76,31 @@ $(document).ready(function() {
 	    uniforms : shader.uniforms
     }); 
     
-    var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 100000, 100000, 100000, 1, 1, 1, null, true ), cubeMaterial );
+    skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 100000, 100000, 100000, 1, 1, 1, null, true ), cubeMaterial );
     scene.addObject( skyboxMesh ); 
     
     initPostprocessing();
 	renderer.autoClear = false;
 	
 	var gui = new DAT.GUI({
-		height : 4 * 32 - 1
+		height : 5 * 32 - 1
 	}); 
 	gui.add(postprocessing, 'enabled').name('Postprocessing');
-	gui.add(params, 'postprocessing_blur').name('Postprocessing blur').min(0).max(0.01).step(0.0005).onChange(function(newValue) {
+	gui.add(params, 'postprocessing_blur').name('Blur').min(0).max(0.01).step(0.0005).onChange(function(newValue) {
 		postprocessing.blurx = new THREE.Vector2( params.postprocessing_blur, 0.0 );
 		postprocessing.blury = new THREE.Vector2( 0.0, params.postprocessing_blur );
 	});
-	gui.add(params, 'postprocessing_opacity').name('Postprocessing opacity').min(0).max(2).step(0.05);
+	gui.add(params, 'postprocessing_opacity').name('Opacity').min(0).max(2).step(0.05);
 	gui.add(params, 'reflection').name('Reflection').onChange(function(newValue) {
 		mesh.materials[0] = newValue ? materialRefl : material;
+	});
+	gui.add(params, 'skybox').name('Skybox').onChange(function(newValue) {
+		if(newValue) {
+			skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 100000, 100000, 100000, 1, 1, 1, null, true ), cubeMaterial );
+			scene.addObject( skyboxMesh );
+		} else {
+			scene.removeObject( skyboxMesh );
+		}
 	});
     
 	animate();
