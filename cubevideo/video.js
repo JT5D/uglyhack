@@ -10,11 +10,10 @@ $(document).ready(function() {
 		return;
 	}
 
-	var container = document.createElement('div');
-	document.body.appendChild( container );
+	var container = $('#scene');
 	
 	renderer = new THREE.WebGLRenderer();
-	container.appendChild( renderer.domElement );
+	container.append( renderer.domElement );
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	
 	camera = new THREE.Camera( 40, window.innerWidth / window.innerHeight, 1, 100000 );
