@@ -16,8 +16,7 @@
 			<li>
 				<a href="twittergraph/">
 					<div class="outer">
-						<img class="fadeable" src="twittergraph/logo.jpg"/>
-						<div class="hover">
+						<div class="fadeable" style="background: url('twittergraph/logo.jpg');">
 							<div class="inner">
 								<h3>Twittergraph</h3>
 							</div>
@@ -28,8 +27,7 @@
 			<li>
 				<a href="artistgraph/">
 					<div class="outer">
-						<img class="fadeable" src="artistgraph/logo.jpg"/>
-						<div class="hover">
+						<div class="fadeable" style="background: url('artistgraph/logo.jpg');">
 							<div class="inner">
 								<h3>Artistgraph</h3>
 							</div>
@@ -40,8 +38,7 @@
 			<li>
 				<a href="3d/">
 					<div class="outer">
-						<img class="fadeable" src="3d/logo.jpg"/>
-						<div class="hover">
+						<div class="fadeable" style="background: url('3d/logo.jpg');">
 							<div class="inner">
 								<h3>3d Cube</h3>
 							</div>
@@ -52,8 +49,7 @@
 			<li>
 				<a href="chaosdraw/">
 					<div class="outer">
-						<img class="fadeable" src="chaosdraw/logo.jpg"/>
-						<div class="hover">
+						<div class="fadeable" style="background: url('chaosdraw/logo.jpg');">
 							<div class="inner">
 								<h3>Chaosdraw</h3>
 							</div>
@@ -64,8 +60,7 @@
 			<li>
 				<a href="shake/">
 					<div class="outer">
-						<img class="fadeable" src="shake/logo.jpg"/>
-						<div class="hover">
+						<div class="fadeable" style="background: url('shake/logo.jpg');">
 							<div class="inner">
 								<h3>Shake</h3>
 							</div>
@@ -76,8 +71,7 @@
 			<li>
 				<a href="cubevideo/">
 					<div class="outer">
-						<img class="fadeable" src="cubevideo/logo.jpg"/>
-						<div class="hover">
+						<div class="fadeable" style="background: url('cubevideo/logo.jpg');">
 							<div class="inner">
 								<h3>CubeVideo</h3>
 							</div>
@@ -93,7 +87,7 @@
 	window.addEventListener( 'load', function() {
 		
 		var t = 0;
-		var images = document.getElementsByTagName( 'img' );
+		var images = document.getElementsByTagName( 'div' );
 			for ( i = 0; i < images.length; i++ ) {
 				if( images[ i ].className == 'fadeable' ) {
 					( function( i, t ) { setTimeout( function(){ i.style.opacity = 1; }, t ) } )( images[ i ], t );
