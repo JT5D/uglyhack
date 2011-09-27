@@ -129,9 +129,9 @@ li:hover div.inner {
 	opacity: 0;
 	width: 280px;
 	height: 200px;
-	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
+	border-radius: 13px;
+	-moz-border-radius: 13px;
+	-webkit-border-radius: 13px;
 	-moz-transition: opacity 1.5s ease-in;
 	-webkit-transition: opacity 1.5s ease-in;
 	-o-transition: opacity 1.5s ease-in;
