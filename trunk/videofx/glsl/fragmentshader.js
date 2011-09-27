@@ -7,6 +7,11 @@ var fragmentshader = [
 	"uniform vec2 resolution;",
 	"uniform float time;",
 	
+	"uniform bool wobble;",
+	"uniform float wobbleStrength;",
+	"uniform float wobbleSpeed;",
+	"uniform float wobbleSize;",
+	
 	"uniform bool invert;",
 	
 	"uniform bool sat;",
@@ -28,7 +33,15 @@ var fragmentshader = [
 	"{",
 		"vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;",
 	
-		"vec3 col = texture2D(video, vUv).xyz;",
+		"vec3 col;",
+		"if(wobble)",
+		"{",
+			"col = texture2D(video, vUv + wobbleStrength*vec2(cos(time*wobbleSpeed+p.x*wobbleSize), sin(time*wobbleSpeed+p.y*wobbleSize))).xyz;",
+		"}",
+		"else",
+		"{",
+			"col = texture2D(video, vUv).xyz;",
+		"}",
 		
 		"if(invert)",
 		"{",
