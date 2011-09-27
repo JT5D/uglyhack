@@ -2,18 +2,20 @@ var renderer, scene, camera, texture, video, mesh;
 var startTime = new Date().getTime();
 var uniforms;
 var params = { wobble: false,
-			   wobbleStrength: 0.03,
+			   wobbleStrength: 0.01,
 			   wobbleSpeed: 6.0,
-			   wobbleSize: 2.5,
+			   wobbleSize: 50.0,
 			   invert: false,
 			   sat: true,
 			   satStrength: 0.2,
+			   contrast: false,
+			   contrastStrength: 0.5,
 			   noise: true,
 			   noiseStrength: 0.2,
 			   lines: true,
 			   lineSize: 550.0,
 			   lineStrength: 0.3,
-			   lineTilt: 0.5};
+			   lineTilt: 0.8};
 
 $(document).ready(function() {
 
@@ -82,6 +84,14 @@ $(document).ready(function() {
 			type: "f",
 			value: params.satStrength
 		},
+		contrast: {
+			type: "i",
+			value: params.contrast ? 1 : 0
+		},
+		contrastStrength: {
+			type: "f",
+			value: params.contrastStrength
+		},
 		noise: {
 			type: "i",
 			value: params.noise ? 1 : 0
@@ -118,18 +128,18 @@ $(document).ready(function() {
     scene.addObject( mesh );
     
 	var gui = new DAT.GUI({
-		height : 13 * 32 - 1
+		height : 15 * 32 - 1
 	}); 
 	gui.add(params, 'wobble').onChange(function(newValue) {
 		uniforms.wobble.value = newValue ? 1 : 0;
 	});
-	gui.add(params, 'wobbleStrength').min(0).max(0.2).step(0.01).onChange(function(newValue) {
+	gui.add(params, 'wobbleStrength').min(0).max(0.05).step(0.002).onChange(function(newValue) {
 		uniforms.wobbleStrength.value = newValue;
 	});
 	gui.add(params, 'wobbleSpeed').min(0).max(20).step(0.2).onChange(function(newValue) {
 		uniforms.wobbleSpeed.value = newValue;
 	});
-	gui.add(params, 'wobbleSize').min(0).max(10).step(0.1).onChange(function(newValue) {
+	gui.add(params, 'wobbleSize').min(0).max(100).step(1).onChange(function(newValue) {
 		uniforms.wobbleSize.value = newValue;
 	});
 	gui.add(params, 'invert').onChange(function(newValue) {
@@ -140,6 +150,12 @@ $(document).ready(function() {
 	});
 	gui.add(params, 'satStrength').min(0).max(4).step(0.05).onChange(function(newValue) {
 		uniforms.satStrength.value = newValue;
+	});
+	gui.add(params, 'contrast').onChange(function(newValue) {
+		uniforms.contrast.value = newValue ? 1 : 0;
+	});
+	gui.add(params, 'contrastStrength').min(-1).max(4).step(0.2).onChange(function(newValue) {
+		uniforms.contrastStrength.value = newValue;
 	});
 	gui.add(params, 'noise').onChange(function(newValue) {
 		uniforms.noise.value = newValue ? 1 : 0;
