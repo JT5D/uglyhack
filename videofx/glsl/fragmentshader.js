@@ -17,6 +17,9 @@ var fragmentshader = [
 	"uniform bool sat;",
 	"uniform float satStrength;",
 	
+	"uniform bool contrast;",
+	"uniform float contrastStrength;",
+	
 	"uniform bool noise;",
 	"uniform float noiseStrength;",
 	
@@ -36,7 +39,7 @@ var fragmentshader = [
 		"vec3 col;",
 		"if(wobble)",
 		"{",
-			"col = texture2D(video, vUv + wobbleStrength*vec2(cos(time*wobbleSpeed+p.x*wobbleSize), sin(time*wobbleSpeed+p.y*wobbleSize))).xyz;",
+			"col = texture2D(video, vUv + wobbleStrength*vec2(cos(time*wobbleSpeed+length(p*wobbleSize)), sin(time*wobbleSpeed+length(p*wobbleSize)))).xyz;",
 		"}",
 		"else",
 		"{",
@@ -52,6 +55,11 @@ var fragmentshader = [
 		"{",
 			"float c = (col.x + col.y + col.z) / 3.0;",
 			"col = col*satStrength+c*(1.0-satStrength);",
+		"}",
+		
+		"if(contrast)",
+		"{",
+			"col += (col - 0.5)*contrastStrength;",
 		"}",
 	
 		"if(noise)",
