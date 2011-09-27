@@ -1,7 +1,11 @@
 var renderer, scene, camera, texture, video, mesh;
 var startTime = new Date().getTime();
 var uniforms;
-var params = { invert: false,
+var params = { wobble: false,
+			   wobbleStrength: 0.03,
+			   wobbleSpeed: 6.0,
+			   wobbleSize: 2.5,
+			   invert: false,
 			   sat: true,
 			   satStrength: 0.2,
 			   noise: true,
@@ -49,6 +53,22 @@ $(document).ready(function() {
 		time: {
 			type: "f",
 			value: 0.0
+		},
+		wobble: {
+			type: "i",
+			value: params.wobble ? 1 : 0
+		},
+		wobbleStrength: {
+			type: "f",
+			value: params.wobbleStrength
+		},
+		wobbleSpeed: {
+			type: "f",
+			value: params.wobbleSpeed
+		},
+		wobbleSize: {
+			type: "f",
+			value: params.wobbleSize
 		},
 		invert: {
 			type: "i",
@@ -98,8 +118,20 @@ $(document).ready(function() {
     scene.addObject( mesh );
     
 	var gui = new DAT.GUI({
-		height : 9 * 32 - 1
+		height : 13 * 32 - 1
 	}); 
+	gui.add(params, 'wobble').onChange(function(newValue) {
+		uniforms.wobble.value = newValue ? 1 : 0;
+	});
+	gui.add(params, 'wobbleStrength').min(0).max(0.2).step(0.01).onChange(function(newValue) {
+		uniforms.wobbleStrength.value = newValue;
+	});
+	gui.add(params, 'wobbleSpeed').min(0).max(20).step(0.2).onChange(function(newValue) {
+		uniforms.wobbleSpeed.value = newValue;
+	});
+	gui.add(params, 'wobbleSize').min(0).max(10).step(0.1).onChange(function(newValue) {
+		uniforms.wobbleSize.value = newValue;
+	});
 	gui.add(params, 'invert').onChange(function(newValue) {
 		uniforms.invert.value = newValue ? 1 : 0;
 	});
