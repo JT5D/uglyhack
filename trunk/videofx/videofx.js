@@ -1,7 +1,9 @@
 var renderer, scene, camera, texture, video, mesh;
 var startTime = new Date().getTime();
 var uniforms;
-var params = { wobble: false,
+var params = { 
+			   useMouse: false,
+			   wobble: false,
 			   wobbleStrength: 0.01,
 			   wobbleSpeed: 6.0,
 			   wobbleSize: 50.0,
@@ -16,6 +18,13 @@ var params = { wobble: false,
 			   lineSize: 550.0,
 			   lineStrength: 0.3,
 			   lineTilt: 0.8};
+
+function mousemove(e) {
+	if(uniforms) {
+		uniforms.mouse.value.x = (e.pageX/window.innerWidth)*2.0-1.0;
+		uniforms.mouse.value.y = -((e.pageY/window.innerHeight)*2.0-1.0);
+	}
+};
 
 $(document).ready(function() {
 
@@ -55,6 +64,14 @@ $(document).ready(function() {
 		time: {
 			type: "f",
 			value: 0.0
+		},
+		mouse: {
+			type: "v2",
+			value: new THREE.Vector2(-1, 0)
+		},
+		useMouse: {
+			type: "i",
+			value: params.useMouse ? 1 : 0
 		},
 		wobble: {
 			type: "i",
@@ -128,8 +145,11 @@ $(document).ready(function() {
     scene.addObject( mesh );
     
 	var gui = new DAT.GUI({
-		height : 15 * 32 - 1
+		height : 16 * 32 - 1
 	}); 
+	gui.add(params, 'useMouse').onChange(function(newValue) {
+		uniforms.useMouse.value = newValue ? 1 : 0;
+	});
 	gui.add(params, 'wobble').onChange(function(newValue) {
 		uniforms.wobble.value = newValue ? 1 : 0;
 	});
