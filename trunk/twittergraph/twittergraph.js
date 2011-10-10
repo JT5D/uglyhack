@@ -55,7 +55,7 @@ function initTwitterGraph() {
 	camera.position.z = 350;
 	camera.position.x = 100;
 	
-	var path = "skybox/";
+	var path = "../resources/skybox/";
 	var format = '.jpg';
 	var urls = [
 			path + 'px' + format, path + 'nx' + format,
@@ -106,7 +106,7 @@ function initPostprocessing() {
 	postprocessing.rtTexture2 = new THREE.WebGLRenderTarget( 512, 512, pars );
 	postprocessing.rtTexture3 = new THREE.WebGLRenderTarget( 512, 512, pars );
 
-	var screen_shader = THREE.ShaderUtils.lib["screen"];
+	var screen_shader = THREE.ShaderExtras.screen
 	var screen_uniforms = THREE.UniformsUtils.clone( screen_shader.uniforms );
 
 	screen_uniforms["tDiffuse"].texture = postprocessing.rtTexture1;
@@ -122,7 +122,7 @@ function initPostprocessing() {
 
 	} );
 
-	var convolution_shader = THREE.ShaderUtils.lib["convolution"];
+	var convolution_shader = THREE.ShaderExtras.convolution;
 	var convolution_uniforms = THREE.UniformsUtils.clone( convolution_shader.uniforms );
 
 	postprocessing.blurx = new THREE.Vector2( 0.001953125, 0.0 ),
@@ -130,7 +130,7 @@ function initPostprocessing() {
 
 	convolution_uniforms["tDiffuse"].texture = postprocessing.rtTexture1;
 	convolution_uniforms["uImageIncrement"].value = postprocessing.blurx;
-	convolution_uniforms["cKernel"].value = THREE.ShaderUtils.buildKernel( 4.0 );
+	convolution_uniforms["cKernel"].value = THREE.ShaderExtras.buildKernel( 4.0 );
 
 	postprocessing.materialConvolution = new THREE.MeshShaderMaterial( {
 
