@@ -51,7 +51,7 @@ Ext.onReady(function() {
 			id: 'sceneContainer',
 			region: 'center',
             border: false,
-			html: '<div id="scene" />'
+			html: '<div id="scene"><div class="overlaybottom"><a href="http://www.chromeexperiments.com/detail/artistgraph/"><img src="../resources/badge-white_black.png" alt="See my Experiment on ChromeExperiments.com" /></a></div></div>'
         },{
 			region: 'west',
 			width: 200,

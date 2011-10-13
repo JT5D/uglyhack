@@ -5,9 +5,7 @@
 			Hypnotron
 		</title>
 		<meta charset="utf-8" />
-		
 		<script type="text/javascript">
-
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-24008188-1']);
 		  _gaq.push(['_trackPageview']);
@@ -17,10 +15,7 @@
 			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
-
 		</script>
-		
-		<!-- Place this render call where appropriate -->
 		<script type="text/javascript">
 		  (function() {
 		    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
@@ -30,7 +25,6 @@
 		</script>
 		
 		<script type="x-shader/x-vertex" id="vertexshader">
-		
 			#ifdef GL_ES
 			precision highp float;
 			#endif
@@ -42,19 +36,13 @@
 				vUv = uv;
 				gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
 			}
-		
 		</script>
 		
 		<script src="../resources/Three.js" type="text/javascript"></script>
-		<script type="text/javascript" src="../resources/DAT.GUI.min.js"></script>
 		<script src="../resources/RequestAnimationFrame.js" type="text/javascript"></script>
 		<script src="../resources/Detector.js" type="text/javascript"></script>
-		
-		<script src="fragmentshader.js" type="text/javascript" ></script>
-		
 		<script src="../resources/jquery.min.js" type="text/javascript"></script>
 		
-
 		<script src="hypnotron.js" type="text/javascript"></script>
 
 		<style> 
@@ -72,7 +60,7 @@
 		</style>
 	</head>
 	<body>
-		<div id="scened">
+		<div id="scene">
 			<div class="overlay">
 				<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/hypnotron/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 				<br/>
