@@ -52,7 +52,7 @@ $(document).ready(function() {
 	texture.minFilter = THREE.LinearFilter;
 	texture.magFilter = THREE.LinearFilter;
 	
-	var path = "textures/skybox/";
+	var path = "../resources/skybox/";
 	var format = '.jpg';
 	var urls = [
 			path + 'px' + format, path + 'nx' + format,

@@ -61,16 +61,30 @@
 				padding: 5px;
 				z-index: 1002;
 			}
+			.overlaybottom {
+				position: fixed;
+				padding: 5px;
+				z-index: 1002;
+				bottom: 0%;
+			}
 		</style>
 	
 	</head>
 	<body>
 		<video id="video" autoplay loop audio="muted" style="display:none">
-			<source src="../cubevideo/textures/video.webm" type='video/webm'>
-			<source src="../cubevideo/textures/video.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
-			<source src="../cubevideo/textures/video.ogv" type='video/ogg; codecs="theora, vorbis"'>
+			<source src="../resources/video/video.webm" type='video/webm'>
+			<source src="../resources/video/video.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+			<source src="../resources/video/video.ogv" type='video/ogg; codecs="theora, vorbis"'>
 		</video>
-		<div id="scene" onmousemove="mousemove(event);"><div class="overlay"><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/videofx/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div></div>
+		<div id="scene" onmousemove="mousemove(event);">
+			<div class="overlay">
+				<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/videofx/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+			</div>
+			<div class="overlaybottom">
+				<a href="http://www.chromeexperiments.com/detail/videofx/"><img src="../resources/badge-white_black.png" alt="See my Experiment on ChromeExperiments.com" /></a>
+			</div>
+			
+		</div>
 		
 		
 	</body>
