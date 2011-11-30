@@ -1,5 +1,3 @@
-var articleId;
-
 $( '#listPage' ).live( 'pageshow',function(){
 	$('#listUl').listview("refresh");
 });
@@ -53,7 +51,7 @@ $( '#searchPage' ).live( 'pageinit',function(){
 				if(name2.length > 0) {
 					name = name + ', ' + name2;
 				}
-				items.push('<li class="listUlItem" id=' + val.article_id + '><a>' + name + '<p>' + val.article_id + ', ' + val.price + ' kr, ' + val.alcohol_percent + ', ' + val.volume + '</p><div class="ui-li-aside"></div></a></li>');
+				items.push('<li class="listUlItem" id=' + val.article_id + '><a><h3>' + name + '</h3><p>' + val.article_id + ', ' + val.price + ' kr, ' + val.alcohol_percent + ', ' + val.volume + '</p></a></li>');
 			});
 			
 			listUl.append(items.join(''));
@@ -61,9 +59,8 @@ $( '#searchPage' ).live( 'pageinit',function(){
 			
 			
 			$('.listUlItem').bind("click", function() {
-				articleId = this.id;
 				$.mobile.showPageLoadingMsg();
-				$.getJSON("http://www.systemetapi.se/product/" + articleId + ".jsonp?callback=?", function(response) {
+				$.getJSON("http://www.systemetapi.se/product/" + this.id + ".jsonp?callback=?", function(response) {
 					var name = response[0].name;
 					var name2 = response[0].name_2;
 					if(name2.length > 0) {
