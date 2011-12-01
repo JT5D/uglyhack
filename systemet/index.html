@@ -38,10 +38,10 @@
 				<h1>Systemet</h1>
 			</div>
 			<div data-role="content">
-				<ul data-role="listview" data-inset="true">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a">
 					<li data-role="list-divider">Sök bland produkter</li>
 					<li>
-						<a href="#searchPage" data-rel="dialog" data-icon="search" data-role="button">Sök</a>
+						<a href="#searchPage" data-rel="dialog" data-icon="search" data-role="button" data-transition="fade">Sök</a>
 					</li>
 				</ul>
 				<p>Byggd av <a href="http://twitter.com/#!/danielpettersso" rel="external">@DanielPettersso</a> Data från <a href="http://www.systemetapi.se" rel="external">SystemetAPI</a></p>
@@ -54,11 +54,11 @@
 	
 		<div data-role="page" id="listPage">
 			<div data-role="header">
-				<a href="#searchPage" data-rel="dialog" data-icon="search" class="ui-btn-right">Sök</a>
+				<a href="#searchPage" data-rel="dialog" data-icon="search" class="ui-btn-right" data-transition="fade">Sök</a>
 				<h1>Systemet</h1>
 			</div>
 			<div data-role="content">
-				<ul data-role="listview" data-inset="true" id="listUl">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a" id="listUl">
 					<li data-role="list-divider">Produkter</li>
 					<li>Gör en sökning</li>
 				</ul>
@@ -120,12 +120,12 @@
 		
 		<div data-role="page" id="detailPage">
 			<div data-role="header">
-				<a href="#listPage" data-icon="back">Tillbaka</a>
+				<a href="#listPage" data-icon="back" data-direction="reverse">Tillbaka</a>
 				<h1>Systemet</h1>
-				<a href="#searchPage" data-rel="dialog" data-icon="search" class="ui-btn-right">Sök</a>
+				<a href="#searchPage" data-rel="dialog" data-icon="search" class="ui-btn-right" data-transition="fade">Sök</a>
 			</div>
 			<div data-role="content">	
-				<ul data-role="listview" data-inset="true">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a">
 					<li data-role="list-divider">Detaljer</li>
 					<li data-role="fieldcontain">
 			        	<label for="detName">Namn:</label>
