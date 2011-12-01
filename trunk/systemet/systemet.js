@@ -1,5 +1,3 @@
-var listItems = undefined;
-
 $(function() {
 	$.getJSON("http://www.systemetapi.se/types.jsonp?callback=?", function(response) {
 		var items = [];
@@ -9,34 +7,6 @@ $(function() {
 		});
 		sType.append(items.join(''));
 	});
-});
-
-$(document).bind("mobileinit", function(){
-	$.mobile.touchOverflowEnabled = true;
-});
-
-$('#listPage').live('pageshow', function(){
-	if(listItems != undefined) {
-		var listUl = $('#listUl');
-		listUl.empty();
-		
-		$.each(listItems, function(key, val) {
-			setTimeout((function(e) {
-		        return function() {
-		        	var el = $(e);
-					el.fadeIn('slow');
-					listUl.append(el);
-					addItemClickHandler(el);
-					
-					try {
-						listUl.listview("refresh");
-					} catch(e) {}
-		        }
-		    })(val), key*150);
-		});
-			
-		listItems = undefined;
-	}
 });
 
 $('#searchPage').live('pageinit', function(){
@@ -59,8 +29,10 @@ $('#searchPage').live('pageinit', function(){
 		
 		$.mobile.showPageLoadingMsg();
 		$.getJSON("http://www.systemetapi.se/product.jsonp?" + searchString + "callback=?", function(response) {
+			var listUl = $('#listUl');
+			listUl.empty();
 			
-			listItems = [];
+			var listItems = [];
 			listItems.push('<li data-role="list-divider">Produkter</li>');
 			$.each(response, function(key, val) {
 				var name = val.name;
@@ -75,9 +47,15 @@ $('#searchPage').live('pageinit', function(){
 				listItems.push('<li>Inga sökresultat</li>');
 			}
 			
-			$.mobile.changePage( $('#listPage'), {
-				transition: 'fade'
-			});
+			listUl.append(listItems.join(''));
+			
+			try {
+				listUl.listview("refresh");
+			} catch(e) {}
+			
+			addItemClickHandlers();
+			
+			$.mobile.changePage( $('#listPage'));
 			
 		}).complete(function() { 
 			$.mobile.hidePageLoadingMsg(); 
@@ -86,8 +64,8 @@ $('#searchPage').live('pageinit', function(){
 	
 });
 
-function addItemClickHandler(ell) {
-	ell.bind("click", function() {
+function addItemClickHandlers() {
+	$('.listUlItem').bind("click", function() {
 		$.mobile.showPageLoadingMsg();
 		$.getJSON("http://www.systemetapi.se/product/" + this.id + ".jsonp?callback=?", function(response) {
 			var name = response[0].name;
