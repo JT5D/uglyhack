@@ -1,9 +1,4 @@
-$( '#listPage' ).live( 'pageshow',function(){
-	$('#listUl').listview("refresh");
-});
-
-$( '#firstPage' ).live( 'pageinit',function(){
-	$.mobile.showPageLoadingMsg();
+$(function() {
 	$.getJSON("http://www.systemetapi.se/types.jsonp?callback=?", function(response) {
 		var items = [];
 
@@ -14,8 +9,6 @@ $( '#firstPage' ).live( 'pageinit',function(){
 		});
 		
 		sType.append(items.join(''));
-	}).complete(function() { 
-		$.mobile.hidePageLoadingMsg(); 
 	});
 });
 
@@ -45,6 +38,7 @@ $( '#searchPage' ).live( 'pageinit',function(){
 			
 			listUl.empty();
 			
+			items.push('<li data-role="list-divider">Produkter</li>');
 			$.each(response, function(key, val) {
 				var name = val.name;
 				var name2 = val.name_2;
@@ -54,9 +48,17 @@ $( '#searchPage' ).live( 'pageinit',function(){
 				items.push('<li class="listUlItem" id=' + val.article_id + '><a><h3>' + name + '</h3><p>' + val.article_id + ', ' + val.price + ' kr, ' + val.alcohol_percent + ', ' + val.volume + '</p></a></li>');
 			});
 			
+			if(items.length == 1) {
+				items.push('<li>Inga sökresultat</li>');
+			}
+			
 			listUl.append(items.join(''));
 
-			
+			try {
+				listUl.listview("refresh");
+			} catch(e) {
+				console.log(e);
+			}
 			
 			$('.listUlItem').bind("click", function() {
 				$.mobile.showPageLoadingMsg();
