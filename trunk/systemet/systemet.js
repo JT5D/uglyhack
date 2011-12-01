@@ -1,18 +1,45 @@
+var listItems = undefined;
+
 $(function() {
 	$.getJSON("http://www.systemetapi.se/types.jsonp?callback=?", function(response) {
 		var items = [];
-
 		var sType = $('#sType');
-		
 		$.each(response, function(key, val) {
 			items.push('<option value="' + val.type + '">' + val.type + '</option>');
 		});
-		
 		sType.append(items.join(''));
 	});
 });
 
-$( '#searchPage' ).live( 'pageinit',function(){
+$(document).bind("mobileinit", function(){
+	$.mobile.touchOverflowEnabled = true;
+});
+
+$('#listPage').live('pageshow', function(){
+	if(listItems != undefined) {
+		var listUl = $('#listUl');
+		listUl.empty();
+		
+		$.each(listItems, function(key, val) {
+			setTimeout((function(e) {
+		        return function() {
+		        	var el = $(e);
+					el.fadeIn('slow');
+					listUl.append(el);
+					addItemClickHandler(el);
+					
+					try {
+						listUl.listview("refresh");
+					} catch(e) {}
+		        }
+		    })(val), key*150);
+		});
+			
+		listItems = undefined;
+	}
+});
+
+$('#searchPage').live('pageinit', function(){
 	$('#doSearchButton').bind("click", function() {
 		var searchString = '';
 		var n = $("#sName").val();
@@ -32,63 +59,25 @@ $( '#searchPage' ).live( 'pageinit',function(){
 		
 		$.mobile.showPageLoadingMsg();
 		$.getJSON("http://www.systemetapi.se/product.jsonp?" + searchString + "callback=?", function(response) {
-			var items = [];
-
-			var listUl = $('#listUl');
 			
-			listUl.empty();
-			
-			items.push('<li data-role="list-divider">Produkter</li>');
+			listItems = [];
+			listItems.push('<li data-role="list-divider">Produkter</li>');
 			$.each(response, function(key, val) {
 				var name = val.name;
 				var name2 = val.name_2;
 				if(name2.length > 0) {
 					name = name + ', ' + name2;
 				}
-				items.push('<li class="listUlItem" id=' + val.article_id + '><a><h3>' + name + '</h3><p>' + val.article_id + ', ' + val.price + ' kr, ' + val.alcohol_percent + ', ' + val.volume + '</p></a></li>');
+				listItems.push('<li class="listUlItem" id=' + val.article_id + '><a><h3>' + name + '</h3><p>' + val.article_id + ', ' + val.price + ' kr, ' + val.alcohol_percent + ', ' + val.volume + '</p></a></li>');
 			});
 			
-			if(items.length == 1) {
-				items.push('<li>Inga sökresultat</li>');
+			if(listItems.length == 1) {
+				listItems.push('<li>Inga sökresultat</li>');
 			}
 			
-			listUl.append(items.join(''));
-
-			try {
-				listUl.listview("refresh");
-			} catch(e) {
-				console.log(e);
-			}
-			
-			$('.listUlItem').bind("click", function() {
-				$.mobile.showPageLoadingMsg();
-				$.getJSON("http://www.systemetapi.se/product/" + this.id + ".jsonp?callback=?", function(response) {
-					var name = response[0].name;
-					var name2 = response[0].name_2;
-					if(name2.length > 0) {
-						name = name + ', ' + name2;
-					}
-					
-					$("#detName").val(name);
-					$("#detPrice").val(response[0].price + ' kr');
-					$("#detVolume").val(response[0].volume + ' liter');
-					$("#detPricePerLiter").val(response[0].price_per_liter + ' kr');
-					$("#detType").val(response[0].type);
-					$("#detOrigin").val(response[0].origin);
-					$("#detProducer").val(response[0].producer);
-					$("#detYear").val(response[0].year);
-					$("#detAlcoholPercent").val(response[0].alcohol_percent);
-					$("#detApk").val(response[0].apk + ' ml/kr');
-					$("#detEcological").val(response[0].ecological == 0 ? 'Nej' : 'Ja');
-					$("#detKoscher").val(response[0].koscher == 0 ? 'Nej' : 'Ja');
-					
-					$.mobile.changePage( $('#detailPage') );
-				}).complete(function() { 
-					$.mobile.hidePageLoadingMsg(); 
-				});
+			$.mobile.changePage( $('#listPage'), {
+				transition: 'fade'
 			});
-			
-			$.mobile.changePage( $('#listPage') );
 			
 		}).complete(function() { 
 			$.mobile.hidePageLoadingMsg(); 
@@ -96,3 +85,34 @@ $( '#searchPage' ).live( 'pageinit',function(){
 	});
 	
 });
+
+function addItemClickHandler(ell) {
+	ell.bind("click", function() {
+		$.mobile.showPageLoadingMsg();
+		$.getJSON("http://www.systemetapi.se/product/" + this.id + ".jsonp?callback=?", function(response) {
+			var name = response[0].name;
+			var name2 = response[0].name_2;
+			if(name2.length > 0) {
+				name = name + ', ' + name2;
+			}
+			
+			$("#detName").val(name);
+			$("#detPrice").val(response[0].price + ' kr');
+			$("#detVolume").val(response[0].volume + ' liter');
+			$("#detPricePerLiter").val(response[0].price_per_liter + ' kr');
+			$("#detType").val(response[0].type);
+			$("#detOrigin").val(response[0].origin);
+			$("#detProducer").val(response[0].producer);
+			$("#detYear").val(response[0].year);
+			$("#detAlcoholPercent").val(response[0].alcohol_percent);
+			$("#detApk").val(response[0].apk + ' ml/kr');
+			$("#detEcological").val(response[0].ecological == 0 ? 'Nej' : 'Ja');
+			$("#detKoscher").val(response[0].koscher == 0 ? 'Nej' : 'Ja');
+			
+			$.mobile.changePage( $('#detailPage'));
+		}).complete(function() { 
+			$.mobile.hidePageLoadingMsg(); 
+		});
+	});
+}
+
