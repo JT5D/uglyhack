@@ -77,21 +77,22 @@
 		</div>
 		<script id="schedule-template" type="text/x-handlebars-template">
 			{{#each items}}
-				<li class="listUlItem" id="scheduleItem{{id}}" {{#unless presentationUri}}data-role="list-divider"{{/unless}} >
+				{{#if presentationUri}}
+					<li class="listUlItem" id="scheduleItem{{id}}" >
 					<div class="hiddenPresUri" style="display: none;">{{presentationUri}}</div>
-					{{#if presentationUri}}
 					<a>
-					{{/if}}
-						{{#if title}}
-							<h3>{{title}}</h3>
-						{{else}}
-							<h3>{{code}}</h3>
-						{{/if}}
+						<h3>{{title}}</h3>
 						<p>{{substr 10 16 fromTime}} - {{substr 10 16 toTime}}, {{room}}</p>
-					{{#if presentationUri}}
 					</a>
-					{{/if}}
 				</li>
+				{{else}}
+					<li class="listUlItem" data-role="list-divider" >
+						<h3>{{code}}</h3>
+						{{#if fromTime}}
+							<p>{{substr 10 16 fromTime}} - {{substr 10 16 toTime}}</p>
+						{{/if}}
+					</li>
+				{{/if}}
 			{{/each}}  			
 		</script>
 		
