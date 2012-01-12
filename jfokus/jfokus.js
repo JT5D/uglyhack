@@ -1,6 +1,5 @@
 var JFokus = {
-	selEventId: null,
-	selDay: null,
+	selEventId: null,	
 	getSpeakerTemplate: function() {
 		if(!JFokus._speakerTemplate) {
 			JFokus._speakerTemplate = Handlebars.compile($('#speaker-template').html());
@@ -34,30 +33,13 @@ var JFokus = {
 	_eventTemplate: null
 }
 
-$(document).ready(function() {
-	JFokus.selEventId = $.jStorage.get('selEventId');
-	JFokus.selDay = $.jStorage.get('selDay');
-
-	if(!JFokus.selDay) {
-		JFokus.selDay = 1;
-	}
-	
-	var day = $('#daynavbar li:eq(' + (JFokus.selDay - 1) + ') a');
-	day.addClass('ui-btn-active');
-
-	if(JFokus.selEventId) {
-		$.mobile.changePage( $('#schedulePage'));
-		getScheduleList(JFokus.selDay, JFokus.selEventId);
-	}
-	
-});
-
 $('#mainPage').live('pageinit', function(){
 	$("#mainUl").delegate(".listUlItem", "click", function() {
-		$.jStorage.set('selEventId', this.id);
 		JFokus.selEventId = this.id;
+		$('#daynavbar li a').removeClass('ui-btn-active');
+		$('#daynavbar li:eq(0) a').addClass('ui-btn-active');
 		
-		getScheduleList(JFokus.selDay, JFokus.selEventId);
+		getScheduleList(1, this.id);
 	});
 	
 	getDataForTemplate({
@@ -69,10 +51,7 @@ $('#mainPage').live('pageinit', function(){
 
 $('#schedulePage').live('pageinit', function(){
 	$("#daynavbar").delegate("li", "click", function() {
-		$.jStorage.set('selDay', this.nodeIndex);
-		JFokus.selDay = this.nodeIndex;
-		
-		getScheduleList(JFokus.selDay, JFokus.selEventId);
+		getScheduleList(this.nodeIndex, JFokus.selEventId);
 	});
 	
 	$("#scheduleUl").delegate(".listUlItem", "click", function() {
@@ -93,6 +72,16 @@ $('#schedulePage').live('pageinit', function(){
 			});
 		}
 	});
+	
+	if(JFokus.selEventId == null) {
+		$.mobile.changePage( $('#mainPage'));
+	}
+});
+
+$('#detailsPage').live('pageinit', function(){
+	if(JFokus.selEventId == null) {
+		$.mobile.changePage( $('#mainPage'));
+	}
 });
 
 function getScheduleList(day, eventId) {
