@@ -29,7 +29,6 @@
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
-	<script type="text/javascript" src="../resources/jstorage.min.js"></script>
 	<script type="text/javascript" src="../resources/handlebars-1.0.0.beta.6.js"></script>
 	
 	<script type="text/javascript" src="jfokus.js"></script>
@@ -65,7 +64,7 @@
 				<a href="#aboutPage" data-rel="dialog" data-icon="info" class="ui-btn-right">About</a>
 				<div data-role="navbar">
 					<ul id="daynavbar">
-						<li><a href="#">Day one</a></li>
+						<li><a href="#" class="ui-btn-active">Day one</a></li>
 						<li><a href="#">Day two</a></li>
 						<li><a href="#">Day three</a></li>
 					</ul>
@@ -109,14 +108,14 @@
 			{{#with items}}
 				<h3>{{title}}</h3>
 				<div id="speakerDetail"></div>
-				<p><b>Summary</b></br>{{summary}}</p>
-				<p><b>Tags</b></br>
+				<p><b>Summary</b><br>{{summary}}</p>
+				<p><b>Tags</b><br>
 					{{#each tags}}
 						{{name}}&nbsp;
 					{{/each}}
 				</p>
-				<p><b>Experience</b></br>{{experience}}</p>
-				<p><b>Track</b></br>{{track}}</p>
+				<p><b>Experience</b><br>{{experience}}</p>
+				<p><b>Track</b><br>{{track}}</p>
 			{{/with}}  	
 		</script>
 		<script id="speaker-template" type="text/x-handlebars-template">
