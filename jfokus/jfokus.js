@@ -100,13 +100,25 @@ function getScheduleList(day, eventId) {
 				}
 				return diff;
 			});
+			
+			for(var i = 1; i < data.items.length; i++) {
+				var it = data.items[i];
+				var prevIt = data.items[i-1];
+				
+				if(it.fromTime != prevIt.fromTime && 
+				   (it.type == "CONFERENCE" || it.type == "QUICKIE") && 
+				   (prevIt.type == "CONFERENCE" || prevIt.type == "QUICKIE")) {
+					data.items.splice(i, 0, {
+						code: 'Break'
+					});
+				}
+			}
 		}
 	});
 }
 
 function getDataForTemplate(config) {
 	$.mobile.showPageLoadingMsg();
-	console.log(getYql(config.url));
 	$.getJSON(getYql(config.url), function(response) { 
 		if(response.query.results == null) {
 			alert('Something went wrong with your request. Maybe you reached your api quota limit. It is reset every hour.');
