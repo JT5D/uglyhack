@@ -1,0 +1,150 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<title>JFokus</title> 
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-24008188-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+	<script type="text/javascript">
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+	
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+	<script type="text/javascript" src="../resources/jstorage.min.js"></script>
+	<script type="text/javascript" src="../resources/handlebars-1.0.0.beta.6.js"></script>
+	
+	<script type="text/javascript" src="jfokus.js"></script>
+	<link rel="stylesheet" href="jfokus.css" />
+</head> 
+	<body> 
+		<div data-role="page" id="mainPage">
+			<div data-role="header">
+				<h1>JFokus</h1>
+				<a href="#aboutPage" data-rel="dialog" data-icon=info class="ui-btn-right">About</a>
+			</div>
+			<div data-role="content">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a" id="mainUl">
+				</ul>
+			</div>
+		</div>
+		<script id="event-template" type="text/x-handlebars-template">
+			<li data-role="list-divider">Choose event</li>
+			{{#each items}}
+				<li class="listUlItem" id="{{id}}">
+					<a>
+						<h3>{{name}}</h3>
+						<p>{{description}}</p>
+					</a>
+				</li>
+			{{/each}}  			
+		</script>
+		
+		<div data-role="page" id="schedulePage">
+			<div data-role="header">
+				<a href="#mainPage" data-icon="back" data-direction="reverse">Back</a>
+				<h1>Schedule</h1>
+				<a href="#aboutPage" data-rel="dialog" data-icon="info" class="ui-btn-right">About</a>
+				<div data-role="navbar">
+					<ul id="daynavbar">
+						<li><a href="#">Day one</a></li>
+						<li><a href="#">Day two</a></li>
+						<li><a href="#">Day three</a></li>
+					</ul>
+				</div>
+			</div>
+			<div data-role="content">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a" id="scheduleUl">
+				</ul>
+			</div>
+		</div>
+		<script id="schedule-template" type="text/x-handlebars-template">
+			{{#each items}}
+				<li class="listUlItem" id="scheduleItem{{id}}" {{#unless presentationUri}}data-role="list-divider"{{/unless}} >
+					<div class="hiddenPresUri" style="display: none;">{{presentationUri}}</div>
+					{{#if presentationUri}}
+					<a>
+					{{/if}}
+						{{#if title}}
+							<h3>{{title}}</h3>
+						{{else}}
+							<h3>{{code}}</h3>
+						{{/if}}
+						<p>{{substr 10 16 fromTime}} - {{substr 10 16 toTime}}, {{room}}</p>
+					{{#if presentationUri}}
+					</a>
+					{{/if}}
+				</li>
+			{{/each}}  			
+		</script>
+		
+		<div data-role="page" id="detailsPage">
+			<div data-role="header">
+				<a href="#schedulePage" data-icon="back" data-direction="reverse">Back</a>
+				<h1>Details</h1>
+				<a href="#aboutPage" data-rel="dialog" data-icon="info" class="ui-btn-right">About</a>
+			</div>
+			<div data-role="content" id="detailsUl">
+			</div>
+		</div>
+		<script id="details-template" type="text/x-handlebars-template">
+			{{#with items}}
+				<h3>{{title}}</h3>
+				<div id="speakerDetail"></div>
+				<p><b>Summary</b></br>{{summary}}</p>
+				<p><b>Tags</b></br>
+					{{#each tags}}
+						{{name}}&nbsp;
+					{{/each}}
+				</p>
+				<p><b>Experience</b></br>{{experience}}</p>
+				<p><b>Track</b></br>{{track}}</p>
+			{{/with}}  	
+		</script>
+		<script id="speaker-template" type="text/x-handlebars-template">
+			{{#with items}}
+				<img src="{{imageURI}}"/></br>
+				<small><i>{{firstName}} {{lastName}}</i></small>
+			{{/with}}  	
+		</script>
+		
+		<div data-role="page" id="aboutPage">
+			<div data-role="header">
+				<h1>About</h1>
+			</div>
+			<div data-role="content">
+				<p>
+					Built by <a href="http://twitter.com/#!/danielpettersso" rel="external">@DanielPettersso</a>. 
+					Data from <a href="http://www.jfokus.se/jfokus/page.jsp?id=rest" rel="external">JFokus REST</a>
+					via <a href="http://developer.yahoo.com/yql/" rel="external">Yahoo YQL</a> to get jsonp.
+					Using <a href="http://jquery.com/" rel="external">jQuery</a>, 
+					<a href="http://jquerymobile.com/" rel="external">jQuery Mobile</a>,
+					<a href="https://github.com/andris9/jStorage" rel="external">jStorage</a> and 
+					<a href="http://handlebarsjs.com/" rel="external">Handlebars</a>
+				</p>
+				<p>
+					<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/jfokus/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+					<g:plusone></g:plusone>
+				</p> 
+			</div>
+		</div>
+	</body>
+</html>
