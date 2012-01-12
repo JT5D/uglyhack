@@ -1,3 +1,12 @@
 .ui-li-desc {
 	white-space: normal;
 }
+
+.portrait {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+	-moz-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+}
