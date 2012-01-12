@@ -120,8 +120,10 @@
 		</script>
 		<script id="speaker-template" type="text/x-handlebars-template">
 			{{#with items}}
-				<img src="{{imageURI}}"/><br>
-				<small><i>{{firstName}} {{lastName}}</i></small>
+				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px"/>
+				{{firstName}} {{lastName}}<br>
+				{{company}}
+				<br clear="all">
 			{{/with}}  	
 		</script>
 		
