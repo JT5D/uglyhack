@@ -107,7 +107,11 @@ function getScheduleList(day, eventId) {
 function getDataForTemplate(config) {
 	$.mobile.showPageLoadingMsg();
 	console.log(getYql(config.url));
-	$.getJSON(getYql(config.url), function(response) {
+	$.getJSON(getYql(config.url), function(response) { 
+		if(response.query.results == null) {
+			alert('Something went wrong with your request. Maybe you reached your api quota limit. It is reset every hour.');
+		}
+			
 		var data = { items: jQuery.parseJSON(response.query.results.body.p) };
 		
 		if(config.dataProcessFnc != undefined) {
