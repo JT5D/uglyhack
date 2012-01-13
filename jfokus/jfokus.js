@@ -61,13 +61,21 @@ $('#schedulePage').live('pageinit', function(){
 				url: presUri,
 				ul: '#detailsUl',
 				template: JFokus.getDetailsTemplate(),
+				dataProcessFnc: function(data) {
+					if(data.items.tags && data.items.tags.length > 0) {
+						data.items.tags[data.items.tags.length - 1].last = true;
+					}
+				},
 				postFnc: function(config, data) {
 					$.mobile.changePage( $('#detailsPage'));
-					getDataForTemplate({
-						url: data.items.speakerUri,
-						ul: '#speakerDetail',
-						template: JFokus.getSpeakerTemplate(),
-					});
+					for(var ii in data.items.speakers) {
+						getDataForTemplate({
+							url: data.items.speakers[ii].speakerUri,
+							ul: '#speakerDetail',
+							emptyContainer: false,
+							template: JFokus.getSpeakerTemplate()
+						});
+					}
 				}
 			});
 		}
@@ -131,7 +139,10 @@ function getDataForTemplate(config) {
 		}
 		
 		var ulul = $(config.ul);
-		ulul.empty();
+		
+		if(config.emptyContainer !== false) {
+			ulul.empty();
+		}
 		
 		
 		ulul.append(config.template(data));

@@ -3,7 +3,7 @@
 	<head> 
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	
-	<title>JFokus</title> 
+	<title>Jfokus</title> 
 	
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];
@@ -16,18 +16,10 @@
 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	  })();
 	</script>
-	<script type="text/javascript">
-	  (function() {
-	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-	    po.src = 'https://apis.google.com/js/plusone.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	  })();
-	</script>
-	
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
 	<script type="text/javascript" src="../resources/handlebars-1.0.0.beta.6.js"></script>
 	
@@ -37,7 +29,7 @@
 	<body> 
 		<div data-role="page" id="mainPage">
 			<div data-role="header">
-				<h1>JFokus</h1>
+				<h1>Jfokus</h1>
 				<a href="#aboutPage" data-rel="dialog" data-icon=info class="ui-btn-right">About</a>
 			</div>
 			<div data-role="content">
@@ -108,23 +100,22 @@
 		<script id="details-template" type="text/x-handlebars-template">
 			{{#with items}}
 				<h3>{{title}}</h3>
-				<div id="speakerDetail"></div>
 				<p><b>Summary</b><br>{{summary}}</p>
+				<div id="speakerDetail"></div>
 				<p><b>Tags</b><br>
 					{{#each tags}}
-						{{name}}&nbsp;
+						{{name}}{{#unless last}}, {{/unless}}
 					{{/each}}
 				</p>
 				<p><b>Experience</b><br>{{experience}}</p>
-				<p><b>Track</b><br>{{track}}</p>
 			{{/with}}  	
 		</script>
 		<script id="speaker-template" type="text/x-handlebars-template">
 			{{#with items}}
-				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px"/>
-				{{firstName}} {{lastName}}<br>
-				{{company}}
-				<br clear="all">
+				<p><b>{{firstName}} {{lastName}}<br></b>
+				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" height="100"/>
+				{{bio}}
+				<br clear="all"></p>
 			{{/with}}  	
 		</script>
 		
@@ -135,16 +126,12 @@
 			<div data-role="content">
 				<p>
 					Built by <a href="http://twitter.com/#!/danielpettersso" rel="external">@DanielPettersso</a>. 
-					Data from <a href="http://www.jfokus.se/jfokus/page.jsp?id=rest" rel="external">JFokus REST</a>
+					Data from <a href="http://www.jfokus.se/jfokus/page.jsp?id=rest" rel="external">Jfokus REST</a>
 					via <a href="http://developer.yahoo.com/yql/" rel="external">Yahoo YQL</a> to get jsonp.
 					Using <a href="http://jquery.com/" rel="external">jQuery</a>, 
 					<a href="http://jquerymobile.com/" rel="external">jQuery Mobile</a> and 
 					<a href="http://handlebarsjs.com/" rel="external">Handlebars</a>
 				</p>
-				<p>
-					<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/jfokus/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-					<g:plusone></g:plusone>
-				</p> 
 			</div>
 		</div>
 	</body>
