@@ -113,7 +113,7 @@
 		<script id="presentationSpeaker-template" type="text/x-handlebars-template">
 			{{#with items}}
 				<p><b>{{firstName}} {{lastName}}{{#if company}} - {{company}}{{/if}}</b><br>
-				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" height="100"/>
+				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" width="94"/>
 				{{bio}}
 				<br clear="all"></p>
 			{{/with}}  	
@@ -133,7 +133,7 @@
 			{{#each items}}
 				<li class="listUlItem" id="{{id}}" >
 					<a>
-						<img src="{{imageURI}}" class="portrait" align="left" hspace="5px" vspace="5px" height="100"/>
+						<img src="{{imageURI}}" class="portrait" align="left" hspace="5px" vspace="5px" width="94"/>
 						<h3>{{firstName}} {{lastName}}</h3>
 						<p>{{company}}</p><br clear="all">
 					</a>
@@ -152,7 +152,7 @@
 		<script id="speakerDetails-template" type="text/x-handlebars-template">
 			{{#with items}}
 				<h3>{{firstName}} {{lastName}}{{#if company}} - {{company}}{{/if}}</h3>
-				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" height="100"/>
+				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" width="94"/>
 				{{bio}}
 				<br clear="all">
 				<p><b>Talks</b>
