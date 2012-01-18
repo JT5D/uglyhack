@@ -10,3 +10,9 @@
 	-moz-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
 	box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
 }
+
+.speakerTalkLink{
+	color: blue;
+	text-decoration: underline;
+	cursor: pointer;
+}
