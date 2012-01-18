@@ -1,36 +1,23 @@
 var JFokus = {
 	selEventId: null,	
-	getSpeakerTemplate: function() {
-		if(!JFokus._speakerTemplate) {
-			JFokus._speakerTemplate = Handlebars.compile($('#speaker-template').html());
+	speakersListLoaded: false,
+	getTemplate: function(templateName) {
+		if(!JFokus._compiledTemplates[templateName]) {
+			JFokus._initHelpers();
+			JFokus._compiledTemplates[templateName] = Handlebars.compile($(templateName).html());
 		}
-		return JFokus._speakerTemplate;
+		return JFokus._compiledTemplates[templateName];
 	},
-	getDetailsTemplate: function() {
-		if(!JFokus._detailsTemplate) {
-			JFokus._detailsTemplate = Handlebars.compile($('#details-template').html());
-		}
-		return JFokus._detailsTemplate;
-	},
-	getEventTemplate: function() {
-		if(!JFokus._eventTemplate) {
-			JFokus._eventTemplate = Handlebars.compile($('#event-template').html());
-		}
-		return JFokus._eventTemplate;
-	},
-	getScheduleTemplate: function() {
-		if(!JFokus._scheduleTemplate) {
+	_initHelpers: function() {
+		if(!JFokus._initedTemplates) {
 			Handlebars.registerHelper('substr', function(start, end, context) {
 			  return context.substring(start, end);
 			});
-			JFokus._scheduleTemplate = Handlebars.compile($('#schedule-template').html());
+			JFokus._initedTemplates = true;
 		}
-		return JFokus._scheduleTemplate;
 	},
-	_speakerTemplate: null,
-	_detailsTemplate: null,
-	_scheduleTemplate: null,
-	_eventTemplate: null
+	_compiledTemplates: {},
+	_initedTemplates: false
 }
 
 $('#mainPage').live('pageinit', function(){
@@ -45,7 +32,7 @@ $('#mainPage').live('pageinit', function(){
 	getDataForTemplate({
 		url: 'http://www.jfokus.se/rest/v1/events',
 		ul: '#mainUl',
-		template: JFokus.getEventTemplate(),
+		template: JFokus.getTemplate('#event-template'),
 	});
 });
 
@@ -55,29 +42,34 @@ $('#schedulePage').live('pageinit', function(){
 	});
 	
 	$("#scheduleUl").delegate(".listUlItem", "click", function() {
-		var presUri = $('#' + this.id + ' .hiddenPresUri').html();
+		var presUri = $(this).find('.hiddenPresUri').html();
 		if(presUri.length > 0) {
+			getPresentationDetails(presUri, '#schedulePage');
+		}
+	});
+	
+	$('#speakersButton').bind('click', function() {
+		if(!JFokus.speakersListLoaded) {
 			getDataForTemplate({
-				url: presUri,
-				ul: '#detailsUl',
-				template: JFokus.getDetailsTemplate(),
-				dataProcessFnc: function(data) {
-					if(data.items.tags && data.items.tags.length > 0) {
-						data.items.tags[data.items.tags.length - 1].last = true;
-					}
-				},
+				url: 'http://www.jfokus.se/rest/v1/events/' + JFokus.selEventId + '/speakers',
+				ul: '#speakersUl',
+				template: JFokus.getTemplate('#speakers-template'),
 				postFnc: function(config, data) {
-					$.mobile.changePage( $('#detailsPage'));
-					for(var ii in data.items.speakers) {
-						getDataForTemplate({
-							url: data.items.speakers[ii].speakerUri,
-							ul: '#speakerDetail',
-							emptyContainer: false,
-							template: JFokus.getSpeakerTemplate()
-						});
-					}
+					$.mobile.changePage( $('#speakersPage'));
+					JFokus.speakersListLoaded = true;
+				},
+				dataProcessFnc: function(data) {
+					data.items.sort(function(a, b) {
+						var diff = a.firstName.localeCompare(b.firstName);
+						if(diff == 0) {
+							diff = a.lastName.localeCompare(b.lastName);
+						}
+						return diff;
+					});
 				}
 			});
+		} else {
+			$.mobile.changePage( $('#speakersPage'));
 		}
 	});
 	
@@ -86,17 +78,70 @@ $('#schedulePage').live('pageinit', function(){
 	}
 });
 
-$('#detailsPage').live('pageinit', function(){
+$('#presentationDetailsPage').live('pageinit', function(){
 	if(JFokus.selEventId == null) {
 		$.mobile.changePage( $('#mainPage'));
 	}
 });
 
+$('#speakersPage').live('pageinit', function(){
+	if(JFokus.selEventId == null) {
+		$.mobile.changePage( $('#mainPage'));
+	} 
+	
+	$("#speakersUl").delegate(".listUlItem", "click", function() {
+		getDataForTemplate({
+			url: 'http://www.jfokus.se/rest/v1/events/speakers/' + this.id,
+			ul: '#speakerDetailsUl',
+			template: JFokus.getTemplate('#speakerDetails-template'),
+			postFnc: function(config, data) {
+				$.mobile.changePage( $('#speakerDetailsPage'));
+			}
+		});
+	});
+});
+
+$('#speakerDetailsPage').live('pageinit', function(){
+	if(JFokus.selEventId == null) {
+		$.mobile.changePage( $('#mainPage'));
+	} 
+	
+	$("#speakerDetailsUl").delegate(".speakerTalkLink", "click", function() {
+		var presUri = $(this).find('.hiddenPresUri').html();
+		getPresentationDetails(presUri, '#speakerDetailsPage');
+	});
+});
+
+function getPresentationDetails(presUri, backUri) {
+	getDataForTemplate({
+		url: presUri,
+		ul: '#presentationDetailsUl',
+		template: JFokus.getTemplate('#presentationDetails-template'),
+		dataProcessFnc: function(data) {
+			if(data.items.tags && data.items.tags.length > 0) {
+				data.items.tags[data.items.tags.length - 1].last = true;
+			}
+		},
+		postFnc: function(config, data) {
+			$.mobile.changePage( $('#presentationDetailsPage'));
+			$('#presentationDetailsBackButton').attr("href", backUri)
+			for(var ii in data.items.speakers) {
+				getDataForTemplate({
+					url: data.items.speakers[ii].speakerUri,
+					ul: '#presentationSpeakerDetail',
+					emptyContainer: false,
+					template: JFokus.getTemplate('#presentationSpeaker-template'),
+				});
+			}
+		}
+	});
+}
+
 function getScheduleList(day, eventId) {
 	getDataForTemplate({
 		url: 'http://www.jfokus.se/rest/v1/events/' + eventId + '/schedule/day/' + day,
 		ul: '#scheduleUl',
-		template: JFokus.getScheduleTemplate(),
+		template: JFokus.getTemplate('#schedule-template'),
 		postFnc: function(config, data) {
 			$.mobile.changePage( $('#schedulePage'));
 		},

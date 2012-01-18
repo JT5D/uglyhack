@@ -43,6 +43,7 @@
 				<li class="listUlItem" id="{{id}}">
 					<a>
 						<h3>{{name}}</h3>
+						<p>{{substr 0 10 from}} - {{substr 0 10 to}}</p>
 						<p>{{description}}</p>
 					</a>
 				</li>
@@ -53,7 +54,7 @@
 			<div data-role="header">
 				<a href="#mainPage" data-icon="back" data-direction="reverse">Back</a>
 				<h1>Schedule</h1>
-				<a href="#aboutPage" data-rel="dialog" data-icon="info" class="ui-btn-right">About</a>
+				<a id="speakersButton" data-icon="star" class="ui-btn-right">Speakers</a>
 				<div data-role="navbar">
 					<ul id="daynavbar">
 						<li><a href="#" class="ui-btn-active">Day one</a></li>
@@ -88,20 +89,19 @@
 			{{/each}}  			
 		</script>
 		
-		<div data-role="page" id="detailsPage">
+		<div data-role="page" id="presentationDetailsPage">
 			<div data-role="header">
-				<a href="#schedulePage" data-icon="back" data-direction="reverse">Back</a>
-				<h1>Details</h1>
-				<a href="#aboutPage" data-rel="dialog" data-icon="info" class="ui-btn-right">About</a>
+				<a href="#schedulePage" data-icon="back" data-direction="reverse" id="presentationDetailsBackButton">Back</a>
+				<h1>Presentation</h1>
 			</div>
-			<div data-role="content" id="detailsUl">
+			<div data-role="content" id="presentationDetailsUl">
 			</div>
 		</div>
-		<script id="details-template" type="text/x-handlebars-template">
+		<script id="presentationDetails-template" type="text/x-handlebars-template">
 			{{#with items}}
 				<h3>{{title}}</h3>
 				<p><b>Summary</b><br>{{summary}}</p>
-				<div id="speakerDetail"></div>
+				<div id="presentationSpeakerDetail"></div>
 				<p><b>Tags</b><br>
 					{{#each tags}}
 						{{name}}{{#unless last}}, {{/unless}}
@@ -110,12 +110,59 @@
 				<p><b>Experience</b><br>{{experience}}</p>
 			{{/with}}  	
 		</script>
-		<script id="speaker-template" type="text/x-handlebars-template">
+		<script id="presentationSpeaker-template" type="text/x-handlebars-template">
 			{{#with items}}
-				<p><b>{{firstName}} {{lastName}}<br></b>
+				<p><b>{{firstName}} {{lastName}}{{#if company}} - {{company}}{{/if}}</b><br>
 				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" height="100"/>
 				{{bio}}
 				<br clear="all"></p>
+			{{/with}}  	
+		</script>
+		
+		<div data-role="page" id="speakersPage">
+			<div data-role="header">
+				<a href="#schedulePage" data-icon="back" data-direction="reverse">Back</a>
+				<h1>Speakers</h1>
+			</div>
+			<div data-role="content">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a" id="speakersUl">
+				</ul>
+			</div>
+		</div>
+		<script id="speakers-template" type="text/x-handlebars-template">
+			{{#each items}}
+				<li class="listUlItem" id="{{id}}" >
+					<a>
+						<img src="{{imageURI}}" class="portrait" align="left" hspace="5px" vspace="5px" height="100"/>
+						<h3>{{firstName}} {{lastName}}</h3>
+						<p>{{company}}</p><br clear="all">
+					</a>
+				</li>
+			{{/each}}  			
+		</script>
+		
+		<div data-role="page" id="speakerDetailsPage">
+			<div data-role="header">
+				<a href="#speakersPage" data-icon="back" data-direction="reverse">Back</a>
+				<h1>Speaker</h1>
+			</div>
+			<div data-role="content" id="speakerDetailsUl">
+			</div>
+		</div>
+		<script id="speakerDetails-template" type="text/x-handlebars-template">
+			{{#with items}}
+				<h3>{{firstName}} {{lastName}}{{#if company}} - {{company}}{{/if}}</h3>
+				<img src="{{imageURI}}" class="portrait" align="left" hspace="10px" height="100"/>
+				{{bio}}
+				<br clear="all">
+				<p><b>Talks</b>
+					{{#each talks}}
+						<div class="speakerTalkLink" id="{{../id}}pres{{title}}">
+							<div class="hiddenPresUri" style="display: none;">{{presentationUri}}</div>
+							{{title}}
+						</div>
+					{{/each}}
+				</p>
 			{{/with}}  	
 		</script>
 		
