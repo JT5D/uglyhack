@@ -9,6 +9,9 @@
 	-webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
 	-moz-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
 	box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+	width: 94px;
+	margin-right: 8px;
+	float: left;
 }
 
 .speakerTalkLink{
