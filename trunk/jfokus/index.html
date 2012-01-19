@@ -1,31 +1,54 @@
 <!DOCTYPE html> 
 <html> 
 	<head> 
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		
+		<title>Jfokus</title> 
+		
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-24008188-1']);
+		  _gaq.push(['_trackPageview']);
 	
-	<title>Jfokus</title> 
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-24008188-1']);
-	  _gaq.push(['_trackPageview']);
-
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-	
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
-	<script type="text/javascript" src="../resources/handlebars-1.0.0.beta.6.js"></script>
-	
-	<script type="text/javascript" src="jfokus.js"></script>
-	<link rel="stylesheet" href="jfokus.css" />
-</head> 
+		  (function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+		
+		<style type="text/css">
+			.ui-li-desc {
+				white-space: normal;
+			}
+			
+			.portrait {
+				border-radius: 5px;
+				-moz-border-radius: 5px;
+				-webkit-border-radius: 5px;
+				-webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+				-moz-box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+				box-shadow: 3px 3px 3px rgba(0, 0, 0, 1);
+				width: 94px;
+				margin-right: 8px;
+				float: left;
+			}
+			
+			.speakerTalkLink{
+				color: blue;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		</style>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+		<script type="text/javascript" src="../resources/handlebars-1.0.0.beta.6.js"></script>
+		
+		<script type="text/javascript" src="jfokus.js"></script>
+	</head> 
 	<body> 
 		<div data-role="page" id="mainPage">
 			<div data-role="header">
