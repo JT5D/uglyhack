@@ -42,7 +42,7 @@ $('#schedulePage').live('pageinit', function(){
 	});
 	
 	$("#scheduleUl").delegate(".listUlItem", "click", function() {
-		var presUri = $(this).find('.hiddenPresUri').html();
+		var presUri = $(this).find('.hiddenPresUri').text();
 		if(presUri.length > 0) {
 			getPresentationDetails(presUri, '#schedulePage');
 		}
@@ -107,7 +107,7 @@ $('#speakerDetailsPage').live('pageinit', function(){
 	} 
 	
 	$("#speakerDetailsUl").delegate(".speakerTalkLink", "click", function() {
-		var presUri = $(this).find('.hiddenPresUri').html();
+		var presUri = $(this).find('.hiddenPresUri').text();
 		getPresentationDetails(presUri, '#speakerDetailsPage');
 	});
 });
