@@ -20,66 +20,144 @@
 			    	
 			    }); */
 			    
-			    doAudioStuff();
+			    doAudioStuff2();
 			    
 			}
 			
 			function doAudioStuff() {
 				
-				var context = new webkitAudioContext();
+				// var context = new (window.AudioContext || window.webkitAudioContext)();
 				
-				var audioTag = document.getElementById('audioTag');
-		    	var audioSource = context.createMediaElementSource(audioTag);
-		    	audioSource.connect(context.destination);
+				// var audioTag = document.getElementById('audioTag');
+		  //   	var audioSource = context.createMediaElementSource(audioTag);
+		  //   	audioSource.connect(context.destination);
 				
-				var analyser = context.createAnalyser();
-		    	var jsProcessor = context.createJavaScriptNode(1024,
-                        1 , 1 );
+				// var analyser = context.createAnalyser();
+		  //   	var jsProcessor = context.createJavaScriptNode(1024,
+    //                     1 , 1 );
 		    	
 		    	
-		    	var freqDataTags = new Array();
-		    	var el = document.createElement('div');
-	    		el.style.background = 'red';
-	    		el.style.height = '1px';
-	    		el.style.width = '500px';
-	    		el.innerHTML = '&nbsp;';
-	    		document.body.appendChild(el);
-		    	for(var i = 0; i < 750; i++) {
-		    		el = document.createElement('div');
-		    		el.style.background = 'black';
-		    		el.style.height = '1px';
-		    		el.style.width = '0px';
-		    		el.innerHTML = '&nbsp;';
-		    		document.body.appendChild(el);
-		    		freqDataTags[i] = el;
+		  //   	var freqDataTags = new Array();
+		  //   	var el = document.createElement('div');
+	   //  		el.style.background = 'red';
+	   //  		el.style.height = '1px';
+	   //  		el.style.width = '500px';
+	   //  		el.innerHTML = '&nbsp;';
+	   //  		document.body.appendChild(el);
+		  //   	for(var i = 0; i < 750; i++) {
+		  //   		el = document.createElement('div');
+		  //   		el.style.background = 'black';
+		  //   		el.style.height = '1px';
+		  //   		el.style.width = '0px';
+		  //   		el.innerHTML = '&nbsp;';
+		  //   		document.body.appendChild(el);
+		  //   		freqDataTags[i] = el;
 
-		    	}
-		    	var el = document.createElement('div');
-	    		el.style.background = 'red';
-	    		el.style.height = '1px';
-	    		el.style.width = '500px';
-	    		el.innerHTML = '&nbsp;';
-	    		document.body.appendChild(el);
+		  //   	}
+		  //   	var el = document.createElement('div');
+	   //  		el.style.background = 'red';
+	   //  		el.style.height = '1px';
+	   //  		el.style.width = '500px';
+	   //  		el.innerHTML = '&nbsp;';
+	   //  		document.body.appendChild(el);
 		    	
 		    	
-		    	jsProcessor.onaudioprocess = function(e) {
-		    		  var freqByteData = new Uint8Array(analyser.frequencyBinCount);
-		    		  analyser.getByteFrequencyData(freqByteData);
-		    		  for(var i = 0; i < 750; i++) {
-		    			  freqDataTags[i].style.width = (freqByteData[i]*2) + 'px';
-				      }
+		  //   	jsProcessor.onaudioprocess = function(e) {
+		  //   		  var freqByteData = new Uint8Array(analyser.frequencyBinCount);
+		  //   		  analyser.getByteFrequencyData(freqByteData);
+		  //   		  for(var i = 0; i < 750; i++) {
+		  //   			  freqDataTags[i].style.width = (freqByteData[i]*2) + 'px';
+				//       }
 		    		  
-		    		};
+		  //   		};
 		    	
-		    	audioSource.connect(analyser);
-		    	analyser.connect(jsProcessor);
-		    	jsProcessor.connect(context.destination);
+		  //   	audioSource.connect(analyser);
+		  //   	analyser.connect(jsProcessor);
+		  //   	jsProcessor.connect(context.destination);
 			}
+
+			function doAudioStuff2() {
+				var context = new (window.AudioContext || window.webkitAudioContext)();
+				var source;
+				var processor;
+				var analyser;
+				var xhr;
+
+				function initAudio(data) {
+				    source = context.createBufferSource();
+
+				    if(context.decodeAudioData) {
+				        context.decodeAudioData(data, function(buffer) {
+				            source.buffer = buffer;
+				            createAudio();
+				        }, function(e) {
+				            console.log(e);
+				        });
+				    } else {
+				        source.buffer = context.createBuffer(data, false /*mixToMono*/);
+				        createAudio();
+				    }
+				}
+
+				function createAudio() {
+				    processor = context.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*numoutputs*/);
+				    processor.onaudioprocess = processAudio;
+				    analyser = context.createAnalyser();
+
+				    source.connect(context.destination);
+				    source.connect(analyser);
+
+				    analyser.connect(processor);
+				    processor.connect(context.destination);
+
+				    source.noteOn(0);
+				    setTimeout(disconnect, source.buffer.duration * 1000);
+				}
+
+				function disconnect() {
+				    source.noteOff(0);
+				    source.disconnect(0);
+				    processor.disconnect(0);
+				    analyser.disconnect(0);
+				}
+
+				function processAudio(e) {
+				    var freqByteData = new Uint8Array(analyser.frequencyBinCount);
+				    analyser.getByteFrequencyData(freqByteData);
+				    console.log(freqByteData);
+				}
+
+				function dropEvent(evt) {
+				    evt.stopPropagation();
+				    evt.preventDefault();
+
+				    var reader = new FileReader();
+				    reader.onload = function(e) {
+				    	initAudio(e.target.result);	
+				    }
+				    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
+				    
+				}
+
+				function dragOver(evt) {
+				    evt.stopPropagation();
+				    evt.preventDefault();
+				    return false;
+				}
+
+				var dropArea = document.getElementById('dropArea');
+				dropArea.addEventListener('drop', dropEvent, false);
+				dropArea.addEventListener('dragover', dragOver, false);
+			}
+
 	    </script>
 	</head>
 	
-	<body onload="load()">
-		<audio id="audioTag" src="sound.ogg" autoplay></audio>
+	<body onload="load()" id="dropArea">
+		<audio id="audioTag" src="preview.mp3" controls></audio>
+		<div id="dropArea" style="height: 200px; width: 200px; background-color: red;">
+			Drop Here!
+		</div>
 	</body>
 	
 </html>
