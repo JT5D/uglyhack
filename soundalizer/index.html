@@ -1,0 +1,85 @@
+<!DOCTYPE html> 
+<html>
+	<head> 
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		
+		<title>Speecher</title> 
+
+		<script type="text/javascript">
+			function load() {
+				
+				
+			    /* navigator.webkitGetUserMedia('audio', function (stream) {
+			    	
+			    	
+			    	var objectUrl = window.webkitURL.createObjectURL(stream);
+			    	var audioTag = document.getElementById('audioTag');
+			    	audioTag.src = objectUrl;
+			    	
+			    	doAudioStuff();
+			    	
+			    }); */
+			    
+			    doAudioStuff();
+			    
+			}
+			
+			function doAudioStuff() {
+				
+				var context = new webkitAudioContext();
+				
+				var audioTag = document.getElementById('audioTag');
+		    	var audioSource = context.createMediaElementSource(audioTag);
+		    	audioSource.connect(context.destination);
+				
+				var analyser = context.createAnalyser();
+		    	var jsProcessor = context.createJavaScriptNode(1024,
+                        1 , 1 );
+		    	
+		    	
+		    	var freqDataTags = new Array();
+		    	var el = document.createElement('div');
+	    		el.style.background = 'red';
+	    		el.style.height = '1px';
+	    		el.style.width = '500px';
+	    		el.innerHTML = '&nbsp;';
+	    		document.body.appendChild(el);
+		    	for(var i = 0; i < 750; i++) {
+		    		el = document.createElement('div');
+		    		el.style.background = 'black';
+		    		el.style.height = '1px';
+		    		el.style.width = '0px';
+		    		el.innerHTML = '&nbsp;';
+		    		document.body.appendChild(el);
+		    		freqDataTags[i] = el;
+
+		    	}
+		    	var el = document.createElement('div');
+	    		el.style.background = 'red';
+	    		el.style.height = '1px';
+	    		el.style.width = '500px';
+	    		el.innerHTML = '&nbsp;';
+	    		document.body.appendChild(el);
+		    	
+		    	
+		    	jsProcessor.onaudioprocess = function(e) {
+		    		  var freqByteData = new Uint8Array(analyser.frequencyBinCount);
+		    		  analyser.getByteFrequencyData(freqByteData);
+		    		  for(var i = 0; i < 750; i++) {
+		    			  freqDataTags[i].style.width = (freqByteData[i]*2) + 'px';
+				      }
+		    		  
+		    		};
+		    	
+		    	audioSource.connect(analyser);
+		    	analyser.connect(jsProcessor);
+		    	jsProcessor.connect(context.destination);
+			}
+	    </script>
+	</head>
+	
+	<body onload="load()">
+		<audio id="audioTag" src="sound.ogg" autoplay></audio>
+	</body>
+	
+</html>
