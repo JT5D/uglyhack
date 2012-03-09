@@ -84,8 +84,8 @@
 				    mainGain.gain.value = 1.0;
 
 				    biquadFilter = context.createBiquadFilter();
-				    biquadFilter.type = biquadFilter.HIGHPASS;
-				    biquadFilter.frequency = 5000;
+				    biquadFilter.type = biquadFilter.LOWPASS;
+				    biquadFilter.frequency = 200;
 
 				    source.connect(gainNode1);
 				    gainNode1.connect(mainGain);
@@ -168,6 +168,18 @@
 		     		dropArea.appendChild(el);
 		     		freqDataTags[i] = el;
 		    	}
+
+				var svgElem = document.getElementById('svgelem');
+		    	for(var a = 0; a <= 100; a+=5) {
+		    		var el = document.createElementNS("http://www.w3.org/2000/svg","line");
+		    		el.setAttribute('x1', 0);
+		    		el.setAttribute('y1', a + '%');
+		    		el.setAttribute('x2', a + '%');
+		    		el.setAttribute('y2', '100%');
+		    		el.style.stroke = 'red';
+		    		el.style['stroke-width'] = 2;
+		    		svgElem.appendChild(el);
+		    	}
 			} 
 
 	    </script>
@@ -194,7 +206,8 @@
 	
 	<body onload="load()">
 		<div id="dropArea" class="fullscreen">
-			
+			<svg id="svgelem" class="fullscreen" xmlns="http://www.w3.org/2000/svg">
+			</svg>
 		</div>
 	</body>
 	
