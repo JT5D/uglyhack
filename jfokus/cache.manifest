@@ -1,12 +1,12 @@
 CACHE MANIFEST
-#10
+#11
 
 CACHE:
 jfokus.js
 ../resources/handlebars-1.0.0.beta.6.js
-http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css
+http://code.jquery.com/mobile/1.1.0-rc.2/jquery.mobile-1.1.0-rc.2.min.css
 http://code.jquery.com/jquery-1.7.1.min.js
-http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.js
+http://code.jquery.com/mobile/1.1.0-rc.2/jquery.mobile-1.1.0-rc.2.min.js
 http://www.google-analytics.com/ga.js
 
 NETWORK:
