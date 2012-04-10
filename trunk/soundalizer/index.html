@@ -85,7 +85,7 @@
 
 				    biquadFilter = context.createBiquadFilter();
 				    biquadFilter.type = biquadFilter.LOWPASS;
-				    biquadFilter.frequency = 200;
+				    biquadFilter.frequency = 10000;
 
 				    source.connect(gainNode1);
 				    gainNode1.connect(mainGain);
@@ -94,10 +94,10 @@
 				    convolver.connect(gainNode2);
 				    gainNode2.connect(mainGain);
 
-				    mainGain.connect(biquadFilter);
-				    biquadFilter.connect(context.destination);
+				    //mainGain.connect(biquadFilter);
+				    mainGain.connect(context.destination);
 
-				    biquadFilter.connect(analyser);
+				    mainGain.connect(analyser);
 					analyser.connect(processor);
 				    processor.connect(context.destination);
 
