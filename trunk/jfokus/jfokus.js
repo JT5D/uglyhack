@@ -20,6 +20,19 @@ var JFokus = {
 	_initedTemplates: false
 }
 
+$(document).bind( "pagebeforechange", function( e, data ) {
+	if ( typeof data.toPage === "string" && JFokus.selEventId == null) {
+		var u = $.mobile.path.parseUrl( data.toPage );
+		if(u.hash === "#aboutPage") {
+			return;
+		}
+		data.toPage = u.hrefNoHash;
+	}
+});
+
+
+
+
 $('#mainPage').live('pageinit', function(){
 	$("#mainUl").delegate(".listUlItem", "click", function() {
 		JFokus.selEventId = this.id;
@@ -35,6 +48,9 @@ $('#mainPage').live('pageinit', function(){
 		template: JFokus.getTemplate('#event-template'),
 	});
 });
+
+
+
 
 $('#schedulePage').live('pageinit', function(){
 	$("#daynavbar").delegate("li", "click", function() {
@@ -72,23 +88,12 @@ $('#schedulePage').live('pageinit', function(){
 			$.mobile.changePage( $('#speakersPage'));
 		}
 	});
-	
-	if(JFokus.selEventId == null) {
-		$.mobile.changePage( $('#mainPage'));
-	}
 });
 
-$('#presentationDetailsPage').live('pageinit', function(){
-	if(JFokus.selEventId == null) {
-		$.mobile.changePage( $('#mainPage'));
-	}
-});
+
+
 
 $('#speakersPage').live('pageinit', function(){
-	if(JFokus.selEventId == null) {
-		$.mobile.changePage( $('#mainPage'));
-	} 
-	
 	$("#speakersUl").delegate(".listUlItem", "click", function() {
 		getDataForTemplate({
 			url: 'http://www.jfokus.se/rest/v1/events/speakers/' + this.id,
@@ -101,16 +106,18 @@ $('#speakersPage').live('pageinit', function(){
 	});
 });
 
+
+
+
 $('#speakerDetailsPage').live('pageinit', function(){
-	if(JFokus.selEventId == null) {
-		$.mobile.changePage( $('#mainPage'));
-	} 
-	
 	$("#speakerDetailsUl").delegate(".speakerTalkLink", "click", function() {
 		var presUri = $(this).find('.hiddenPresUri').text();
 		getPresentationDetails(presUri, '#speakerDetailsPage');
 	});
 });
+
+
+
 
 function getPresentationDetails(presUri, backUri) {
 	getDataForTemplate({
@@ -189,7 +196,6 @@ function getDataForTemplate(config) {
 			ulul.empty();
 		}
 		
-		
 		ulul.append(config.template(data));
 		
 		try {
@@ -208,4 +214,3 @@ function getDataForTemplate(config) {
 function getYql(site) {
 	return 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '"') + '&format=json&callback=?';
 }
-
