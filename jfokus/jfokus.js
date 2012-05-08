@@ -45,7 +45,7 @@ $('#mainPage').live('pageinit', function(){
 	getDataForTemplate({
 		url: 'http://www.jfokus.se/rest/v1/events',
 		ul: '#mainUl',
-		template: JFokus.getTemplate('#event-template'),
+		template: JFokus.getTemplate('#event-template')
 	});
 });
 
@@ -137,7 +137,7 @@ function getPresentationDetails(presUri, backUri) {
 					url: data.items.speakers[ii].speakerUri,
 					ul: '#presentationSpeakerDetail',
 					emptyContainer: false,
-					template: JFokus.getTemplate('#presentationSpeaker-template'),
+					template: JFokus.getTemplate('#presentationSpeaker-template')
 				});
 			}
 		}
