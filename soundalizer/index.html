@@ -7,169 +7,262 @@
 
 		<script type="text/javascript">
 			
+		/* navigator.webkitGetUserMedia('audio', function (stream) {
+    	
+    	
+    	var objectUrl = window.webkitURL.createObjectURL(stream);
+    	var audioTag = document.getElementById('audioTag');
+    	audioTag.src = objectUrl;
+    	
+    	doAudioStuff();
+    	
+    }); */
+    		var source, lowPass, gain, convolver, dest;
+    
+    		function doConnect() {
+    			var from = document.getElementById('fromNode').value;
+    			var to = document.getElementById('toNode').value;
+    			window[from].connectTo(window[to]); 
+    		}
 
-			function load() {
+			function init() {
 				
-				
-			    /* navigator.webkitGetUserMedia('audio', function (stream) {
-			    	
-			    	
-			    	var objectUrl = window.webkitURL.createObjectURL(stream);
-			    	var audioTag = document.getElementById('audioTag');
-			    	audioTag.src = objectUrl;
-			    	
-			    	doAudioStuff();
-			    	
-			    }); */
-
-				var request = new XMLHttpRequest();
-			    request.open("GET", "wildecho.wav", true);
-			    request.responseType = "arraybuffer";
-			    
-			    request.onload = function() {
-			        doAudioStuff(request.response);
-			    }
-			    request.send();
-			}
-			
-			function doAudioStuff(assetResponse) {
 				var context = new (window.AudioContext || window.webkitAudioContext)();
-				var source;
-				var processor;
-				var analyser;
-				var gainNode1;
-				var gainNode2;
-				var convolver;
-				var mainGain;
-				var biquadFilter;
-
-				
-				var numFreqs = 50;
-				var freqWidth = 10;
 				var freqDataTags = new Array();
-
-				var assetBuffer = context.createBuffer(assetResponse, false);
-
-				function initAudio(data) {
-				    source = context.createBufferSource();
-
-				    if(context.decodeAudioData) {
-				        context.decodeAudioData(data, function(buffer) {
-				            source.buffer = buffer;
-				            createAudio();
-				        }, function(e) {
-				            console.log(e);
-				        });
-				    } else {
-				        source.buffer = context.createBuffer(data, false /*mixToMono*/);
-				        createAudio();
-				    }
+				
+				var connectToFnc = function(node) {
+					var conns = node.getConnections();
+					for(var i in conns) {
+						this.thingy.connect(conns[i]);
+					}
+					this.myConnections.push(node);
+					printConnections();
+				};
+				
+				var toStringFnc = function() {
+					var s = "(" + this.name + " to ";
+					for(var i in this.myConnections) {
+						if(i > 0) {
+							s += ", ";
+						}
+						s += this.myConnections[i];
+					}
+					s += ")";
+					return s;
+				};
+				
+				function printConnections() {
+					var connDiv = document.getElementById('connections');
+					connDiv.innerHTML = source.toString();
 				}
+				
+				// SOURCE NODE -------------------------------------------------------------------------
+				function SourceNode() {
+					this.thingy = context.createBufferSource();
+					var bufferSource = this.thingy;
+					this.myConnections = new Array();
+					
+					this.connectTo = connectToFnc;
+					this.getConnections = function() {
+						return new Array();
+					}
+					this.toString = toStringFnc;
+					this.name = "source";
+					
+					
+					var el = document.createElement('div');
+					el.setAttribute('class', 'node');
+					el.innerHTML = this.name;
+					document.body.appendChild(el);
+					
+					el.addEventListener('drop', function (evt) {
+					    evt.stopPropagation();
+					    evt.preventDefault();
 
-				function createAudio() {
-				    processor = context.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*numoutputs*/);
-				    processor.onaudioprocess = processAudio;
-				    
-				    analyser = context.createAnalyser();
-				    analyser.minDecibels = -70;
-
-				    convolver = context.createConvolver();
-				    convolver.buffer = assetBuffer;
-
-				    gainNode1 = context.createGainNode();
-				    gainNode2 = context.createGainNode();
-				    mainGain = context.createGainNode();
-				    gainNode1.gain.value = 0.5;
-				    gainNode2.gain.value = 0.8;
-				    mainGain.gain.value = 1.0;
-
-				    biquadFilter = context.createBiquadFilter();
-				    biquadFilter.type = biquadFilter.LOWPASS;
-				    biquadFilter.frequency = 10000;
-
-				    source.connect(gainNode1);
-				    gainNode1.connect(mainGain);
-
-				    source.connect(convolver);
-				    convolver.connect(gainNode2);
-				    gainNode2.connect(mainGain);
-
-				    //mainGain.connect(biquadFilter);
-				    mainGain.connect(context.destination);
-
-				    mainGain.connect(analyser);
-					analyser.connect(processor);
-				    processor.connect(context.destination);
-
-				    source.noteOn(0);
-				    setTimeout(disconnect, source.buffer.duration * 1000);
-				}
-
-				function disconnect() {
-				    source.noteOff(0);
-				    source.disconnect(0);
-				    processor.disconnect(0);
-				    analyser.disconnect(0);
-				    gainNode1.disconnect(0);
-				    gainNode2.disconnect(0);
-				    convolver.disconnect(0);
-				    mainGain.disconnect(0);
-				    biquadFilter.disconnect(0);
-				}
-
-				function processAudio(e) {
-				    var freqByteData = new Uint8Array(analyser.frequencyBinCount);
-				    analyser.getByteFrequencyData(freqByteData);
-				    for(var i = 0; i < numFreqs; i++) {
-				    	var f = i*freqWidth;
-				    	var divHeight = ((freqByteData[f]/255.0)*100.0)+1;
-	     				freqDataTags[i].style.height = divHeight + '%';
-
-	     				var col = 255-freqByteData[f];
-	     				freqDataTags[i].style.background = 
-	     					'rgb(' + col + ',' + col + ',' + col + ')';
+					    var reader = new FileReader();
+					    reader.onload = function(e) {
+					    	initAudio(e.target.result);	
+					    }
+					    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
+					}, false);
+					
+					el.addEventListener('dragover', function (evt) {
+					    evt.stopPropagation();
+					    evt.preventDefault();
+					    return false;
+					}, false);
+					
+					function initAudio(data) {
+						if(context.decodeAudioData) {
+					        context.decodeAudioData(data, function(buffer) {
+					        	bufferSource.buffer = buffer;
+					        	bufferSource.noteOn(0);
+					        }, function(e) {
+					            console.log(e);
+					        });
+					    } else {
+					    	bufferSource.buffer = context.createBuffer(data, false /*mixToMono*/);
+					    	bufferSource.noteOn(0);
+					    }
 					}
 				}
-
-				function dropEvent(evt) {
-				    evt.stopPropagation();
-				    evt.preventDefault();
-
-				    var reader = new FileReader();
-				    reader.onload = function(e) {
-				    	initAudio(e.target.result);	
-				    }
-				    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
+				
+				// CONVOLVER NODE -------------------------------------------------------------------------
+				function ConvolverNode() {
+					this.thingy = context.createConvolver();
+					var convolver = this.thingy;
+					this.myConnections = new Array();
+					this.connectTo = connectToFnc;
+					this.getConnections = function() {
+						var arr = new Array();
+						arr[0] = this.thingy;
+						return arr;
+					}
+					this.toString = toStringFnc;
+					this.name = "convolver";
+					
+					var el = document.createElement('div');
+					el.setAttribute('class', 'node');
+					el.innerHTML = this.name;
+					document.body.appendChild(el);
+					
+					var request = new XMLHttpRequest();
+				    request.open("GET", "conv/cosmic-ping-long.wav", true);
+				    request.responseType = "arraybuffer";
 				    
+				    request.onload = function() {
+					    convolver.buffer = context.createBuffer(request.response, false);
+				    }
+				    request.send();
+				}	    
+
+				// DESTINATION NODE -------------------------------------------------------------------------
+				function DestinationNode() {
+					this.thingy = context.createAnalyser();
+					this.thingy.minDecibels = -70;
+					this.getConnections = function() {
+						var arr = new Array();
+						arr[0] = context.destination;
+						arr[1] = this.thingy;
+						return arr;
+					}
+					
+					this.name = "destination";
+					this.toString = function() {
+						return this.name;
+					}
+					
+					var el = document.createElement('div');
+					el.setAttribute('class', 'node');
+					el.innerHTML = this.name;
+					document.body.appendChild(el);
+					
+					var analyzer = this.thingy;
+					var processor = context.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*numoutputs*/);
+				    processor.onaudioprocess = function(e) {
+				    	console.log('audioprocess');
+					    var freqByteData = new Uint8Array(analyzer.frequencyBinCount);
+					    analyzer.getByteFrequencyData(freqByteData);
+					    for(var i = 0; i < 50; i++) {
+					    	var f = i*10;
+					    	var divHeight = ((freqByteData[f]/255.0)*100.0)+1;
+		     				freqDataTags[i].style.height = divHeight + '%';
+
+		     				var col = 255-freqByteData[f];
+		     				freqDataTags[i].style.background = 
+		     					'rgb(' + col + ',' + col + ',' + col + ')';
+						}
+					};
+					
+					for(var i = 0; i < 50; i++) {
+						var dd = 2 * i;
+
+			    		var el = document.createElement('div');
+			     		el.style.background = 'rgb(255,255,255)';
+			     		el.style.width = '2%';
+			     		el.style.height = '1px';
+			     		el.style.position = 'absolute';
+			     		el.style.left =  dd + '%';
+	     				el.style.bottom =  '0px';
+			     		el.innerHTML = '&nbsp;';
+			     		document.body.appendChild(el);
+			     		freqDataTags[i] = el;
+			    	}
+					
+					this.thingy.connect(processor);
+				    processor.connect(context.destination);
+					
 				}
-
-				function dragOver(evt) {
-				    evt.stopPropagation();
-				    evt.preventDefault();
-				    return false;
+				
+				// GAIN NODE ----------------------------------------------------------------------
+				function GainNode() {
+					this.thingy = context.createGainNode();
+					this.thingy.gain.value = 1.0;
+					this.myConnections = new Array();
+					this.connectTo = connectToFnc;
+					this.getConnections = function() {
+						var arr = new Array();
+						arr[0] = this.thingy;
+						return arr;
+					}
+					this.toString = toStringFnc;
+					this.name = "gain";
+					
+					this.setGain = function(gain) {
+						this.thingy.gain.value = gain;
+						return this;
+					} 
+					
+					var el = document.createElement('div');
+					el.setAttribute('class', 'node');
+					el.innerHTML = this.name;
+					document.body.appendChild(el);
 				}
-
-				var dropArea = document.getElementById('dropArea');
-				dropArea.addEventListener('drop', dropEvent, false);
-				dropArea.addEventListener('dragover', dragOver, false);
 				
+				// BIQUADFILTER NODE -----------------------------------------------------------------
+				function BiquadFilterNode() {
+					this.thingy = context.createBiquadFilter();
+					this.thingy.type = this.thingy.LOWPASS;
+					this.thingy.frequency = 1000;
+					this.myConnections = new Array();
+					this.connectTo = connectToFnc;
+					this.getConnections = function() {
+						var arr = new Array();
+						arr[0] = this.thingy;
+						return arr;
+					}
+					this.toString = toStringFnc;
+					this.name = "biquadFilter";
+					
+					this.setType = function(type) {
+						switch(type) {
+							case "highpass":
+								this.thingy.type = this.thingy.HIGHPASS;
+							break;
+							case "lowpass":
+								this.thingy.type = this.thingy.LOWPASS;
+							break;
+						}
+						return this;
+					}
+					
+					var el = document.createElement('div');
+					el.setAttribute('class', 'node');
+					el.innerHTML = this.name;
+					document.body.appendChild(el);
+				}
+			    
+				source = new SourceNode();
+				lowPass = new BiquadFilterNode().setType("lowpass");
+				gain = new GainNode().setGain(0.1);
+				convolver = new ConvolverNode();
+				dest = new DestinationNode();
 				
-		    	for(var i = 0; i < numFreqs; i++) {
-					var dd = (100.0 / numFreqs) * i;
-
-		    		var el = document.createElement('div');
-		     		el.style.background = 'rgb(255,255,255)';
-		     		el.style.width = '2%';
-		     		el.style.height = '1px';
-		     		el.style.position = 'absolute';
-		     		el.style.left =  dd + '%';
-     				el.style.bottom =  '0px';
-		     		el.innerHTML = '&nbsp;';
-		     		dropArea.appendChild(el);
-		     		freqDataTags[i] = el;
-		    	}
-
-				var svgElem = document.getElementById('svgelem');
+				//source.connectTo(convolver);
+				//convolver.connectTo(lowPass);
+				//lowPass.connectTo(dest);
+				
+				/* var svgElem = document.getElementById('svgelem');
 		    	for(var a = 0; a <= 100; a+=5) {
 		    		var el = document.createElementNS("http://www.w3.org/2000/svg","line");
 		    		el.setAttribute('x1', 0);
@@ -179,7 +272,7 @@
 		    		el.style.stroke = 'red';
 		    		el.style['stroke-width'] = 2;
 		    		svgElem.appendChild(el);
-		    	}
+		    	} */
 			} 
 
 	    </script>
@@ -190,25 +283,43 @@
 				height: 100%;
 			}
 
-			div.fullscreen{
-			    display:block;
-
-			    position:absolute;
+			div.fullscreen {
+			    position: fixed;
 			    top:0;
 			    left:0;
 			    
 			    width:100%;
 			    height:100%;
 			}
+			
+			div.node {
+				width:100px;
+				height:100px;
+				background: #999999;
+				float: right;
+				margin: 5px;
+			}
 		</style>
 
 	</head>
 	
-	<body onload="load()">
-		<div id="dropArea" class="fullscreen">
-			<svg id="svgelem" class="fullscreen" xmlns="http://www.w3.org/2000/svg">
-			</svg>
-		</div>
+	<body onload="setTimeout('init()', 2000)">
+		<div id="connections"></div>
+		<select id="fromNode">
+			<option>source</option>
+			<option>lowPass</option>
+			<option>gain</option>
+			<option>convolver</option>
+		</select>
+		to
+		<select  id="toNode">
+			<option>lowPass</option>
+			<option>gain</option>
+			<option>convolver</option>
+			<option>dest</option>
+		</select>
+		<input type="button" value="Connect" onclick="doConnect()"></input>
+		<!-- <svg id="svgelem" xmlns="http://www.w3.org/2000/svg"></svg> -->
 	</body>
 	
 </html>
