@@ -17,250 +17,437 @@
     	doAudioStuff();
     	
     }); */
-    		var source, lowPass, gain, convolver, dest;
+    		var nodes = new Array();
+			var context = null;
+			var freqDataTags = new Array();
+
     
     		function doConnect() {
     			var from = document.getElementById('fromNode').value;
     			var to = document.getElementById('toNode').value;
-    			window[from].connectTo(window[to]); 
+    			nodes[from].connectTo(nodes[to]); 
     		}
-
-			function init() {
+    		
+    		function doCreate() {
+    			var createVal = document.getElementById('createSelect').value;
+    			var node = null;
+    			switch(createVal) {
+	    			case "source":
+	    				node = new SourceNode(nodes.length);
+						break;
+	    			case "biquadFilter":
+	    				node = new BiquadFilterNode(nodes.length);
+						break;
+	    			case "gain":
+	    				node = new GainNode(nodes.length);
+						break;
+	    			case "convolver":
+	    				node = new ConvolverNode(nodes.length);
+						break;
+    			}
+    			if(node != null) {
+    				nodes.push(node);
+    			}
+    			var from = document.getElementById('fromNode');
+    			from.innerHTML = "";
+    			for(var i in nodes) {
+    				if(!(nodes[i] instanceof DestinationNode)) {
+	    				var optionEl = document.createElement('option');
+						optionEl.innerHTML = nodes[i].name;
+						optionEl.setAttribute('value', nodes[i].idx);
+						from.appendChild(optionEl);
+    				}
+    			}
+    			
+    			var to = document.getElementById('toNode');
+    			to.innerHTML = "";
+    			for(var i in nodes) {
+    				if(!(nodes[i] instanceof SourceNode)) {
+	    				var optionEl = document.createElement('option');
+						optionEl.innerHTML = nodes[i].name;
+						optionEl.setAttribute('value', nodes[i].idx);
+						to.appendChild(optionEl);
+    				}
+    			}
+    		}
 				
-				var context = new (window.AudioContext || window.webkitAudioContext)();
-				var freqDataTags = new Array();
-				
-				var connectToFnc = function(node) {
-					var conns = node.getConnections();
-					for(var i in conns) {
-						this.thingy.connect(conns[i]);
-					}
-					this.myConnections.push(node);
-					printConnections();
-				};
-				
-				var toStringFnc = function() {
-					var s = "(" + this.name + " to ";
-					for(var i in this.myConnections) {
-						if(i > 0) {
-							s += ", ";
-						}
-						s += this.myConnections[i];
-					}
-					s += ")";
-					return s;
-				};
-				
-				function printConnections() {
-					var connDiv = document.getElementById('connections');
-					connDiv.innerHTML = source.toString();
+			
+			var connectToFnc = function(node) {
+				var conns = node.getConnections();
+				for(var i in conns) {
+					this.thingy.connect(conns[i]);
 				}
-				
-				// SOURCE NODE -------------------------------------------------------------------------
-				function SourceNode() {
-					this.thingy = context.createBufferSource();
-					var bufferSource = this.thingy;
-					this.myConnections = new Array();
-					
-					this.connectTo = connectToFnc;
-					this.getConnections = function() {
-						return new Array();
+				this.myConnections.push(node);
+				printConnections();
+			};
+			
+			var toStringFnc = function() {
+				var s = this.name + " to ";
+				for(var i in this.myConnections) {
+					if(i > 0) {
+						s += ", ";
 					}
-					this.toString = toStringFnc;
-					this.name = "source";
-					
-					
-					var el = document.createElement('div');
-					el.setAttribute('class', 'node');
-					el.innerHTML = this.name;
-					document.body.appendChild(el);
-					
-					el.addEventListener('drop', function (evt) {
-					    evt.stopPropagation();
-					    evt.preventDefault();
-
-					    var reader = new FileReader();
-					    reader.onload = function(e) {
-					    	initAudio(e.target.result);	
-					    }
-					    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
-					}, false);
-					
-					el.addEventListener('dragover', function (evt) {
-					    evt.stopPropagation();
-					    evt.preventDefault();
-					    return false;
-					}, false);
-					
-					function initAudio(data) {
-						if(context.decodeAudioData) {
-					        context.decodeAudioData(data, function(buffer) {
-					        	bufferSource.buffer = buffer;
-					        	bufferSource.noteOn(0);
-					        }, function(e) {
-					            console.log(e);
-					        });
-					    } else {
-					    	bufferSource.buffer = context.createBuffer(data, false /*mixToMono*/);
-					    	bufferSource.noteOn(0);
-					    }
+					s += this.myConnections[i].name;
+				}
+				return s;
+			};
+			
+			function printConnections() {
+				var connDiv = document.getElementById('connections');
+				connDiv.innerHTML = "";
+				for(var i in nodes) {
+					if(!(nodes[i] instanceof DestinationNode)) {
+						connDiv.innerHTML += nodes[i].toString();	
+						connDiv.innerHTML += '<br/>'
 					}
 				}
+			}
+			
+			// SOURCE NODE -------------------------------------------------------------------------
+			function SourceNode(index) {
+				this.idx = index;
+				this.thingy = context.createBufferSource();
+				this.thingy.loop = true;
+				var bufferSource = this.thingy;
+				this.myConnections = new Array();
 				
-				// CONVOLVER NODE -------------------------------------------------------------------------
-				function ConvolverNode() {
-					this.thingy = context.createConvolver();
-					var convolver = this.thingy;
-					this.myConnections = new Array();
-					this.connectTo = connectToFnc;
-					this.getConnections = function() {
-						var arr = new Array();
-						arr[0] = this.thingy;
-						return arr;
-					}
-					this.toString = toStringFnc;
-					this.name = "convolver";
-					
-					var el = document.createElement('div');
-					el.setAttribute('class', 'node');
-					el.innerHTML = this.name;
-					document.body.appendChild(el);
-					
+				this.connectTo = connectToFnc;
+				this.getConnections = function() {
+					return new Array();
+				}
+				this.toString = toStringFnc;
+				this.name = "source" + this.idx;
+				
+				var el = document.createElement('div');
+				el.setAttribute('class', 'node');
+				el.innerHTML = this.name;
+				document.body.appendChild(el);
+				
+				el.addEventListener('drop', function (evt) {
+				    evt.stopPropagation();
+				    evt.preventDefault();
+
+				    var reader = new FileReader();
+				    reader.onload = function(e) {
+				    	initAudio(e.target.result);	
+				    }
+				    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
+				}, false);
+				
+				el.addEventListener('dragover', function (evt) {
+				    evt.stopPropagation();
+				    evt.preventDefault();
+				    return false;
+				}, false);
+				
+				function initAudio(data) {
+					if(context.decodeAudioData) {
+				        context.decodeAudioData(data, function(buffer) {
+				        	bufferSource.buffer = buffer;
+				        	bufferSource.noteOn(0);
+				        }, function(e) {
+				            console.log(e);
+				        });
+				    } else {
+				    	bufferSource.buffer = context.createBuffer(data, false /*mixToMono*/);
+				    	bufferSource.noteOn(0);
+				    }
+				}
+			}
+			
+			// CONVOLVER NODE -------------------------------------------------------------------------
+			function ConvolverNode(index) {
+				this.idx = index;
+				this.thingy = context.createConvolver();
+				this.myConnections = new Array();
+				this.connectTo = connectToFnc;
+				this.getConnections = function() {
+					var arr = new Array();
+					arr[0] = this.thingy;
+					return arr;
+				}
+				this.toString = toStringFnc;
+				this.name = "convolver" + this.idx;
+				
+				this.setConv = function(input) {
 					var request = new XMLHttpRequest();
-				    request.open("GET", "conv/cosmic-ping-long.wav", true);
+				    request.open("GET", "conv/" + input.value + ".wav", true);
 				    request.responseType = "arraybuffer";
+				    var cc = this.thingy;
 				    
 				    request.onload = function() {
-					    convolver.buffer = context.createBuffer(request.response, false);
+					    cc.buffer = context.createBuffer(request.response, false);
 				    }
 				    request.send();
-				}	    
+				};
+				
+				var el = document.createElement('div');
+				el.setAttribute('class', 'node');
+				el.innerHTML = this.name;
+				document.body.appendChild(el);
+				
+				var selectEl = document.createElement('select');
+				selectEl.setAttribute('onchange', 'nodes[' + this.idx + '].setConv(this);');
+				var optionEl = document.createElement('option');
+				optionEl.innerHTML = "cardiod-rear-levelled";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "comb-saw1";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "comb-saw2";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "cosmic-ping-long";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "diffusor3";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "dining-far-kitchen";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "dining-living-true-stereo";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "feedback-spring";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "filter-lopass160";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "filter-rhythm1";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "filter-rhythm3";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "filter-telephone";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "impulse-rhythm2";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "kitchen";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "kitchen-true-stereo";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "living-bedroom-leveled";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "matrix6-backwards";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "matrix-reverb2";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "matrix-reverb3";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "s2_r4_bd";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "spatialized4";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "spatialized5";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "spreader50-65ms";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "wildecho";
+				selectEl.appendChild(optionEl);
+				
+				el.appendChild(selectEl);
+				this.setConv(selectEl);
+			}	    
 
-				// DESTINATION NODE -------------------------------------------------------------------------
-				function DestinationNode() {
-					this.thingy = context.createAnalyser();
-					this.thingy.minDecibels = -70;
-					this.getConnections = function() {
-						var arr = new Array();
-						arr[0] = context.destination;
-						arr[1] = this.thingy;
-						return arr;
-					}
-					
-					this.name = "destination";
-					this.toString = function() {
-						return this.name;
-					}
-					
-					var el = document.createElement('div');
-					el.setAttribute('class', 'node');
-					el.innerHTML = this.name;
-					document.body.appendChild(el);
-					
-					var analyzer = this.thingy;
-					var processor = context.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*numoutputs*/);
-				    processor.onaudioprocess = function(e) {
-				    	console.log('audioprocess');
-					    var freqByteData = new Uint8Array(analyzer.frequencyBinCount);
-					    analyzer.getByteFrequencyData(freqByteData);
-					    for(var i = 0; i < 50; i++) {
-					    	var f = i*10;
-					    	var divHeight = ((freqByteData[f]/255.0)*100.0)+1;
-		     				freqDataTags[i].style.height = divHeight + '%';
-
-		     				var col = 255-freqByteData[f];
-		     				freqDataTags[i].style.background = 
-		     					'rgb(' + col + ',' + col + ',' + col + ')';
-						}
-					};
-					
-					for(var i = 0; i < 50; i++) {
-						var dd = 2 * i;
-
-			    		var el = document.createElement('div');
-			     		el.style.background = 'rgb(255,255,255)';
-			     		el.style.width = '2%';
-			     		el.style.height = '1px';
-			     		el.style.position = 'absolute';
-			     		el.style.left =  dd + '%';
-	     				el.style.bottom =  '0px';
-			     		el.innerHTML = '&nbsp;';
-			     		document.body.appendChild(el);
-			     		freqDataTags[i] = el;
-			    	}
-					
-					this.thingy.connect(processor);
-				    processor.connect(context.destination);
-					
+			// DESTINATION NODE -------------------------------------------------------------------------
+			function DestinationNode(index) {
+				this.idx = index;
+				this.thingy = context.createAnalyser();
+				this.thingy.minDecibels = -70;
+				this.getConnections = function() {
+					var arr = new Array();
+					arr[0] = context.destination;
+					arr[1] = this.thingy;
+					return arr;
 				}
 				
-				// GAIN NODE ----------------------------------------------------------------------
-				function GainNode() {
-					this.thingy = context.createGainNode();
-					this.thingy.gain.value = 1.0;
-					this.myConnections = new Array();
-					this.connectTo = connectToFnc;
-					this.getConnections = function() {
-						var arr = new Array();
-						arr[0] = this.thingy;
-						return arr;
-					}
-					this.toString = toStringFnc;
-					this.name = "gain";
-					
-					this.setGain = function(gain) {
-						this.thingy.gain.value = gain;
-						return this;
-					} 
-					
-					var el = document.createElement('div');
-					el.setAttribute('class', 'node');
-					el.innerHTML = this.name;
-					document.body.appendChild(el);
+				this.name = "destination" + this.idx;
+				this.toString = function() {
+					return this.name;
 				}
 				
-				// BIQUADFILTER NODE -----------------------------------------------------------------
-				function BiquadFilterNode() {
-					this.thingy = context.createBiquadFilter();
-					this.thingy.type = this.thingy.LOWPASS;
-					this.thingy.frequency = 1000;
-					this.myConnections = new Array();
-					this.connectTo = connectToFnc;
-					this.getConnections = function() {
-						var arr = new Array();
-						arr[0] = this.thingy;
-						return arr;
-					}
-					this.toString = toStringFnc;
-					this.name = "biquadFilter";
-					
-					this.setType = function(type) {
-						switch(type) {
-							case "highpass":
-								this.thingy.type = this.thingy.HIGHPASS;
-							break;
-							case "lowpass":
-								this.thingy.type = this.thingy.LOWPASS;
-							break;
-						}
-						return this;
-					}
-					
-					var el = document.createElement('div');
-					el.setAttribute('class', 'node');
-					el.innerHTML = this.name;
-					document.body.appendChild(el);
-				}
-			    
-				source = new SourceNode();
-				lowPass = new BiquadFilterNode().setType("lowpass");
-				gain = new GainNode().setGain(0.1);
-				convolver = new ConvolverNode();
-				dest = new DestinationNode();
+				var el = document.createElement('div');
+				el.setAttribute('class', 'node');
+				el.innerHTML = this.name;
+				document.body.appendChild(el);
 				
-				//source.connectTo(convolver);
-				//convolver.connectTo(lowPass);
-				//lowPass.connectTo(dest);
+				var analyzer = this.thingy;
+				var processor = context.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*numoutputs*/);
+			    processor.onaudioprocess = function(e) {
+			    	console.log('audioprocess');
+				    var freqByteData = new Uint8Array(analyzer.frequencyBinCount);
+				    analyzer.getByteFrequencyData(freqByteData);
+				    for(var i = 0; i < 50; i++) {
+				    	var f = i*10;
+				    	var divHeight = ((freqByteData[f]/255.0)*100.0)+1;
+	     				freqDataTags[i].style.height = divHeight + '%';
+
+	     				var col = 255-freqByteData[f];
+	     				freqDataTags[i].style.background = 
+	     					'rgb(' + col + ',' + col + ',' + col + ')';
+					}
+				};
+				
+				for(var i = 0; i < 50; i++) {
+					var dd = 2 * i;
+
+		    		var el = document.createElement('div');
+		     		el.style.background = 'rgb(255,255,255)';
+		     		el.style.width = '2%';
+		     		el.style.height = '1px';
+		     		el.style.position = 'absolute';
+		     		el.style.left =  dd + '%';
+     				el.style.bottom =  '0px';
+		     		el.innerHTML = '&nbsp;';
+		     		document.body.appendChild(el);
+		     		freqDataTags[i] = el;
+		    	}
+				
+				this.thingy.connect(processor);
+			    processor.connect(context.destination);
+				
+			}
+			
+			// GAIN NODE ----------------------------------------------------------------------
+			function GainNode(index) {
+				this.idx = index;
+				this.thingy = context.createGainNode();
+				this.thingy.gain.value = 1.0;
+				this.myConnections = new Array();
+				this.connectTo = connectToFnc;
+				this.getConnections = function() {
+					var arr = new Array();
+					arr[0] = this.thingy;
+					return arr;
+				}
+				this.toString = toStringFnc;
+				this.name = "gain" + this.idx;
+				
+				this.setVolume = function(input) {
+					var fraction = parseInt(input.value) / parseInt(100);
+					// Let's use an x*x curve (x-squared) since simple linear (x) does not
+					// sound as good.
+					this.thingy.gain.value = fraction * fraction;
+					return this;
+				} 
+				
+				var el = document.createElement('div');
+				el.setAttribute('class', 'node');
+				el.innerHTML = this.name;
+				document.body.appendChild(el);
+				
+				var gainRange = document.createElement('input');
+				gainRange.setAttribute('type', 'range');
+				gainRange.setAttribute('min', '0');
+				gainRange.setAttribute('max', '200');
+				gainRange.setAttribute('value', '100');
+				gainRange.setAttribute('onchange', 'nodes[' + this.idx + '].setVolume(this);');
+				el.appendChild(gainRange);
+				this.setVolume(gainRange);
+			}
+			
+			// BIQUADFILTER NODE -----------------------------------------------------------------
+			function BiquadFilterNode(index) {
+				this.idx = index;
+				this.thingy = context.createBiquadFilter();
+				this.thingy.type = this.thingy.LOWPASS;
+				this.thingy.frequency = 1000;
+				this.myConnections = new Array();
+				this.connectTo = connectToFnc;
+				this.getConnections = function() {
+					var arr = new Array();
+					arr[0] = this.thingy;
+					return arr;
+				}
+				this.toString = toStringFnc;
+				this.name = "biquadFilter" + this.idx;
+				
+				this.setType = function(input) {
+					switch(input.value) {
+						case "highpass":
+							this.thingy.type = this.thingy.HIGHPASS;
+						break;
+						case "lowpass":
+							this.thingy.type = this.thingy.LOWPASS;
+						break;
+					}
+					return this;
+				}
+				
+				this.setFrequency = function(input) {
+					var minValue = 40;
+					var maxValue = context.sampleRate / 2;
+					// Logarithm (base 2) to compute how many octaves fall in the range.
+					var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
+					// Compute a multiplier from 0 to 1 based on an exponential scale.
+					var multiplier = Math.pow(2, numberOfOctaves * (input.value - 1.0));
+					// Get back to the frequency value between min and max.
+					this.thingy.frequency.value = maxValue * multiplier;
+					return this;
+				}
+				
+				this.setQ = function(input) {
+					this.thingy.Q.value = input.value * 30;
+					return this;
+				}
+				
+				var el = document.createElement('div');
+				el.setAttribute('class', 'node');
+				el.innerHTML = this.name;
+				document.body.appendChild(el);
+				
+				var selectEl = document.createElement('select');
+				selectEl.setAttribute('onchange', 'nodes[' + this.idx + '].setType(this);');
+				var optionEl = document.createElement('option');
+				optionEl.innerHTML = "lowpass";
+				selectEl.appendChild(optionEl);
+				optionEl = document.createElement('option');
+				optionEl.innerHTML = "highpass";
+				selectEl.appendChild(optionEl);
+				el.appendChild(selectEl);
+				
+				var freqRange = document.createElement('input');
+				freqRange.setAttribute('type', 'range');
+				freqRange.setAttribute('min', '0');
+				freqRange.setAttribute('max', '1');
+				freqRange.setAttribute('step', '0.01');
+				freqRange.setAttribute('value', '1');
+				freqRange.setAttribute('onchange', 'nodes[' + this.idx + '].setFrequency(this);');
+				el.appendChild(freqRange);
+				
+				var qRange = document.createElement('input');
+				qRange.setAttribute('type', 'range');
+				qRange.setAttribute('min', '0');
+				qRange.setAttribute('max', '1');
+				qRange.setAttribute('step', '0.01');
+				qRange.setAttribute('value', '0');
+				qRange.setAttribute('onchange', 'nodes[' + this.idx + '].setQ(this);');
+				el.appendChild(qRange);
+				
+				this.setFrequency(freqRange);
+				this.setQ(qRange);
+			}
+				
+			function init() {
+				context = new (window.AudioContext || window.webkitAudioContext)();
+
+				nodes[0] = new DestinationNode(0);
 				
 				/* var svgElem = document.getElementById('svgelem');
 		    	for(var a = 0; a <= 100; a+=5) {
@@ -293,8 +480,8 @@
 			}
 			
 			div.node {
-				width:100px;
-				height:100px;
+				width:150px;
+				height:150px;
 				background: #999999;
 				float: right;
 				margin: 5px;
@@ -304,21 +491,27 @@
 	</head>
 	
 	<body onload="setTimeout('init()', 2000)">
-		<div id="connections"></div>
-		<select id="fromNode">
-			<option>source</option>
-			<option>lowPass</option>
-			<option>gain</option>
-			<option>convolver</option>
-		</select>
-		to
-		<select  id="toNode">
-			<option>lowPass</option>
-			<option>gain</option>
-			<option>convolver</option>
-			<option>dest</option>
-		</select>
-		<input type="button" value="Connect" onclick="doConnect()"></input>
+		
+		<div style="float: left;">
+			<div>
+				<select id="createSelect">
+					<option>source</option>
+					<option>biquadFilter</option>
+					<option>gain</option>
+					<option>convolver</option>
+				</select>
+				<input type="button" value="Create" onclick="doCreate()"></input>
+			</div>
+			<select id="fromNode">
+			</select>
+			to
+			<select id="toNode">
+				<option value="0">destination</option>
+			</select>
+			<input type="button" value="Connect" onclick="doConnect()"></input>
+			<div id="connections"></div>
+		</div>
+		
 		<!-- <svg id="svgelem" xmlns="http://www.w3.org/2000/svg"></svg> -->
 	</body>
 	
