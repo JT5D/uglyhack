@@ -16,6 +16,8 @@ var SourceNode = BaseNode.extend({
 			value: 'start',
 			disabled: 'true',
 		});
+		startEl.addClass('btn');
+		startEl.addClass('btn-primary');
 		startEl.click(function() {
 			stopEl.removeAttr('disabled');
 			startEl.attr('disabled', 'true');
@@ -29,6 +31,8 @@ var SourceNode = BaseNode.extend({
 			value: 'stop',
 			disabled: 'true',
 		});
+		stopEl.addClass('btn');
+		stopEl.addClass('btn-primary');
 		stopEl.click(function() {
 			startEl.removeAttr('disabled');
 			stopEl.attr('disabled', 'true');
