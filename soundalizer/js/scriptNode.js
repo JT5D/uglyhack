@@ -6,7 +6,7 @@ var ScriptNode = BaseNode.extend({
 		this.name = "script" + this.idx;
 	    var javaScriptNode = this.thingy;
 		
-	    var el = this.createMainEl();
+	    var el = this.createMainEl(true, true);
 	    el.addClass('nodebig');
 	    
 	    var scriptBox = $('<textarea>');

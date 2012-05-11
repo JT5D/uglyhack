@@ -3,7 +3,7 @@ var DelayNode = BaseNode.extend({
 	    this._super(index);
 		this.thingy = context.createDelayNode();
 		this.name = "delay" + this.idx;
-		var el = this.createMainEl();
+		var el = this.createMainEl(true, true);
 		var delayN = this.thingy;
 		
 		var setDelayFnc = function(v) { delayN.delayTime.value = v; }; 

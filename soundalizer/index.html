@@ -32,8 +32,19 @@
 				border: 3px solid rgb(85,85,85);
   				box-shadow: 0px 0px 15px 1px rgb(150, 150, 150);
 			}
+
+			div.nodedrop {
+				width:20px;
+				height:20px;
+				margin: 0px;
+				border: 3px solid rgb(85,85,85);
+  				box-shadow: 0px 0px 15px 1px rgb(150, 150, 150);
+  				position: relative;
+				left: -31px;
+				top: 3px;
+			}
 			
-			.css-arrow-right {
+			.nodedrag {
 				border-color:transparent transparent transparent rgb(85,85,85);
 				border-style:solid;
 				border-width:20px;
@@ -44,7 +55,7 @@
 				top: 35px;
 			}
 			
-			.css-arrow-right-in {
+			.nodedrag-in {
 				border-color:transparent transparent transparent rgb(238, 238, 238);
 				border-style:solid;
 				border-width:13px;
@@ -60,9 +71,16 @@
 				width:300px;
 				height:250px;
 			}
+
+			div.line{
+				-webkit-transform-origin: 0 0;
+			  	height: 3px;
+			  	background: rgb(50,50,50);
+			  	box-shadow: 0px 0px 15px 1px rgb(150, 150, 150);
+			}
 			
 			body {
-		    	padding-top: 60px;
+		    	overflow: hidden;
 		    	background-image: url(img/grid-18px-masked.png);
 				background-repeat: repeat;
 		    }
@@ -112,7 +130,6 @@
 			</select>
 			<input type="button" value="Connect" onclick="doConnect()" class="btn btn-primary"></input>
 			<input type="button" value="Disconnect" onclick="doDisconnect()" class="btn btn-primary"></input>
-			<div id="connections"></div>
 		</div>
 	</body>
 </html>

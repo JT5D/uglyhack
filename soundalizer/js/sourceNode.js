@@ -8,7 +8,7 @@ var SourceNode = BaseNode.extend({
 		var bufferSource = this.thingy;
 		var thisNode = this;
 		
-		var el = this.createMainEl();
+		var el = this.createMainEl(true, false);
 		
 		var btnGroupEl = $('<div>');
 		btnGroupEl.addClass('btn-group');
@@ -86,8 +86,9 @@ var SourceNode = BaseNode.extend({
 		}, false);
   	},
   	connectTo: function(node) {
-	  	this._super(node);
+	  	var ret = this._super(node);
 		this.info2El.hide('fast');
+		return ret;
   	},
   	getConnections: function() {
 		return new Array();
