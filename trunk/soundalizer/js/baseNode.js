@@ -6,10 +6,21 @@ var BaseNode = Class.extend({
   	createMainEl: function() {
   		var el = $('<div>');
 		el.addClass('node');
+		el.addClass('hero-unit');
 		el.html(this.name);
 		el.draggable({
 			stack: 'div.node'
 		});
+		
+		var arrRight = $('<div>');
+		arrRight.draggable();
+		arrRight.addClass('css-arrow-right');
+		el.append(arrRight);
+		
+		var arrRightIn = $('<div>');
+		arrRightIn.addClass('css-arrow-right-in');
+		arrRight.append(arrRightIn);
+		
 		$('body').append(el);
 		return el;
   	},
