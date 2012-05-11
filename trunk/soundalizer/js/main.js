@@ -14,14 +14,12 @@ function doConnect() {
 	var from = document.getElementById('fromNode').value;
 	var to = document.getElementById('toNode').value;
 	nodes[from].connectTo(nodes[to]); 
-	printConnections();
 }
 
 function doDisconnect() {
 	var from = document.getElementById('fromNode').value;
 	var to = document.getElementById('toNode').value;
 	nodes[from].disconnectFrom(nodes[to]);
-	printConnections();
 }
 
 function onClickCreate() {
@@ -78,18 +76,6 @@ function doCreate(name) {
 			to.appendChild(optionEl);
 		}
 	}
-	printConnections();
-}
-
-function printConnections() {
-	var connDiv = document.getElementById('connections');
-	connDiv.innerHTML = "";
-	for(var i in nodes) {
-		if(!(nodes[i] instanceof DestinationNode)) {
-			connDiv.innerHTML += nodes[i].toString();	
-			connDiv.innerHTML += '<br/>'
-		}
-	}
 }
 
 $(function() {
@@ -99,7 +85,6 @@ $(function() {
 	setTimeout(function() {
 		nodes[0] = new DestinationNode(0);
 		doCreate("source");
-		printConnections();
 	}, 1000);
 	
 }); 

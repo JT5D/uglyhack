@@ -4,7 +4,7 @@ var DestinationNode = BaseNode.extend({
   		this.thingy = context.createAnalyser();
   		this.thingy.minDecibels = -70;
   		this.name = "destination" + this.idx;
-  		this.createMainEl();
+  		this.createMainEl(false, true);
 		
 		var freqDataTags = new Array();
 		var analyzer = this.thingy;
@@ -13,7 +13,6 @@ var DestinationNode = BaseNode.extend({
 	    processor.connect(context.destination);
 
 	    processor.onaudioprocess = function(e) {
-	    	console.log('process');
 		    var freqByteData = new Uint8Array(analyzer.frequencyBinCount);
 		    analyzer.getByteFrequencyData(freqByteData);
 		    for(var i = 0; i < 50; i++) {

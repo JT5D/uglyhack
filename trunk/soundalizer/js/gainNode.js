@@ -3,7 +3,7 @@ var GainNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createGainNode();
 		this.name = "gain" + this.idx;
-	    var el = this.createMainEl();
+	    var el = this.createMainEl(true, true);
 	    var gainN = this.thingy;
 	    
 	    var setVolumeFnc = function(vol) {

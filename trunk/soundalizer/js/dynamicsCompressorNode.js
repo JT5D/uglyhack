@@ -3,7 +3,7 @@ var DynamicsCompressorNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createDynamicsCompressor();
 		this.name = "dynamicscompressor" + this.idx;
-		var el = this.createMainEl();
+		var el = this.createMainEl(true, true);
 		var dynCmpN = this.thingy;
 		
 		var setThresholdFnc = function(v) { dynCmpN.threshold.value = v; };
