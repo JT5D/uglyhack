@@ -7,36 +7,45 @@ var SourceNode = BaseNode.extend({
 	    
 		var bufferSource = this.thingy;
 		var thisNode = this;
-
-		var el = document.createElement('div');
-		el.setAttribute('class', 'node');
-		el.innerHTML = this.name;
-		document.body.appendChild(el);
 		
-		var startEl = document.createElement('input');
-    	startEl.setAttribute('value', 'start');
-    	startEl.setAttribute('type', 'button');
-    	startEl.setAttribute('disabled', 'true');
-    	startEl.setAttribute('onclick', 'nodes[' + this.idx + '].doStart();');
-		el.appendChild(startEl);
+		var el = this.createMainEl();
 		
-		var stopEl = document.createElement('input');
-		stopEl.setAttribute('value', 'stop');
-		stopEl.setAttribute('type', 'button');
-		stopEl.setAttribute('disabled', 'true');
-		stopEl.setAttribute('onclick', 'nodes[' + this.idx + '].doStop();');
-		el.appendChild(stopEl);
+		var startEl = $('<input>');
+		startEl.attr({
+			type: 'button',
+			value: 'start',
+			disabled: 'true',
+		});
+		startEl.click(function() {
+			stopEl.removeAttr('disabled');
+			startEl.attr('disabled', 'true');
+			bufferSource.gain.value = 1;
+		});
+		el.append(startEl);
 		
-		var infoEl = document.createElement('div');
-		infoEl.innerHTML = "Drag and drop a sound file to me..";
-		el.appendChild(infoEl);
+		var stopEl = $('<input>');
+		stopEl.attr({
+			type: 'button',
+			value: 'stop',
+			disabled: 'true',
+		});
+		stopEl.click(function() {
+			startEl.removeAttr('disabled');
+			stopEl.attr('disabled', 'true');
+			bufferSource.gain.value = 0;
+		});
+		el.append(stopEl);
 		
-		var info2El = this.info2El = document.createElement('div');
-		this.info2El.innerHTML = "Now connect me to something..";
-		this.info2El.style.display = "none";
-		el.appendChild(this.info2El);
+		var infoEl = $('<div>');
+		infoEl.html("Drag and drop a sound file to me..");
+		el.append(infoEl);
 		
-		el.addEventListener('drop', function (evt) {
+		var info2El = this.info2El = $('<div>');
+		info2El.html("Now connect me to something..");
+		info2El.hide();
+		el.append(info2El);
+		
+		el[0].addEventListener('drop', function (evt) {
 		    evt.stopPropagation();
 		    evt.preventDefault();
 
@@ -53,16 +62,16 @@ var SourceNode = BaseNode.extend({
 			    	bufferSource.buffer = context.createBuffer(e.target.result, false /*mixToMono*/);
 			    }
 	        	bufferSource.noteOn(0);
-	        	stopEl.removeAttribute('disabled');
+	        	stopEl.removeAttr('disabled');
 	        	if(thisNode.myConnections.length == 0) {
-	        		info2El.style.display = 'block';
+	        		info2El.show('fast');
 	        	}
-	        	infoEl.style.display = 'none';
+	        	infoEl.hide('fast');
 		    }
 		    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
 		}, false);
 		
-		el.addEventListener('dragover', function (evt) {
+		el[0].addEventListener('dragover', function (evt) {
 		    evt.stopPropagation();
 		    evt.preventDefault();
 		    return false;
@@ -70,19 +79,9 @@ var SourceNode = BaseNode.extend({
   	},
   	connectTo: function(node) {
 	  	this._super(node);
-		this.info2El.style.display = "none";
+		this.info2El.hide('fast');
   	},
   	getConnections: function() {
 		return new Array();
-	},
-	doStart: function() {
-		stopEl.removeAttribute('disabled');
-		startEl.setAttribute('disabled', 'true');
-		this.thingy.gain.value = 1;
-	},
-	doStop: function() {
-		startEl.removeAttribute('disabled');
-		stopEl.setAttribute('disabled', 'true');
-		this.thingy.gain.value = 0;
 	}
 });

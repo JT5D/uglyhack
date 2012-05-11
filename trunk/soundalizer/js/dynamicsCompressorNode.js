@@ -3,49 +3,52 @@ var DynamicsCompressorNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createDynamicsCompressor();
 		this.name = "dynamicscompressor" + this.idx;
-	    
-	    var el = document.createElement('div');
-		el.setAttribute('class', 'node');
-		el.innerHTML = this.name;
-		document.body.appendChild(el);
+		var el = this.createMainEl();
+		var dynCmpN = this.thingy;
 		
-		var thresRange = document.createElement('input');
-		thresRange.setAttribute('type', 'range');
-		thresRange.setAttribute('min', this.thingy.threshold.minValue);
-		thresRange.setAttribute('max', this.thingy.threshold.maxValue);
-		thresRange.setAttribute('value', this.thingy.threshold.defaultValue);
-		thresRange.setAttribute('onchange', 'nodes[' + this.idx + '].setThreshold(this);');
-		el.appendChild(thresRange);
+		var setThresholdFnc = function(v) { dynCmpN.threshold.value = v; };
+		var setAttackFnc = function(v) { dynCmpN.attack.value = v; };
+		var setReleaseFnc = function(v) { dynCmpN.release.value = v; };
 		
-		var attackRange = document.createElement('input');
-		attackRange.setAttribute('type', 'range');
-		attackRange.setAttribute('min', this.thingy.attack.minValue);
-		attackRange.setAttribute('max', this.thingy.attack.maxValue);
-		attackRange.setAttribute('value', this.thingy.attack.defaultValue);
-		attackRange.setAttribute('step', '0.01');
-		attackRange.setAttribute('onchange', 'nodes[' + this.idx + '].setAttack(this);');
-		el.appendChild(attackRange);
+		var thresRange = $('<input>');
+		thresRange.attr({
+			type: 'range',
+			min: dynCmpN.threshold.minValue,
+			max: dynCmpN.threshold.maxValue,
+			value: dynCmpN.threshold.defaultValue
+		});
+		thresRange.on('change', function() {
+			setThresholdFnc(this.value)
+		});
+		el.append(thresRange);
+		setThresholdFnc(thresRange.val());
 		
-		var releaseRange = document.createElement('input');
-		releaseRange.setAttribute('type', 'range');
-		releaseRange.setAttribute('min', this.thingy.release.minValue);
-		releaseRange.setAttribute('max', this.thingy.release.maxValue);
-		releaseRange.setAttribute('value', this.thingy.release.defaultValue);
-		releaseRange.setAttribute('step', '0.01');
-		releaseRange.setAttribute('onchange', 'nodes[' + this.idx + '].setRelease(this);');
-		el.appendChild(releaseRange);
-
-	},
-	setThreshold: function(input) {
-		this.thingy.threshold.value = input.value;
-		return this;
-	},
-	setAttack: function(input) {
-		this.thingy.attack.value = input.value;
-		return this;
-	},
-	setRelease: function(input) {
-		this.thingy.release.value = input.value;
-		return this;
+		var attackRange = $('<input>');
+		attackRange.attr({
+			type: 'range',
+			min: dynCmpN.attack.minValue,
+			max: dynCmpN.attack.maxValue,
+			step: '0.01',
+			value: dynCmpN.attack.defaultValue
+		});
+		attackRange.on('change', function() {
+			setAttackFnc(this.value)
+		});
+		el.append(attackRange);
+		setAttackFnc(attackRange.val());
+		
+		var releaseRange = $('<input>');
+		releaseRange.attr({
+			type: 'range',
+			min: dynCmpN.release.minValue,
+			max: dynCmpN.release.maxValue,
+			step: '0.01',
+			value: dynCmpN.release.defaultValue
+		});
+		releaseRange.on('change', function() {
+			setReleaseFnc(this.value)
+		});
+		el.append(releaseRange);
+		setReleaseFnc(releaseRange.val());
 	}
 });
