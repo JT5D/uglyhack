@@ -3,25 +3,26 @@ var GainNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createGainNode();
 		this.name = "gain" + this.idx;
+	    var el = this.createMainEl();
+	    var gainN = this.thingy;
 	    
-		var el = document.createElement('div');
-		el.setAttribute('class', 'node');
-		el.innerHTML = this.name;
-		document.body.appendChild(el);
+	    var setVolumeFnc = function(vol) {
+			var fraction = parseInt(vol) / parseInt(100);
+			// Let's use an x*x curve (x-squared) since simple linear (x) does not sound as good.
+			gainN.gain.value = fraction * fraction;
+		} 
 		
-		var gainRange = document.createElement('input');
-		gainRange.setAttribute('type', 'range');
-		gainRange.setAttribute('min', '0');
-		gainRange.setAttribute('max', '200');
-		gainRange.setAttribute('value', '100');
-		gainRange.setAttribute('onchange', 'nodes[' + this.idx + '].setVolume(this);');
-		el.appendChild(gainRange);
-		this.setVolume(gainRange);
-	},
-	setVolume: function(input) {
-		var fraction = parseInt(input.value) / parseInt(100);
-		// Let's use an x*x curve (x-squared) since simple linear (x) does not sound as good.
-		this.thingy.gain.value = fraction * fraction;
-		return this;
-	} 
+		var gainRange = $('<input>');
+		gainRange.attr({
+			type: 'range',
+			min: '0',
+			max: '200',
+			value: '100'
+		});
+		gainRange.on('change', function() {
+			setVolumeFnc(this.value);
+		});
+		el.append(gainRange);
+		setVolumeFnc(gainRange.val());
+	}
 });

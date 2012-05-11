@@ -4,20 +4,16 @@ var DestinationNode = BaseNode.extend({
   		this.thingy = context.createAnalyser();
   		this.thingy.minDecibels = -70;
   		this.name = "destination" + this.idx;
-  		
-  		var el = document.createElement('div');
-		el.setAttribute('class', 'node');
-		el.innerHTML = this.name;
-		document.body.appendChild(el);
+  		this.createMainEl();
 		
 		var freqDataTags = new Array();
 		var analyzer = this.thingy;
-		var processor = context.createJavaScriptNode(2048 /*bufferSize*/, 1 /*num inputs*/, 1 /*numoutputs*/);
+		var processor = context.createJavaScriptNode(2048, 1, 1);
 		this.thingy.connect(processor);
 	    processor.connect(context.destination);
 
 	    processor.onaudioprocess = function(e) {
-	    	
+	    	console.log('process');
 		    var freqByteData = new Uint8Array(analyzer.frequencyBinCount);
 		    analyzer.getByteFrequencyData(freqByteData);
 		    for(var i = 0; i < 50; i++) {

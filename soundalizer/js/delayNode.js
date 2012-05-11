@@ -3,25 +3,24 @@ var DelayNode = BaseNode.extend({
 	    this._super(index);
 		this.thingy = context.createDelayNode();
 		this.name = "delay" + this.idx;
-
-		var el = document.createElement('div');
-		el.setAttribute('class', 'node');
-		el.innerHTML = this.name;
-		document.body.appendChild(el);
+		var el = this.createMainEl();
+		var delayN = this.thingy;
 		
-		var delayRange = document.createElement('input');
-		delayRange.setAttribute('type', 'range');
-		delayRange.setAttribute('min', '0');
-		delayRange.setAttribute('max', '0.99');
-		delayRange.setAttribute('step', '0.01');
-		delayRange.setAttribute('value', '0.99');
-		delayRange.setAttribute('onchange', 'nodes[' + this.idx + '].setDelay(this);');
-		el.appendChild(delayRange);
-		this.setDelay(delayRange);
-
-	},
-	setDelay: function(input) {
-		this.thingy.delayTime.value = input.value;
-		return this;
-	} 
+		var setDelayFnc = function(v) { delayN.delayTime.value = v; }; 
+		
+		var delayRange = $('<input>');
+		delayRange.attr({
+			type: 'range',
+			min: '0',
+			max: '0.99',
+			step: '0.01',
+			value: '0.99'
+		});
+		delayRange.on('change', function() {
+			setDelayFnc(this.value)
+		});
+		el.append(delayRange);
+		setDelayFnc(delayRange.val());
+	}
+	
 });
