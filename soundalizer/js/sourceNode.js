@@ -10,6 +10,9 @@ var SourceNode = BaseNode.extend({
 		
 		var el = this.createMainEl();
 		
+		var btnGroupEl = $('<div>');
+		btnGroupEl.addClass('btn-group');
+		
 		var startEl = $('<input>');
 		startEl.attr({
 			type: 'button',
@@ -23,7 +26,7 @@ var SourceNode = BaseNode.extend({
 			startEl.attr('disabled', 'true');
 			bufferSource.gain.value = 1;
 		});
-		el.append(startEl);
+		btnGroupEl.append(startEl);
 		
 		var stopEl = $('<input>');
 		stopEl.attr({
@@ -38,7 +41,8 @@ var SourceNode = BaseNode.extend({
 			stopEl.attr('disabled', 'true');
 			bufferSource.gain.value = 0;
 		});
-		el.append(stopEl);
+		btnGroupEl.append(stopEl);
+		el.append(btnGroupEl);
 		
 		var infoEl = $('<div>');
 		infoEl.html("Drag and drop a sound file to me..");
