@@ -10,22 +10,6 @@ navigator.webkitGetUserMedia('audio', function (stream) {
 var nodes = new Array();
 var context = null;
 
-function doConnect() {
-	var from = document.getElementById('fromNode').value;
-	var to = document.getElementById('toNode').value;
-	nodes[from].connectTo(nodes[to]); 
-}
-
-function doDisconnect() {
-	var from = document.getElementById('fromNode').value;
-	var to = document.getElementById('toNode').value;
-	nodes[from].disconnectFrom(nodes[to]);
-}
-
-function onClickCreate() {
-	doCreate(document.getElementById('createSelect').value);
-}
-
 function doCreate(name) {
 	var node = null;
 	switch(name) {
@@ -55,27 +39,6 @@ function doCreate(name) {
 	if(node != null) {
 		nodes.push(node);
 	}
-	var from = document.getElementById('fromNode');
-	from.innerHTML = "";
-	for(var i in nodes) {
-		if(!(nodes[i] instanceof DestinationNode)) {
-			var optionEl = document.createElement('option');
-			optionEl.innerHTML = nodes[i].name;
-			optionEl.setAttribute('value', nodes[i].idx);
-			from.appendChild(optionEl);
-		}
-	}
-	
-	var to = document.getElementById('toNode');
-	to.innerHTML = "";
-	for(var i in nodes) {
-		if(!(nodes[i] instanceof SourceNode)) {
-			var optionEl = document.createElement('option');
-			optionEl.innerHTML = nodes[i].name;
-			optionEl.setAttribute('value', nodes[i].idx);
-			to.appendChild(optionEl);
-		}
-	}
 }
 
 $(function() {
@@ -84,7 +47,9 @@ $(function() {
 	//some kind fo bug makes audio analyze not kick in if creating destination node directly
 	setTimeout(function() {
 		nodes[0] = new DestinationNode(0);
-		doCreate("source");
+		nodes[1] = new SourceNode(1);
+		nodes[0].el.offset({left: window.innerWidth - 200, top: window.innerHeight/2-100});
+		nodes[1].el.offset({left: 30, top: window.innerHeight/2-100});
 	}, 1000);
 	
 }); 

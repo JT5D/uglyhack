@@ -3,7 +3,7 @@ var ScriptNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createJavaScriptNode(4096, 1, 1);
 		this.thingy.onaudioprocess = function(event) {	};
-		this.name = "script" + this.idx;
+		this.name = "script";
 	    var javaScriptNode = this.thingy;
 		
 	    var el = this.createMainEl(true, true);
