@@ -3,7 +3,7 @@ var DestinationNode = BaseNode.extend({
   		this._super(index);
   		this.thingy = context.createAnalyser();
   		this.thingy.minDecibels = -70;
-  		this.name = "destination" + this.idx;
+  		this.name = "destination";
   		this.createMainEl(false, true);
 		
 		var freqDataTags = new Array();

@@ -27,10 +27,15 @@
 				width:150px;
 				height:150px;
 				padding: 5px; 
-				float: right;
-				margin: 5px;
+				margin: 15px;
 				border: 3px solid rgb(85,85,85);
   				box-shadow: 0px 0px 15px 1px rgb(150, 150, 150);
+  				-webkit-transition: box-shadow 2s;
+				transition: box-shadow 2s;
+			}
+
+			div.node:hover {
+				box-shadow: 0px 0px 25px 5px rgb(120, 120, 120);
 			}
 
 			div.nodedrop {
@@ -42,6 +47,7 @@
   				position: absolute;
 				left: -26px;
 				top: 64px;
+				background-color: rgb(238, 238, 238);
 			}
 			
 			.nodedrag {
@@ -53,6 +59,12 @@
 				position: relative;
 				left: 155px;
 				top: 35px;
+				-webkit-transition: border-color 1s;
+				transition: border-color 1s;
+			}
+
+			.nodedrag:hover {
+				border-color:transparent transparent transparent rgb(255,85,85);
 			}
 			
 			.nodedrag-in {
@@ -77,6 +89,13 @@
 			  	height: 3px;
 			  	background: rgb(50,50,50);
 			  	box-shadow: 0px 0px 15px 1px rgb(150, 150, 150);
+			  	-webkit-transition: background 1s, box-shadow 1s;
+				transition: background 1s, box-shadow 1s;
+			}
+
+			div.line:hover {
+				background: rgb(255,50,50);
+				box-shadow: 0px 0px 25px 5px rgb(255, 150, 150);
 			}
 			
 			body {
@@ -88,7 +107,7 @@
 	</head>
 	
 	<body>
-		<div class="navbar navbar-fixed-top">
+		<div class="navbar navbar-fixed-top" style="z-index: 4;">
 	      <div class="navbar-inner">
 	        <div class="container">
 	          <ul class="nav">
@@ -101,35 +120,17 @@
 				          <b class="caret"></b>
 				    </a>
 				    <ul class="dropdown-menu">
-					      <li><a href="#">Action</a></li>
-					      <li><a href="#">Monkey</a></li>
+					    <li><a href="#" onclick="doCreate(this.innerHTML)">source</a></li>
+						<li><a href="#" onclick="doCreate(this.innerHTML)">biquadFilter</a></li>
+						<li><a href="#" onclick="doCreate(this.innerHTML)">gain</a></li>
+						<li><a href="#" onclick="doCreate(this.innerHTML)">convolver</a></li>
+						<li><a href="#" onclick="doCreate(this.innerHTML)">delay</a></li>
+						<li><a href="#" onclick="doCreate(this.innerHTML)">dynamicscompressor</a></li>
+						<li><a href="#" onclick="doCreate(this.innerHTML)">script</a></li>
 				    </ul>
 				  </li>
 				</ul>
 	      </div>
 	    </div>
-	
-		<div style="float: left;">
-			<div>
-				<select id="createSelect">
-					<option>source</option>
-					<option>biquadFilter</option>
-					<option>gain</option>
-					<option>convolver</option>
-					<option>delay</option>
-					<option>dynamicscompressor</option>
-					<option>script</option>
-				</select>
-				<input type="button" value="Create" onclick="onClickCreate()" class="btn btn-primary"></input>
-			</div>
-			<select id="fromNode">
-			</select>
-			to
-			<select id="toNode">
-				<option value="0">destination</option>
-			</select>
-			<input type="button" value="Connect" onclick="doConnect()" class="btn btn-primary"></input>
-			<input type="button" value="Disconnect" onclick="doDisconnect()" class="btn btn-primary"></input>
-		</div>
 	</body>
 </html>

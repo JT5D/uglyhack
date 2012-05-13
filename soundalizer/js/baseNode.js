@@ -18,9 +18,20 @@ var BaseNode = Class.extend({
 		
 		if(createDrag) {
 			var arrRight = $('<div>');
+			var tempConnectionLine = null;
 			arrRight.draggable({
 				revert: true,
-				snap: '.nodedrop'
+				snap: '.nodedrop',
+				start: function() {
+					tempConnectionLine = thisNode.createConnectionLine(thisNode.el, arrRight, null, null, true)
+				},
+				drag: function() {
+					var linePosData = thisNode.getLinePosData(thisNode.el, arrRight, true);
+					thisNode.updateConnectionLine(tempConnectionLine, linePosData);
+				},
+				stop: function() {
+					tempConnectionLine.remove();
+				}
 			});
 			arrRight.addClass('nodedrag');
 			arrRight.attr('data-nodeIndex', this.idx);
@@ -40,9 +51,12 @@ var BaseNode = Class.extend({
 				drop: function( event, ui ) {
 					var dEl = $(ui.draggable[0]);
 					var dragFromIndex = dEl.attr('data-nodeIndex');
+					var fromN = nodes[dragFromIndex];
+					var toN = nodes[thisNode.idx];
 
+					$('.templine').remove();
 					if(nodes[dragFromIndex].connectTo(thisNode)) {
-						thisNode.createConnectionLine(dragFromIndex,thisNode.idx);
+						thisNode.createConnectionLine(fromN.el,toN.el,fromN.idx,toN.idx, false);
 						thisNode.updateConnectionLines();
 					}
 				}
@@ -89,10 +103,8 @@ var BaseNode = Class.extend({
 		}
 		return s;
 	},
-	createConnectionLine: function(fromIdx, toIdx){
-	    var fromEl = nodes[fromIdx].el;
-		var toEl = nodes[toIdx].el;
-		var linePosData = this.getLinePosData(fromEl, toEl);
+	createConnectionLine: function(fromEl, toEl, fromIdx, toIdx, temp) {
+		var linePosData = this.getLinePosData(fromEl, toEl, temp);
 
 	    var line = $('<div>')
 	        .appendTo('body')
@@ -109,6 +121,16 @@ var BaseNode = Class.extend({
 	        })
 	        .width(linePosData.length)
 	        .offset({left: linePosData.left, top: linePosData.top});
+	    if(temp) {
+	    	line.addClass('templine');
+	    } else {
+	    	line.on('click', function() {
+	    		var fromN = nodes[line.attr('data-fromIdx')];
+				var toN = nodes[line.attr('data-toIdx')];
+				fromN.disconnectFrom(toN);
+				$(this).remove();
+	    	})
+	    }
 
 	    return line;
 	},
@@ -118,18 +140,21 @@ var BaseNode = Class.extend({
 			var line = $(this);
 			var fromEl = nodes[line.attr('data-fromIdx')].el;
 			var toEl = nodes[line.attr('data-toIdx')].el;
-			var linePosData = thisNode.getLinePosData(fromEl, toEl);
+			var linePosData = thisNode.getLinePosData(fromEl, toEl, false);
 
-			line.css({
-	          'webkit-transform': linePosData.transform,
-	          '-moz-transform': linePosData.transform,
-	          'transform': linePosData.transform
-	        })
-	        .width(linePosData.length)
-	        .offset({left: linePosData.left, top: linePosData.top});
+			thisNode.updateConnectionLine(line, linePosData);
 		});
 	},
-	getLinePosData: function(fromEl, toEl) {
+	updateConnectionLine: function(line, linePosData) {
+		line.css({
+          'webkit-transform': linePosData.transform,
+          '-moz-transform': linePosData.transform,
+          'transform': linePosData.transform
+        })
+        .width(linePosData.length)
+        .offset({left: linePosData.left, top: linePosData.top});
+	},
+	getLinePosData: function(fromEl, toEl, temp) {
 		var fromElPos = fromEl.offset();
 		var toElPos = toEl.offset();
 
@@ -137,10 +162,20 @@ var BaseNode = Class.extend({
 		var fromElHeight = fromEl.height();
 		var toElHeight = toEl.height();
 
-		var x1 = fromElPos.left+fromElWidth+30;
-		var y1 = fromElPos.top+fromElHeight/2+5;
-		var x2 = toElPos.left-22;
-		var y2 = toElPos.top+toElHeight/2+5;
+		var x1 = fromElPos.left+fromElWidth;
+		var y1 = fromElPos.top+fromElHeight/2;
+		var x2 = toElPos.left;
+		var y2 = toElPos.top+toElHeight/2;
+
+		if(temp) {
+			x2 += 5;
+			y2 += 20;
+		} else {
+			x1 += 10;
+			y1 += 5;
+			x2 -= 22;
+			y2 += 5;			
+		}
 
 		var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;	
 		return {

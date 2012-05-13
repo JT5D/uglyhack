@@ -2,7 +2,7 @@ var BiquadFilterNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
 		this.thingy = context.createBiquadFilter();
-		this.name = "biquadFilter" + this.idx;
+		this.name = "biquadFilter";
 		var el = this.createMainEl(true, true);
   		var biqN = this.thingy;
   		

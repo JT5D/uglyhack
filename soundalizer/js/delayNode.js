@@ -2,7 +2,7 @@ var DelayNode = BaseNode.extend({
   	init: function(index){
 	    this._super(index);
 		this.thingy = context.createDelayNode();
-		this.name = "delay" + this.idx;
+		this.name = "delay";
 		var el = this.createMainEl(true, true);
 		var delayN = this.thingy;
 		

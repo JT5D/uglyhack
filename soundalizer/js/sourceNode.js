@@ -3,7 +3,7 @@ var SourceNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createBufferSource();
 		this.thingy.loop = true;
-		this.name = "source" + this.idx;
+		this.name = "source";
 	    
 		var bufferSource = this.thingy;
 		var thisNode = this;
@@ -63,6 +63,7 @@ var SourceNode = BaseNode.extend({
 			        context.decodeAudioData(e.target.result, function(buffer) {
 			        	bufferSource.buffer = buffer;
 			        }, function(e) {
+			        	alert('could not play that audio');
 			            console.log(e);
 			            return;
 			        });

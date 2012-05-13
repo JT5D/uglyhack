@@ -2,7 +2,7 @@ var GainNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
 		this.thingy = context.createGainNode();
-		this.name = "gain" + this.idx;
+		this.name = "gain";
 	    var el = this.createMainEl(true, true);
 	    var gainN = this.thingy;
 	    
