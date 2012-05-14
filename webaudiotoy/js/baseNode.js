@@ -86,9 +86,12 @@ var BaseNode = Class.extend({
 			el.append(dropEl);
 		}
 
-		
+		var body = $('<div>');
+		body.addClass('nodebody');
+		el.append(body);
+				
 		$('body').append(el);
-		return el;
+		return body;
   	},
   	connectTo: function(node) {
   		if(this.myConnections.indexOf(node) != -1) {
