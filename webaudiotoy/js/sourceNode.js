@@ -8,7 +8,7 @@ var SourceNode = BaseNode.extend({
 		var bufferSource = this.thingy;
 		var thisNode = this;
 		
-		var el = this.createMainEl(true, false);
+		var el = this.createMainEl(true, false, true);
 		
 		var btnGroupEl = $('<div>');
 		btnGroupEl.addClass('btn-group');

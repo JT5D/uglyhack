@@ -28,7 +28,7 @@ function doCreate(name) {
 		case "delay":
 			node = new DelayNode(nodes.length);
 			break;
-		case "dynamicscompressor":
+		case "dyncompr":
 			node = new DynamicsCompressorNode(nodes.length);
 			break;
 		case "script":
@@ -51,5 +51,4 @@ $(function() {
 		nodes[0].el.offset({left: window.innerWidth - 200, top: window.innerHeight/2-100});
 		nodes[1].el.offset({left: 30, top: window.innerHeight/2-100});
 	}, 1000);
-	
 }); 

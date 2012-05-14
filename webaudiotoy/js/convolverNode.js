@@ -3,7 +3,7 @@ var ConvolverNode = BaseNode.extend({
   		this._super(index);
   		this.thingy = context.createConvolver();
   		this.name = "convolver";
-  		var el = this.createMainEl(true, true);
+  		var el = this.createMainEl(true, true, true);
   		var convN = this.thingy;
   		
   		var setConvFnc = function(v) {
