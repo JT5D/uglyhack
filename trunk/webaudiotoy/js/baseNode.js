@@ -3,12 +3,10 @@ var BaseNode = Class.extend({
     	this.idx = index;
     	this.myConnections = new Array();
   	},
-  	createMainEl: function(createDrag, createDrop) {
+  	createMainEl: function(createDrag, createDrop, createclose) {
   		var thisNode = this;
   		var el = this.el = $('<div>');
 		el.addClass('node');
-		el.addClass('hero-unit');
-		el.html(this.name);
 		el.draggable({
 			stack: 'div.node',
 			drag: function() {
@@ -16,36 +14,60 @@ var BaseNode = Class.extend({
 			},
 		});
 		
+		//create header
+		var header = $('<div>');
+		header.addClass('nodeheader');
+		header.html(this.name);
+		el.append(header);
+		if(createclose) {
+			var closeBtn = $('<div>');
+			closeBtn.addClass('close');
+			closeBtn.html('x');
+			closeBtn.on('click', function() {
+				for(var i in thisNode.myConnections) {
+					thisNode.disconnectFrom(thisNode.myConnections[i]);
+				}
+				$('.line').each(function() {
+					var line = $(this);
+					var lineFromIdx = line.attr('data-fromIdx');
+					var lineToIdx = line.attr('data-toIdx');
+					if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
+						line.remove();
+					}
+					thisNode.el.remove();
+				});
+			});
+		}
+		header.append(closeBtn);
+		
 		if(createDrag) {
-			var arrRight = $('<div>');
+			var dragEl = $('<div>');
 			var tempConnectionLine = null;
-			arrRight.draggable({
+			dragEl.draggable({
 				revert: true,
 				snap: '.nodedrop',
 				start: function() {
-					tempConnectionLine = thisNode.createConnectionLine(thisNode.el, arrRight, null, null, true)
+					tempConnectionLine = thisNode.createConnectionLine(thisNode.el, dragEl, null, null, true)
 				},
 				drag: function() {
-					var linePosData = thisNode.getLinePosData(thisNode.el, arrRight, true);
+					var linePosData = thisNode.getLinePosData(thisNode.el, dragEl, true);
 					thisNode.updateConnectionLine(tempConnectionLine, linePosData);
 				},
 				stop: function() {
 					tempConnectionLine.remove();
 				}
 			});
-			arrRight.addClass('nodedrag');
-			arrRight.attr('data-nodeIndex', this.idx);
-			el.append(arrRight);
-			
-			var arrRightIn = $('<div>');
-			arrRightIn.addClass('nodedrag-in');
-			arrRight.append(arrRightIn);
+			dragEl.addClass('nodedrag');
+			dragEl.addClass('nodehandle');
+			dragEl.attr('data-nodeIndex', this.idx);
+			el.append(dragEl);
 		}
 
 		if(createDrop) {
 			
 			var dropEl = $('<div>');
 			dropEl.addClass('nodedrop');
+			dropEl.addClass('nodehandle');
 			dropEl.droppable({
 				accept: ".nodedrag",
 				drop: function( event, ui ) {
@@ -92,16 +114,6 @@ var BaseNode = Class.extend({
 		var arr = new Array();
 		arr[0] = this.thingy;
 		return arr;
-	},
-  	toString: function() {
-		var s = this.name + " to ";
-		for(var i in this.myConnections) {
-			if(i > 0) {
-				s += ", ";
-			}
-			s += this.myConnections[i].name;
-		}
-		return s;
 	},
 	createConnectionLine: function(fromEl, toEl, fromIdx, toIdx, temp) {
 		var linePosData = this.getLinePosData(fromEl, toEl, temp);
@@ -168,13 +180,10 @@ var BaseNode = Class.extend({
 		var y2 = toElPos.top+toElHeight/2;
 
 		if(temp) {
-			x2 += 5;
-			y2 += 20;
+			x2 += 10;
 		} else {
-			x1 += 10;
-			y1 += 5;
-			x2 -= 22;
-			y2 += 5;			
+			x1 += 25;
+			x2 -= 15;
 		}
 
 		var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;	
