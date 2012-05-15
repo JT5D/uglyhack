@@ -33,18 +33,20 @@ var BaseNode = Class.extend({
 			closeBtn.addClass('close');
 			closeBtn.html('x');
 			closeBtn.on('click', function() {
-				for(var i in thisNode.myConnections) {
-					thisNode.disconnectFrom(thisNode.myConnections[i]);
-				}
-				$('.line').each(function() {
-					var line = $(this);
-					var lineFromIdx = line.attr('data-fromIdx');
-					var lineToIdx = line.attr('data-toIdx');
-					if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
-						line.remove();
+				el.fadeOut(1500, function() {
+					for(var i in thisNode.myConnections) {
+						thisNode.disconnectFrom(thisNode.myConnections[i]);
 					}
+					$('.line').each(function() {
+						var line = $(this);
+						var lineFromIdx = line.attr('data-fromIdx');
+						var lineToIdx = line.attr('data-toIdx');
+						if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
+							line.remove();
+						}
+					});
+					thisNode.el.remove();
 				});
-				thisNode.el.remove();
 			});
 		}
 		header.append(closeBtn);
@@ -106,9 +108,10 @@ var BaseNode = Class.extend({
 		var body = $('<div>');
 		body.addClass('nodebody');
 		el.append(body);
-				
 		
 		el.offset({top: 100, left: 100});
+		el.hide();
+		el.fadeIn(2000);
 		return body;
   	},
   	connectTo: function(node) {
