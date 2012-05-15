@@ -12,6 +12,7 @@ var SourceNode = BaseNode.extend({
 		
 		var btnGroupEl = $('<div>');
 		btnGroupEl.addClass('btn-group');
+		btnGroupEl.css('width', '100%');
 		
 		var startEl = $('<input>');
 		startEl.attr({
@@ -21,6 +22,7 @@ var SourceNode = BaseNode.extend({
 		});
 		startEl.addClass('btn');
 		startEl.addClass('btn-primary');
+		startEl.css('width', '50%');
 		startEl.click(function() {
 			stopEl.removeAttr('disabled');
 			startEl.attr('disabled', 'true');
@@ -36,6 +38,7 @@ var SourceNode = BaseNode.extend({
 		});
 		stopEl.addClass('btn');
 		stopEl.addClass('btn-primary');
+		stopEl.css('width', '50%');
 		stopEl.click(function() {
 			startEl.removeAttr('disabled');
 			stopEl.attr('disabled', 'true');
