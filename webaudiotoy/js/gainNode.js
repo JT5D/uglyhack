@@ -6,22 +6,22 @@ var GainNode = BaseNode.extend({
 	    var el = this.createMainEl(true, true, true);
 	    var gainN = this.thingy;
 	    
-	    var setVolumeFnc = function(el, valueObj) {
-			var fraction = valueObj.value / 100;
-			// Let's use an x*x curve (x-squared) since simple linear (x) does not sound as good.
-			gainN.gain.value = fraction * fraction;
+	    var setVolumeFnc = function(el, v) {
+			gainN.gain.value = v.value * v.value;
+			gainLabel.html('Volume ' + v.value);
 		} 
 		
-	    var defaultVal = 100;
 		var gainRange = $('<div>');
+		var gainLabel = $('<p>');
 		gainRange.slider({
-			min: '0',
-			max: '200',
-			value: 100,
+			min: 0,
+			max: 3,
+			value: 1,
+			step: 0.01,
 			slide: setVolumeFnc
 		});
-		el.append($('<p>').html('Volume'));
+		el.append(gainLabel);
 		el.append(gainRange);
-		setVolumeFnc(null, defaultVal);
+		setVolumeFnc(null, {value: 1});
 	}
 });

@@ -6,21 +6,23 @@ var DelayNode = BaseNode.extend({
 		var el = this.createMainEl(true, true, true);
 		var delayN = this.thingy;
 		
-		var setDelayFnc = function(v) { delayN.delayTime.value = v; }; 
+		var setDelayFnc = function(el, v) { 
+			delayN.delayTime.value = v.value;
+			delayLabel.html('Delay ' + v.value + ' s');
+		}; 
 		
-		var delayRange = $('<input>');
-		delayRange.attr({
-			type: 'range',
-			min: '0',
-			max: '0.99',
-			step: '0.01',
-			value: '0.99'
+		var delayRange = $('<div>');
+		var delayLabel = $('<p>');
+		delayRange.slider({
+			min: 0,
+			max: 0.99,
+			step: 0.01,
+			value: 0.8,
+			slide: setDelayFnc
 		});
-		delayRange.on('change', function() {
-			setDelayFnc(this.value)
-		});
+		el.append(delayLabel);
 		el.append(delayRange);
-		setDelayFnc(delayRange.val());
+		setDelayFnc(null, {value:0.8});
 	}
 	
 });
