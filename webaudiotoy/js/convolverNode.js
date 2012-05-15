@@ -3,7 +3,7 @@ var ConvolverNode = BaseNode.extend({
   		this._super(index);
   		this.thingy = context.createConvolver();
   		this.name = "convolver";
-  		var el = this.createMainEl(true, true, true);
+  		var el = this.createMainEl(true, true, true, 106);
   		var convN = this.thingy;
   		
   		var setConvFnc = function(v) {
@@ -46,6 +46,7 @@ var ConvolverNode = BaseNode.extend({
 		sEl.append($('<option>').html("spreader50-65ms"));
 		sEl.append($('<option>').html("wildecho"));
 
+		el.append($('<p>').html('Impulse response'));
 		el.append(sEl);
 		setConvFnc(sEl.val());
   	}

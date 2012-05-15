@@ -3,7 +3,7 @@ var BiquadFilterNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createBiquadFilter();
 		this.name = "biquadFilter";
-		var el = this.createMainEl(true, true, true, 180);
+		var el = this.createMainEl(true, true, true, 231);
   		var biqN = this.thingy;
   		
   		var setTypeFnc = function(v) {
@@ -44,7 +44,10 @@ var BiquadFilterNode = BaseNode.extend({
 		selectEl.on('change', function() {
 			setTypeFnc(this.value);
 		});
+		el.append($('<p>').html('Type'));
 		el.append(selectEl);
+		el.append($('<br/>'));
+		el.append($('<br/>'));
 		setTypeFnc(selectEl.val());
 		
 		var freqRange = $('<div>');
@@ -58,6 +61,7 @@ var BiquadFilterNode = BaseNode.extend({
 		});
 		el.append(freqLabel);
 		el.append(freqRange);
+		el.append($('<br/>'));
 		setFrequencyFnc(null, {value:0.8});
 		
 		var qRange = $('<div>');
