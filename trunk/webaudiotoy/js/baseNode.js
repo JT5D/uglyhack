@@ -3,10 +3,14 @@ var BaseNode = Class.extend({
     	this.idx = index;
     	this.myConnections = new Array();
   	},
-  	createMainEl: function(createDrag, createDrop, createclose) {
+  	createMainEl: function(createDrag, createDrop, createclose, elHeight) {
   		var thisNode = this;
   		var el = this.el = $('<div>');
 		el.addClass('node');
+		if(elHeight != undefined) {
+			el.css('height', elHeight)
+		} 
+		
 		el.draggable({
 			stack: 'div.node',
 			drag: function() {
@@ -34,8 +38,8 @@ var BaseNode = Class.extend({
 					if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
 						line.remove();
 					}
-					thisNode.el.remove();
 				});
+				thisNode.el.remove();
 			});
 		}
 		header.append(closeBtn);
@@ -91,6 +95,7 @@ var BaseNode = Class.extend({
 		el.append(body);
 				
 		$('body').append(el);
+		el.offset({top: 100, left: 100});
 		return body;
   	},
   	connectTo: function(node) {

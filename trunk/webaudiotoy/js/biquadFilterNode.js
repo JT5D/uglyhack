@@ -3,7 +3,7 @@ var BiquadFilterNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createBiquadFilter();
 		this.name = "biquadFilter";
-		var el = this.createMainEl(true, true, true);
+		var el = this.createMainEl(true, true, true, 180);
   		var biqN = this.thingy;
   		
   		var setTypeFnc = function(v) {
@@ -20,18 +20,22 @@ var BiquadFilterNode = BaseNode.extend({
   			}
   		};
   		
-  		var setFrequencyFnc = function(v) {
-  			var minValue = 40;
+  		var setFrequencyFnc = function(el, v) {
+  			var minValue = 30;
   			var maxValue = context.sampleRate / 2;
   			// Logarithm (base 2) to compute how many octaves fall in the range.
   			var numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
   			// Compute a multiplier from 0 to 1 based on an exponential scale.
-  			var multiplier = Math.pow(2, numberOfOctaves * (v - 1.0));
+  			var multiplier = Math.pow(2, numberOfOctaves * (v.value - 1.0));
   			// Get back to the frequency value between min and max.
   			biqN.frequency.value = maxValue * multiplier;
+  			freqLabel.html('Frequency ' + Math.floor(biqN.frequency.value) + ' Hz');
   		};
   		
-  		var setQFnc = function(v) { biqN.Q.value = v * 30; };
+  		var setQFnc = function(el, v) { 
+  			biqN.Q.value = v.value * 30; 
+  			qLabel.html('Quality ' + Math.floor(biqN.Q.value));
+  		};
 	    		
 		var selectEl = $('<select>');
 		selectEl.append($('<option>').html("lowpass"));
@@ -43,32 +47,30 @@ var BiquadFilterNode = BaseNode.extend({
 		el.append(selectEl);
 		setTypeFnc(selectEl.val());
 		
-		var freqRange = $('<input>');
-		freqRange.attr({
-			type: 'range',
-			min: '0',
-			max: '1',
-			step: '0.01',
-			value: '1'
+		var freqRange = $('<div>');
+		var freqLabel = $('<p>');
+		freqRange.slider({
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: 0.8,
+			slide: setFrequencyFnc
 		});
-		freqRange.on('change', function() {
-			setFrequencyFnc(this.value)
-		});
+		el.append(freqLabel);
 		el.append(freqRange);
-		setFrequencyFnc(freqRange.val());
+		setFrequencyFnc(null, {value:0.8});
 		
-		var qRange = $('<input>');
-		qRange.attr({
-			type: 'range',
-			min: '0',
-			max: '1',
-			step: '0.01',
-			value: '0'
+		var qRange = $('<div>');
+		var qLabel = $('<p>');
+		qRange.slider({
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: 0.2,
+			slide: setQFnc
 		});
-		qRange.on('change', function() {
-			setQFnc(this.value)
-		});
+		el.append(qLabel);
 		el.append(qRange);
-		setQFnc(qRange.val());
+		setQFnc(null, {value:0.2});
 	}	
 });
