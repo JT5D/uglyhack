@@ -3,16 +3,21 @@ var BaseNode = Class.extend({
     	this.idx = index;
     	this.myConnections = new Array();
   	},
-  	createMainEl: function(createDrag, createDrop, createclose, elHeight) {
+  	createMainEl: function(createDrag, createDrop, createclose, elHeight, elWidth) {
   		var thisNode = this;
   		var el = this.el = $('<div>');
+  		$('body').append(el);
 		el.addClass('node');
 		if(elHeight != undefined) {
 			el.css('height', elHeight)
 		} 
+		if(elWidth != undefined) {
+			el.css('width', elWidth)
+		} 
 		
 		el.draggable({
 			stack: 'div.node',
+			containment: 'parent',
 			drag: function() {
 				thisNode.updateConnectionLines();
 			},
@@ -64,6 +69,10 @@ var BaseNode = Class.extend({
 			dragEl.addClass('nodedrag');
 			dragEl.addClass('nodehandle');
 			dragEl.attr('data-nodeIndex', this.idx);
+			dragEl.offset({
+				top: el.height()/2-39,	
+				left: el.width()+8
+			});
 			el.append(dragEl);
 		}
 
@@ -72,6 +81,10 @@ var BaseNode = Class.extend({
 			var dropEl = $('<div>');
 			dropEl.addClass('nodedrop');
 			dropEl.addClass('nodehandle');
+			dropEl.offset({
+				top: el.height()/2-10,	
+				left: -28
+			});
 			dropEl.droppable({
 				accept: ".nodedrag",
 				drop: function( event, ui ) {
@@ -94,7 +107,7 @@ var BaseNode = Class.extend({
 		body.addClass('nodebody');
 		el.append(body);
 				
-		$('body').append(el);
+		
 		el.offset({top: 100, left: 100});
 		return body;
   	},

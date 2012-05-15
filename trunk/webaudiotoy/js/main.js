@@ -44,6 +44,8 @@ function doCreate(name) {
 $(function() {
 	context = new (window.AudioContext || window.webkitAudioContext)();
 	
+	$('body').css('height', window.innerHeight - 40);
+	
 	//some kind fo bug makes audio analyze not kick in if creating destination node directly
 	setTimeout(function() {
 		nodes[0] = new DestinationNode(0);
