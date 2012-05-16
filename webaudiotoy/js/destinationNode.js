@@ -12,12 +12,21 @@ var DestinationNode = BaseNode.extend({
 		this.thingy.connect(processor);
 	    processor.connect(context.destination);
 	    
+	    var visMode = false;
 	    var soundVisualizer = new SoundVisualizer(el, 150, 120);
+	    soundVisualizer.canvas.on('click', function() {
+	    	visMode = !visMode;
+	    })
 
 	    processor.onaudioprocess = function(e) {
-		    var freqByteData = new Uint8Array(analyzer.frequencyBinCount);
-		    analyzer.getByteFrequencyData(freqByteData);
-		    soundVisualizer.visualize(freqByteData);
+		    var data = new Uint8Array(analyzer.frequencyBinCount);
+		    if(visMode) {
+			    analyzer.getByteFrequencyData(data);
+			    soundVisualizer.visualizeFrequencyData(data);
+		    } else {
+			    analyzer.getByteTimeDomainData(data);
+			    soundVisualizer.visualizeTimeDomainData(data);
+		    }
 		};
   	},
   	getConnections: function() {

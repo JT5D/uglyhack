@@ -5,14 +5,17 @@ var ConvolverNode = BaseNode.extend({
   		this.name = "convolver";
   		var el = this.createMainEl(true, true, true, 106);
   		var convN = this.thingy;
+  		var thisNode = this;
   		
   		var setConvFnc = function(v) {
+  			thisNode.loader.fadeIn('fast');
   			var request = new XMLHttpRequest();
   		    request.open("GET", "conv/" + v + ".wav", true);
   		    request.responseType = "arraybuffer";
   		    
   		    request.onload = function() {
   		    	convN.buffer = context.createBuffer(request.response, false);
+  		    	thisNode.loader.fadeOut('fast');
   		    }
   		    request.send();
   		};

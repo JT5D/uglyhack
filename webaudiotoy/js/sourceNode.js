@@ -59,7 +59,8 @@ var SourceNode = BaseNode.extend({
 		el[0].addEventListener('drop', function (evt) {
 		    evt.stopPropagation();
 		    evt.preventDefault();
-
+		    thisNode.loader.fadeIn('fast');
+		    
 		    var reader = new FileReader();
 		    reader.onload = function(e) {
 		    	if(context.decodeAudioData) {
@@ -79,6 +80,7 @@ var SourceNode = BaseNode.extend({
 	        		info2El.show('fast');
 	        	}
 	        	infoEl.hide('fast');
+	        	thisNode.loader.fadeOut('fast');
 		    }
 		    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
 		}, false);

@@ -23,6 +23,13 @@ var BaseNode = Class.extend({
 			},
 		});
 		
+		//create loader
+		var loaderImg = $('<img>').attr('src', 'img/ajax-loader.gif').addClass('loaderImg');;
+		this.loader = $('<div>').addClass('loaderOverlay');
+		this.loader.append(loaderImg);
+		el.append(this.loader);
+		this.loader.hide();
+		
 		//create header
 		var header = $('<div>');
 		header.addClass('nodeheader');
@@ -33,18 +40,20 @@ var BaseNode = Class.extend({
 			closeBtn.addClass('close');
 			closeBtn.html('x');
 			closeBtn.on('click', function() {
+				$('.line').each(function() {
+					var line = $(this);
+					var lineFromIdx = line.attr('data-fromIdx');
+					var lineToIdx = line.attr('data-toIdx');
+					if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
+						line.fadeOut(1500, function() {
+							line.remove();
+						});
+					}
+				});
 				el.fadeOut(1500, function() {
 					for(var i in thisNode.myConnections) {
 						thisNode.disconnectFrom(thisNode.myConnections[i]);
 					}
-					$('.line').each(function() {
-						var line = $(this);
-						var lineFromIdx = line.attr('data-fromIdx');
-						var lineToIdx = line.attr('data-toIdx');
-						if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
-							line.remove();
-						}
-					});
 					thisNode.el.remove();
 				});
 			});
