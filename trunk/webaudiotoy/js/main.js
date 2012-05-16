@@ -10,41 +10,12 @@ navigator.webkitGetUserMedia('audio', function (stream) {
 var nodes = new Array();
 var context = null;
 
-function doCreate(name) {
-	var node = null;
-	switch(name) {
-		case "source":
-			node = new SourceNode(nodes.length);
-			break;
-		case "biquadFilter":
-			node = new BiquadFilterNode(nodes.length);
-			break;
-		case "gain":
-			node = new GainNode(nodes.length);
-			break;
-		case "convolver":
-			node = new ConvolverNode(nodes.length);
-			break;
-		case "delay":
-			node = new DelayNode(nodes.length);
-			break;
-		case "dyncompr":
-			node = new DynamicsCompressorNode(nodes.length);
-			break;
-		case "script":
-			node = new ScriptNode(nodes.length);
-			break;
-			
-	}
-	if(node != null) {
-		nodes.push(node);
-	}
-}
-
 $(function() {
 	
 	$('body').css('height', window.innerHeight - 40);
-	
+	$('.itemCreator').draggable({
+		containment: 'parent'
+	})
 	try {
 		context = new (window.AudioContext || window.webkitAudioContext)();
 	} catch(e) {
@@ -58,10 +29,8 @@ $(function() {
 		setTimeout(function() {
 			nodes[0] = new DestinationNode(0);
 			nodes[1] = new SourceNode(1);
-			nodes[2] = new BiquadFilterNode(2);
 			nodes[0].el.offset({left: window.innerWidth - 200, top: window.innerHeight/2-150});
-			nodes[1].el.offset({left: 30, top: window.innerHeight/2-100});
-			nodes[2].el.offset({left: window.innerWidth/2-70, top: window.innerHeight/2-200});
+			nodes[1].el.offset({left: 230, top: window.innerHeight/2-100});
 		}, 1000);
 	}
 }); 
