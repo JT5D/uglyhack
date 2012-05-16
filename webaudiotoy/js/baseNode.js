@@ -33,7 +33,8 @@ var BaseNode = Class.extend({
 		//create header
 		var header = $('<div>');
 		header.addClass('nodeheader');
-		header.html(this.name);
+		header.append($('<i class="' + this.icon + '">'));
+		header.append('&nbsp;' + this.name);
 		el.append(header);
 		if(createclose) {
 			var closeBtn = $('<div>');
@@ -172,8 +173,11 @@ var BaseNode = Class.extend({
 	    	line.on('click', function() {
 	    		var fromN = nodes[line.attr('data-fromIdx')];
 				var toN = nodes[line.attr('data-toIdx')];
-				fromN.disconnectFrom(toN);
-				$(this).remove();
+				line.fadeOut(1000, function() {
+					fromN.disconnectFrom(toN);
+					$(this).remove();
+				});
+				
 	    	})
 	    }
 

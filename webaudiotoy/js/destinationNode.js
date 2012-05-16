@@ -2,8 +2,8 @@ var DestinationNode = BaseNode.extend({
   	init: function(index){
   		this._super(index);
   		this.thingy = context.createAnalyser();
-  		//this.thingy.minDecibels = -70;
-  		this.name = "destination";
+  		this.icon = "icon-volume-up";
+  		this.name = "Output";
   		var el = this.createMainEl(false, true, false);
   		el.css('margin', 0);
 		

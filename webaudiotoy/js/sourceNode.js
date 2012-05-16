@@ -3,7 +3,8 @@ var SourceNode = BaseNode.extend({
 		this._super(index);
 		this.thingy = context.createBufferSource();
 		this.thingy.loop = true;
-		this.name = "source";
+		this.name = "File";
+		this.icon = "icon-file";
 	    
 		var bufferSource = this.thingy;
 		var thisNode = this;

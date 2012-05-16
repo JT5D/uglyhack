@@ -2,7 +2,8 @@ var DynamicsCompressorNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
 		this.thingy = context.createDynamicsCompressor();
-		this.name = "dyncompr";
+		this.name = "Dynamic Compr";
+		this.icon = "icon-bullhorn";
 		var el = this.createMainEl(true, true, true, 207);
 		var dynCmpN = this.thingy;
 		

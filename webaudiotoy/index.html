@@ -36,7 +36,7 @@
 				-moz-background-clip: padding-box;
 				background-clip: padding-box;
 
-				width:150px;
+				width: 150px;
 				height:150px;
 				margin: 15px;
 				-webkit-transition: box-shadow 2s;
@@ -144,6 +144,15 @@
 				left: calc(50% - 16px);
 			}
 			
+			.itemCreator {
+				padding: 8px 0; 
+				width: 190px; 
+				top: 20px; 
+				left: 20px; 
+				position: relative;
+				cursor: move;
+			}
+			
 			.navbar {
 				box-shadow: 0 0 68px 6px rgba(0, 0, 0, 0.5);
 			}
@@ -193,24 +202,9 @@
 	<body>
 		<div class="navbar navbar-fixed-top">
 	      <div class="navbar-inner">
-	        <div class="container">
+	        <div class="container-fluid">
           	  <a class="brand" href="#">WebAudioToy</a>
 				<ul class="nav pull-right">
-				  <li class="dropdown">
-				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				          Create Nodes
-				          <b class="caret"></b>
-				    </a>
-				    <ul class="dropdown-menu">
-					    <li><a href="#" onclick="doCreate(this.innerHTML)">source</a></li>
-						<li><a href="#" onclick="doCreate(this.innerHTML)">biquadFilter</a></li>
-						<li><a href="#" onclick="doCreate(this.innerHTML)">gain</a></li>
-						<li><a href="#" onclick="doCreate(this.innerHTML)">convolver</a></li>
-						<li><a href="#" onclick="doCreate(this.innerHTML)">delay</a></li>
-						<li><a href="#" onclick="doCreate(this.innerHTML)">dyncompr</a></li>
-						<li><a href="#" onclick="doCreate(this.innerHTML)">script</a></li>
-				    </ul>
-				  </li>
 				  <li>
 				  	<a data-toggle="modal" href="#aboutBox">About</a>
 				  </li>
@@ -218,6 +212,65 @@
 		      </div>
 		    </div>
 		 </div>
+		 <div class="well itemCreator">
+	        <ul class="nav nav-list">
+	  			<li class="nav-header">
+	  				Audio sources
+	  			</li>
+	  			<li>
+	    			<a href="#" onclick="nodes.push(new SourceNode(nodes.length));">
+	    				<i class="icon-file"></i>
+	    				File
+	    			</a>
+	    			<p>
+	    				<i class="icon-user"></i>
+	    				Microphone
+	    			</p>
+	    		</li>
+	  			<li class="nav-header">
+	  				Simple filters
+	  			</li>
+	  			<li>
+	    			<a href="#" onclick="nodes.push(new DelayNode(nodes.length));">
+	    				<i class="icon-pause"></i>
+	    				Delay
+	    			</a>
+	    		</li>
+	    		<li>
+	    			<a href="#" onclick="nodes.push(new GainNode(nodes.length));">
+	    				<i class="icon-plus"></i>
+	    				Gain
+	    			</a>
+	    		</li>
+	    		<li>
+	    			<a href="#" onclick="nodes.push(new BiquadFilterNode(nodes.length));">
+	    				<i class="icon-signal"></i>
+	    				Pass
+	    			</a>
+	    		</li>
+	  			<li class="nav-header">
+	  				Advanced filters
+	  			</li>
+	  			<li>
+	    			<a href="#" onclick="nodes.push(new ConvolverNode(nodes.length));">
+	    				<i class="icon-random"></i>
+	    				Convolver
+	    			</a>
+	    		</li>
+	    		<li>
+	    			<a href="#" onclick="nodes.push(new DynamicsCompressorNode(nodes.length));">
+	    				<i class="icon-bullhorn"></i>
+	    				Dynamic Compression
+	    			</a>
+	    		</li>
+	    		<li>
+	    			<a href="#" onclick="nodes.push(new ScriptNode(nodes.length));">
+	    				<i class="icon-filter"></i>
+	    				Javascript
+	    			</a>
+	    		</li>
+	  		</ul>
+	  	</div>
 		 <div class="container">
 	    	<div id="aboutBox" class="modal hide fade">
 	            <div class="modal-header">
