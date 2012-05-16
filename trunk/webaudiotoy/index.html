@@ -157,7 +157,13 @@
 				box-shadow: 0 0 68px 6px rgba(0, 0, 0, 0.5);
 			}
 			
-			div.navbar a.brand, 
+			div.navbar a.brand {
+				color: rgb(255, 255, 200);
+				text-shadow: 0px 0px 9px rgba(255, 255, 255, 1);
+				-webkit-transition: color 1s;
+				transition: color 1s;
+			}
+
 			div.navbar > div.navbar-inner > div.container > ul.nav > li.dropdown > a.dropdown-toggle,
 			div.navbar > div.navbar-inner > div.container > ul.nav > li > a {
 				color: rgb(200, 200, 200);
@@ -191,6 +197,10 @@
 		    select {
 		    	width: 100%;
 		    }
+
+		    a[rel=tooltip] {
+		    	color: rgb(51, 51, 51);
+		    }
 		    
 		    canvas {
 		    	-webkit-border-radius: 6px;
@@ -203,7 +213,7 @@
 		<div class="navbar navbar-fixed-top">
 	      <div class="navbar-inner">
 	        <div class="container-fluid">
-          	  <a class="brand" href="#">WebAudioToy</a>
+          	  <a class="brand" href="#" rel="tooltip" title="Is the shit!">WebAudioToy</a>
 				<ul class="nav pull-right">
 				  <li>
 				  	<a data-toggle="modal" href="#aboutBox">About</a>
@@ -279,10 +289,20 @@
 	            </div>
 	            <div class="modal-body">
 		            <h4>Made by</h4>
-		            <p>Daniel Pettersson</p>
+		            <p>Daniel Pettersson <a href="https://twitter.com/#!/DanielPettersso">@DanielPettersso</a> <a href="mailto:daniel.g.pettersson@gmail.com">daniel.g.pettersson@gmail.com</a></p>
 		
-		            <h4>With stuff borrowed from</h4>
-		            <p>A lot of peoples...</p>
+		            <h4>With stuff from</h4>
+		            <p>
+		            	John Resig - <a href="http://ejohn.org/blog/simple-javascript-inheritance/">Simple JavaScript Inheritance</a><br/>
+		            	Monkey & Crow - <a href="http://monkeyandcrow.com/blog/drawing_lines_with_css3/">Drawing Lines with CSS3</a><br/>
+		            	Twitter - <a href="http://twitter.github.com/bootstrap/">Bootstrap</a><br/>
+		            	jQuery Foundation - <a href="http://jquery.org">jQuery and jQuery UI</a><br/>
+		            	Google - <a href="http://www.google.com/webfonts">Webfonts</a>
+		            </p>
+		            <h4>Code at</h4>
+		            <p>
+		            	<a href="http://code.google.com/p/uglyhack/">Google code</a>
+		            </p>
 	            </div>
 	            <div class="modal-footer">
 	            	<a href="#" class="btn" data-dismiss="modal" >Close</a>
@@ -296,6 +316,28 @@
 	            <div class="modal-body">
 		            <h4>No Web Audio API</h4>
 		            <p>Seems your browser has no support for Web Audio. Try with a recent Chrome, or maybe Safari or some other Webkit based browser.</p>
+	            </div>
+	            <div class="modal-footer">
+	            	<a href="#" class="btn" data-dismiss="modal" >Close</a>
+	            </div>
+          	</div>
+          	<div id="firstTimeBox" class="modal hide fade">
+	            <div class="modal-header">
+	              	<button class="close" data-dismiss="modal">&times;</button>
+	              	<h3>What is this?</h3>
+	            </div>
+	            <div class="modal-body">
+		            <h4>Web Audio API</h4>
+		            <p>This is kind of a toy or explorer thing which lets you play with Web Audio. Which can play audio and apply different kinds of effects.</p>
+		            <h4>How do I use it?</h4>
+		            <p>To get you started, a file node and output is created right away. Just drag and drop a Audio file (mp3, ogg or whatever) from your computer to the file node.</p>
+		            <p> Then to get sound out of the speaker, drag the right handle of the file node to the left handle of the output. And voila, there should be sounds coming out of your speakers. </p>
+		            <p>But the fun starts when you connect together a combination of filters. So you can really make your music sound bad.</p>
+		            <h4>How about that microphone?</h4>
+		            <p>Sometime in the not too distant future, there should be support in the browsers to capture input from a microphone (without plugins). I'll probably implement it here then.</p>
+		            <label class="checkbox">
+						<input type="checkbox" checked="true" id="firstTimeChk"> Don't show this again
+					</label>
 	            </div>
 	            <div class="modal-footer">
 	            	<a href="#" class="btn" data-dismiss="modal" >Close</a>

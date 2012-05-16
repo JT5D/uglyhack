@@ -4,6 +4,7 @@ var ConvolverNode = BaseNode.extend({
   		this.thingy = context.createConvolver();
   		this.name = "Convolver";
   		this.icon = "icon-random";
+  		this.tooltip = "Applies a linear convolution effect given an impulse response";
   		var el = this.createMainEl(true, true, true, 106);
   		var convN = this.thingy;
   		var thisNode = this;
@@ -50,7 +51,7 @@ var ConvolverNode = BaseNode.extend({
 		sEl.append($('<option>').html("spreader50-65ms"));
 		sEl.append($('<option>').html("wildecho"));
 
-		el.append($('<p>').html('Impulse response'));
+		el.append($('<a href="#" rel="tooltip" title="Impulse response used by the convolver">').tooltip().html('Impulse response'));
 		el.append(sEl);
 		setConvFnc(sEl.val());
   	}

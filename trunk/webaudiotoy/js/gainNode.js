@@ -4,6 +4,7 @@ var GainNode = BaseNode.extend({
 		this.thingy = context.createGainNode();
 		this.name = "Gain";
 		this.icon = "icon-plus";
+		this.tooltip = "Changes the gain of (scales) the incoming audio signal by a certain amount";
 	    var el = this.createMainEl(true, true, true, 90);
 	    var gainN = this.thingy;
 	    
@@ -13,7 +14,7 @@ var GainNode = BaseNode.extend({
 		} 
 		
 		var gainRange = $('<div>');
-		var gainLabel = $('<p>');
+		var gainLabel = $('<a href="#" rel="tooltip" title="Set gain multiplier">').tooltip();
 		gainRange.slider({
 			min: 0,
 			max: 3,
