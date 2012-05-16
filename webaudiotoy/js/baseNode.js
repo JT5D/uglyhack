@@ -34,7 +34,7 @@ var BaseNode = Class.extend({
 		var header = $('<div>');
 		header.addClass('nodeheader');
 		header.append($('<i class="' + this.icon + '">'));
-		header.append('&nbsp;' + this.name);
+		header.append($('<a href="#" rel="tooltip" title="' + this.tooltip + '">').html(this.name).tooltip());
 		el.append(header);
 		if(createclose) {
 			var closeBtn = $('<div>');

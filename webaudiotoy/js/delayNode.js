@@ -4,6 +4,7 @@ var DelayNode = BaseNode.extend({
 		this.thingy = context.createDelayNode();
 		this.name = "Delay";
 		this.icon = "icon-pause";
+		this.tooltip = "Delays the incoming audio signal by a certain amount";
 		var el = this.createMainEl(true, true, true, 90);
 		var delayN = this.thingy;
 		
@@ -13,7 +14,7 @@ var DelayNode = BaseNode.extend({
 		}; 
 		
 		var delayRange = $('<div>');
-		var delayLabel = $('<p>');
+		var delayLabel = $('<a href="#" rel="tooltip" title="Delay time in seconds">').tooltip();
 		delayRange.slider({
 			min: 0,
 			max: 0.99,

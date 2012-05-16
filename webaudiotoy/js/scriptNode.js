@@ -5,6 +5,7 @@ var ScriptNode = BaseNode.extend({
 		this.thingy.onaudioprocess = function(event) {	};
 		this.name = "Javascript";
 		this.icon = "icon-filter";
+		this.tooltip = "Can generate or process audio directly using JavaScript. Has inputBuffer inp, outputBuffer out and AudioProcessingEvent ev defined";
 	    var javaScriptNode = this.thingy;
 		
 	    var el = this.createMainEl(true, true, true, 321, 241);

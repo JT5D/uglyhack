@@ -5,11 +5,12 @@ var SourceNode = BaseNode.extend({
 		this.thingy.loop = true;
 		this.name = "File";
 		this.icon = "icon-file";
+		this.tooltip = "Plays an audio file dragged from the filesystem"
 	    
 		var bufferSource = this.thingy;
 		var thisNode = this;
 		
-		var el = this.createMainEl(true, false, true, 110);
+		var el = this.createMainEl(true, false, true, 175);
 		
 		var btnGroupEl = $('<div>');
 		btnGroupEl.addClass('btn-group');
@@ -47,6 +48,27 @@ var SourceNode = BaseNode.extend({
 		});
 		btnGroupEl.append(stopEl);
 		el.append(btnGroupEl);
+
+		
+		var setPlaybackRateFnc = function(el, v) {
+			bufferSource.playbackRate.value = v.value;
+			rateLabel.html('Rate ' + v.value);
+		} 
+		
+		var rateRange = $('<div>');
+		var rateLabel = $('<a href="#" rel="tooltip" title="Set playback rate multiplier">').tooltip();
+		rateRange.slider({
+			min: 0.1,
+			max: 3,
+			value: 1,
+			step: 0.1,
+			slide: setPlaybackRateFnc
+		});
+		el.append('<br/>');
+		el.append(rateLabel);
+		el.append(rateRange);
+		el.append('<br/>');
+		setPlaybackRateFnc(null, {value: 1});
 		
 		var infoEl = $('<div>');
 		infoEl.html("Drag and drop a sound file to me..");
@@ -57,7 +79,7 @@ var SourceNode = BaseNode.extend({
 		info2El.hide();
 		el.append(info2El);
 		
-		el[0].addEventListener('drop', function (evt) {
+		el.parent()[0].addEventListener('drop', function (evt) {
 		    evt.stopPropagation();
 		    evt.preventDefault();
 		    thisNode.loader.fadeIn('fast');
@@ -86,7 +108,7 @@ var SourceNode = BaseNode.extend({
 		    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
 		}, false);
 		
-		el[0].addEventListener('dragover', function (evt) {
+		el.parent()[0].addEventListener('dragover', function (evt) {
 		    evt.stopPropagation();
 		    evt.preventDefault();
 		    return false;

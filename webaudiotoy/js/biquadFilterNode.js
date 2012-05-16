@@ -4,6 +4,7 @@ var BiquadFilterNode = BaseNode.extend({
 		this.thingy = context.createBiquadFilter();
 		this.name = "Pass";
 		this.icon = "icon-signal";
+		this.tooltip = "Lets different frequencies of the audio input through";
 		var el = this.createMainEl(true, true, true, 231);
   		var biqN = this.thingy;
   		
@@ -45,14 +46,14 @@ var BiquadFilterNode = BaseNode.extend({
 		selectEl.on('change', function() {
 			setTypeFnc(this.value);
 		});
-		el.append($('<p>').html('Type'));
+		el.append($('<a href="#" rel="tooltip" title="Type of pass effect">').tooltip().html('Type'));
 		el.append(selectEl);
 		el.append($('<br/>'));
 		el.append($('<br/>'));
 		setTypeFnc(selectEl.val());
 		
 		var freqRange = $('<div>');
-		var freqLabel = $('<p>');
+		var freqLabel = $('<a href="#" rel="tooltip" title="The cutoff frequency">').tooltip();
 		freqRange.slider({
 			min: 0,
 			max: 1,
@@ -66,7 +67,7 @@ var BiquadFilterNode = BaseNode.extend({
 		setFrequencyFnc(null, {value:0.8});
 		
 		var qRange = $('<div>');
-		var qLabel = $('<p>');
+		var qLabel = $('<a href="#" rel="tooltip" title="Controls how peaked the response will be at the cutoff frequency">').tooltip();
 		qRange.slider({
 			min: 0,
 			max: 1,
