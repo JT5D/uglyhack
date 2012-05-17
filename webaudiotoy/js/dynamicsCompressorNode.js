@@ -5,12 +5,20 @@ var DynamicsCompressorNode = BaseNode.extend({
 		this.name = "Dynamic Compr";
 		this.icon = "icon-bullhorn";
 		this.tooltip = "Dynamics compression is very commonly used in musical production and game audio. It lowers the volume of the loudest parts of the signal and raises the volume of the softest parts";
-		var el = this.createMainEl(true, true, true, 207);
+		var el = this.createMainEl(true, true, true, 306);
 		var dynCmpN = this.thingy;
 		
 		var setThresholdFnc = function(el, v) {
 			dynCmpN.threshold.value = v.value;
 			thresLabel.html('Threshold ' + v.value + ' dB');
+		};
+		var setKneeFnc = function(el, v) {
+			dynCmpN.knee.value = v.value;
+			kneeLabel.html('Knee ' + v.value + ' dB');
+		};
+		var setRatioFnc = function(el, v) { 
+			dynCmpN.ratio.value = v.value;
+			ratioLabel.html('Ratio ' + v.value);
 		};
 		var setAttackFnc = function(el, v) { 
 			dynCmpN.attack.value = v.value;
@@ -39,6 +47,35 @@ var DynamicsCompressorNode = BaseNode.extend({
 		el.append(thresRange);
 		el.append($('<br/>'));
 		setThresholdFnc(null, { value: dynCmpN.threshold.defaultValue});
+
+		var kneeRange = $('<div>');
+		var kneeLabel = $('<a href="#" rel="tooltip" title="A decibel value representing the range above the threshold where the curve smoothly transitions to the "ratio" portion">').tooltip();
+		kneeRange.slider({
+			min: dynCmpN.knee.minValue,
+			max: dynCmpN.knee.maxValue,
+			value: dynCmpN.knee.defaultValue,
+			slide: setKneeFnc
+			
+		});
+		el.append(kneeLabel);
+		el.append(kneeRange);
+		el.append($('<br/>'));
+		setKneeFnc(null, { value: dynCmpN.knee.defaultValue});
+
+		var ratioRange = $('<div>');
+		var ratioLabel = $('<a href="#" rel="tooltip" title="The ratio of compression">').tooltip();
+		ratioRange.slider({
+			min: dynCmpN.ratio.minValue,
+			max: dynCmpN.ratio.maxValue,
+			value: dynCmpN.ratio.defaultValue,
+			slide: setRatioFnc
+			
+		});
+		el.append(ratioLabel);
+		el.append(ratioRange);
+		el.append($('<br/>'));
+		setRatioFnc(null, { value: dynCmpN.ratio.defaultValue});
+
 		
 		var attackRange = $('<div>');
 		var attackLabel = $('<a href="#" rel="tooltip" title="The amount of time to increase the gain by 10dB.">').tooltip();
@@ -65,6 +102,13 @@ var DynamicsCompressorNode = BaseNode.extend({
 		});
 		el.append(releaseLabel);
 		el.append(releaseRange);
+		el.append($('<br/>'));
 		setReleaseFnc(null, { value: 0.25});
+
+		var reductionLabel = $('<p>')
+		setInterval(function() {
+			reductionLabel.html('Reduction ' + Math.min(dynCmpN.reduction.value.toPrecision(2), -0.1) + ' dB');
+		},100);
+		el.append($('<a href="#" rel="tooltip" title="Current amount of gain reduction">').tooltip().append(reductionLabel));
 	}
 });

@@ -61,7 +61,7 @@ var SourceNode = BaseNode.extend({
 			min: 0.1,
 			max: 3,
 			value: 1,
-			step: 0.1,
+			step: 0.05,
 			slide: setPlaybackRateFnc
 		});
 		el.append('<br/>');
