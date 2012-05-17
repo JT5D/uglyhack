@@ -5,7 +5,7 @@ var ConvolverNode = BaseNode.extend({
   		this.name = "Convolver";
   		this.icon = "icon-random";
   		this.tooltip = "Applies a linear convolution effect given an impulse response";
-  		var el = this.createMainEl(true, true, true, 106);
+  		var el = this.createMainEl(true, true, true, 120);
   		var convN = this.thingy;
   		var thisNode = this;
   		
@@ -20,6 +20,10 @@ var ConvolverNode = BaseNode.extend({
   		    	thisNode.loader.fadeOut('fast');
   		    }
   		    request.send();
+  		};
+
+  		var setNormalizeFnc = function() {
+  			convN.normalize.value = this.checked;
   		};
   		
 		var sEl = $('<select>');
@@ -54,6 +58,14 @@ var ConvolverNode = BaseNode.extend({
 		el.append($('<a href="#" rel="tooltip" title="Impulse response used by the convolver">').tooltip().html('Impulse response'));
 		el.append(sEl);
 		setConvFnc(sEl.val());
+
+		var normalizeChk = $('<input>').attr({
+			type: 'checkbox',
+			checked: 'true'
+		});
+		var normalizeLabel = $('<a href="#" rel="tooltip" title="Controls whether the impulse response will be scaled by an equal-power normalization">').tooltip().html('Normalize');
+		el.append($('<label>').addClass('checkbox').append(normalizeChk).append(normalizeLabel));
+		normalizeChk.on('change', setNormalizeFnc);
   	}
   	
 });
