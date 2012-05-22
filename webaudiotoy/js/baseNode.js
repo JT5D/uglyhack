@@ -55,7 +55,12 @@ var BaseNode = Class.extend({
 					for(var i in thisNode.myConnections) {
 						thisNode.disconnectFrom(thisNode.myConnections[i]);
 					}
+					var nH = thisNode.el.height()+2;
 					thisNode.el.remove();
+					//move following nodes down the same amount as removed element was high since position is relative
+					for(var i = thisNode.idx + 1; i < nodes.length; i++) {
+						nodes[i].el.offset({top: nodes[i].el.offset().top + nH});
+					}
 				});
 			});
 		}
