@@ -65,7 +65,7 @@ $(function() {
 			nodes[0] = new SourceNode(0);
 			nodes[1] = new DestinationNode(1);
 			
-			nodes[0].el.offset({left: 230, top: window.innerHeight/2-100});
+			nodes[0].el.offset({left: 250, top: window.innerHeight/2-100});
 			nodes[1].el.offset({left: window.innerWidth - 200, top: window.innerHeight/2-150});
 		}, 1000);
 

@@ -119,9 +119,9 @@ var BaseNode = Class.extend({
 		body.addClass('nodebody');
 		el.append(body);
 		
-		el.offset({top: 100, left: 100});
+		el.offset({top: 200, left: 200});
 		el.hide();
-		el.fadeIn(2000);
+		el.fadeIn(1500);
 		return body;
   	},
   	connectTo: function(node) {
