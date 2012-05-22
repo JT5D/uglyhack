@@ -9,29 +9,40 @@ var DestinationNode = BaseNode.extend({
   		el.css('margin', 0);
 		
 		var analyzer = this.thingy;
-		var processor = context.createJavaScriptNode(2048, 1, 1);
-		this.thingy.connect(processor);
-	    processor.connect(context.destination);
+		this.thingy.connect(context.destination);
 	    
-	    var visMode = false;
+	    var visMode = 0;
 
 	    var ctooltip = $('<a href="#" rel="tooltip" title="Click to change visualization">').tooltip({placement: 'bottom'});
 	    el.append(ctooltip);
 	    var soundVisualizer = new SoundVisualizer(ctooltip, 150, 120);
 	    soundVisualizer.canvas.on('click', function() {
-	    	visMode = !visMode;
+	    	visMode++;
+	    	if(visMode == 2) {
+	    		soundVisualizer.clear();
+	    	} else if(visMode == 3) {
+	    		visMode = 0;
+	    		window.requestAnimationFrame(onaudioprocess);
+	    	}
 	    })
 
-	    processor.onaudioprocess = function(e) {
-		    var data = new Uint8Array(analyzer.frequencyBinCount);
-		    if(visMode) {
-			    analyzer.getByteFrequencyData(data);
-			    soundVisualizer.visualizeFrequencyData(data);
-		    } else {
-			    analyzer.getByteTimeDomainData(data);
+	    var data = null; 
+	    var onaudioprocess = function() {
+		    if(data == null) {
+		    	data = new Uint8Array(analyzer.frequencyBinCount);
+		    }
+		    if(visMode == 0) {
+		    	analyzer.getByteTimeDomainData(data);
 			    soundVisualizer.visualizeTimeDomainData(data);
+			    window.requestAnimationFrame(onaudioprocess);
+		    } else if(visMode == 1) {
+		    	analyzer.getByteFrequencyData(data);
+			    soundVisualizer.visualizeFrequencyData(data);
+		    	window.requestAnimationFrame(onaudioprocess);
 		    }
 		};
+		
+		window.requestAnimationFrame(onaudioprocess);
   	},
   	getConnections: function() {
 		var arr = new Array();

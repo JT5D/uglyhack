@@ -4,7 +4,7 @@ var OscillatorNode = BaseNode.extend({
 		this.name = "Oscillator";
 		this.icon = " icon-chevron-up";
 		this.tooltip = "Oscillator represents an audio source generating a periodic waveform";
-		var el = this.createMainEl(true, false, true, 138);
+		var el = this.createMainEl(true, false, true, 185);
 		try {
 			this.thingy = context.createOscillator();
 		} catch(e) {
@@ -42,6 +42,11 @@ var OscillatorNode = BaseNode.extend({
   			freqLabel.html('Frequency ' + Math.floor(oscN.frequency.value) + ' Hz');
   		};
   		
+  		var setDetuneFnc = function(el, v) {
+  			oscN.detune.value = v.value;
+			detuneLabel.html('Detune ' + v.value + ' Cents');
+  		}
+  		
 		var selectEl = $('<select>');
 		selectEl.append($('<option>').html("sine"));
 		selectEl.append($('<option>').html("square"));
@@ -66,7 +71,21 @@ var OscillatorNode = BaseNode.extend({
 		});
 		el.append(freqLabel);
 		el.append(freqRange);
+		el.append($('<br/>'));
 		setFrequencyFnc(null, {value:0.1});
+		
+		var detuneRange = $('<div>');
+		var detuneLabel = $('<a href="#" rel="tooltip" title="A detuning value which will offset the frequency by the given amount">').tooltip();
+		detuneRange.slider({
+			min: -100,
+			max: 100,
+			step: 1,
+			value: 0,
+			slide: setDetuneFnc
+		});
+		el.append(detuneLabel);
+		el.append(detuneRange);
+		setDetuneFnc(null, {value:0});
 
 		oscN.noteOn(0);
 	}	
