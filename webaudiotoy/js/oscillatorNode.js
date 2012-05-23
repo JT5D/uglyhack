@@ -88,5 +88,8 @@ var OscillatorNode = BaseNode.extend({
 		setDetuneFnc(null, {value:0});
 
 		oscN.noteOn(0);
-	}	
+	},
+	shutdown: function() {
+		this.thingy.noteOff(0);
+	}
 });

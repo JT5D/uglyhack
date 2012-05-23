@@ -121,5 +121,8 @@ var SourceNode = BaseNode.extend({
   	},
   	getConnections: function() {
 		return new Array();
+	},
+	shutdown: function() {
+		this.thingy.noteOff(0);
 	}
 });
