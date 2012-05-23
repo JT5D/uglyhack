@@ -46,15 +46,16 @@ var BaseNode = Class.extend({
 					var lineFromIdx = line.attr('data-fromIdx');
 					var lineToIdx = line.attr('data-toIdx');
 					if(lineFromIdx == thisNode.idx || lineToIdx == thisNode.idx) {
-						line.fadeOut(1500, function() {
+						line.fadeOut(700, function() {
 							line.remove();
 						});
 					}
 				});
-				el.fadeOut(1500, function() {
+				el.fadeOut(700, function() {
 					for(var i in thisNode.myConnections) {
 						thisNode.disconnectFrom(thisNode.myConnections[i]);
 					}
+					thisNode.shutdown();
 					var nH = thisNode.el.height()+2;
 					thisNode.el.remove();
 					//move following nodes down the same amount as removed element was high since position is relative
@@ -126,7 +127,7 @@ var BaseNode = Class.extend({
 		
 		el.offset({top: 200, left: 200});
 		el.hide();
-		el.fadeIn(1500);
+		el.fadeIn(700);
 		return body;
   	},
   	connectTo: function(node) {
@@ -178,7 +179,7 @@ var BaseNode = Class.extend({
 	    	line.on('click', function() {
 	    		var fromN = nodes[line.attr('data-fromIdx')];
 				var toN = nodes[line.attr('data-toIdx')];
-				line.fadeOut(1000, function() {
+				line.fadeOut(700, function() {
 					fromN.disconnectFrom(toN);
 					$(this).remove();
 				});
@@ -235,5 +236,6 @@ var BaseNode = Class.extend({
 	  		top: y1 < y2 ? y1 : y1 - (y1-y2),
 	  		left: x1 < x2 ? x1 : x1 - (x1-x2)
 		}
-	}
+	},
+	shutdown: function() {}
 });
