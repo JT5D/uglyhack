@@ -1,6 +1,7 @@
 var ConvolverNode = BaseNode.extend({
   	init: function(index){
   		this._super(index);
+  		this.shortName = "cn";
   		this.thingy = context.createConvolver();
   		this.name = "Convolver";
   		this.icon = "icon-random";

@@ -1,6 +1,7 @@
 var ScriptNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
+		this.shortName = "scn";
 		this.thingy = context.createJavaScriptNode(4096, 1, 1);
 		this.thingy.onaudioprocess = function(event) {	};
 		this.name = "Javascript";

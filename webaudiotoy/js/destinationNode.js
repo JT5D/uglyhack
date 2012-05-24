@@ -1,6 +1,7 @@
 var DestinationNode = BaseNode.extend({
   	init: function(index){
   		this._super(index);
+  		this.shortName = "dstn";
   		this.thingy = context.createAnalyser();
   		this.icon = "icon-volume-up";
   		this.name = "Output";
