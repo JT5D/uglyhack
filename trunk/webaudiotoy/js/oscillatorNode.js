@@ -1,6 +1,7 @@
 var OscillatorNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
+		this.shortName = "on";
 		this.name = "Oscillator";
 		this.icon = " icon-chevron-up";
 		this.tooltip = "Oscillator represents an audio source generating a periodic waveform";

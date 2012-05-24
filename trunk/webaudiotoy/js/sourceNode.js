@@ -1,6 +1,7 @@
 var SourceNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
+		this.shortName = "son";
 		this.thingy = context.createBufferSource();
 		this.thingy.loop = true;
 		this.name = "File";

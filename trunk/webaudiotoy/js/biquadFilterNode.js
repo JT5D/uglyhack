@@ -1,6 +1,7 @@
 var BiquadFilterNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
+		this.shortName = "bfn";
 		this.thingy = context.createBiquadFilter();
 		this.name = "Pass";
 		this.icon = "icon-signal";

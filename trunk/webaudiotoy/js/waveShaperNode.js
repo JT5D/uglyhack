@@ -1,6 +1,7 @@
 var WaveShaperNode = BaseNode.extend({
   	init: function(index){
 	    this._super(index);
+	    this.shortName = "wsn";
 		this.thingy = context.createWaveShaper();
 		this.name = "WaveShaper";
 		this.icon = "icon-tasks";

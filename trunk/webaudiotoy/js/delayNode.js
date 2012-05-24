@@ -1,6 +1,7 @@
 var DelayNode = BaseNode.extend({
   	init: function(index){
 	    this._super(index);
+	    this.shortName = "deln";
 		this.thingy = context.createDelayNode();
 		this.name = "Delay";
 		this.icon = "icon-pause";

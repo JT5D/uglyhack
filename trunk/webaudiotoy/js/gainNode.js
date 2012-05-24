@@ -1,6 +1,7 @@
 var GainNode = BaseNode.extend({
   	init: function(index){
 		this._super(index);
+		this.shortName = "gn";
 		this.thingy = context.createGainNode();
 		this.name = "Gain";
 		this.icon = "icon-plus";
