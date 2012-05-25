@@ -1,6 +1,6 @@
 var ScriptNode = BaseNode.extend({
-  	init: function(index){
-		this._super(index);
+  	init: function(index, config){
+		this._super(index, config);
 		this.shortName = "scn";
 		this.thingy = context.createJavaScriptNode(4096, 1, 1);
 		this.thingy.onaudioprocess = function(event) {	};
@@ -8,6 +8,13 @@ var ScriptNode = BaseNode.extend({
 		this.icon = "icon-filter";
 		this.tooltip = "Can generate or process audio directly using JavaScript. Has inputBuffer inp, outputBuffer out and AudioProcessingEvent ev defined";
 	    var javaScriptNode = this.thingy;
+	    var thisNode = this;
+
+	    if(!config) {
+	    	this.c = {
+	    		c: "for (var i = 0; i < inp.length; i++) {\n out[i] = inp[i];\n}"
+	    	};
+	    }
 		
 	    var el = this.createMainEl(true, true, true, 321, 241);
 	    el.css('width', '221px');
@@ -24,6 +31,7 @@ var ScriptNode = BaseNode.extend({
 	    });
 	    
 	    var compileFnc = function(code) {
+	    	thisNode.c.c = code;
 			var fnc = null;
 			errorMsg.html("");
 			try {
@@ -39,7 +47,7 @@ var ScriptNode = BaseNode.extend({
 		
 		scriptBox.attr('cols', '30');
 		scriptBox.attr('rows', '12');
-		scriptBox.val("for (var i = 0; i < inp.length; i++) {\n out[i] = inp[i];\n}");
+		scriptBox.val(this.c.c);
 		
 		compileButton.attr({
 			type: 'button',
@@ -54,6 +62,6 @@ var ScriptNode = BaseNode.extend({
 		el.append(compileButton);
 		el.append(errorMsg);
 		
-		compileFnc(scriptBox.val());
+		compileFnc(this.c.c);
 	}  
 });

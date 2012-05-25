@@ -20,7 +20,7 @@ var SaveHandler = Class.extend({
 				save.nodes.push({
 					i: n.idx,
 					sn: n.shortName,
-					d: n.getSaveData(),
+					d: n.c,
 					p: n.el.offset(),
 					c: conns
 				});
