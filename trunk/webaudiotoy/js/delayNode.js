@@ -1,6 +1,6 @@
 var DelayNode = BaseNode.extend({
-  	init: function(index){
-	    this._super(index);
+  	init: function(index, config){
+	    this._super(index, config);
 	    this.shortName = "deln";
 		this.thingy = context.createDelayNode();
 		this.name = "Delay";
@@ -8,8 +8,16 @@ var DelayNode = BaseNode.extend({
 		this.tooltip = "Delays the incoming audio signal by a certain amount";
 		var el = this.createMainEl(true, true, true, 90);
 		var delayN = this.thingy;
+		var thisNode = this;
+		
+		if(!config) {
+			this.c = {
+				d: 0.8
+			};
+		}
 		
 		var setDelayFnc = function(el, v) { 
+			thisNode.c.d = v.value;
 			delayN.delayTime.value = v.value;
 			delayLabel.html('Delay ' + v.value + ' s');
 		}; 

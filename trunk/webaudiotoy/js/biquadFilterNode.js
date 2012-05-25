@@ -1,6 +1,6 @@
 var BiquadFilterNode = BaseNode.extend({
-  	init: function(index){
-		this._super(index);
+  	init: function(index, config){
+  		this._super(index, config);
 		this.shortName = "bfn";
 		this.thingy = context.createBiquadFilter();
 		this.name = "Pass";
@@ -8,8 +8,18 @@ var BiquadFilterNode = BaseNode.extend({
 		this.tooltip = "Lets different frequencies of the audio input through";
 		var el = this.createMainEl(true, true, true, 231);
   		var biqN = this.thingy;
+  		var thisNode = this;
+  		
+  		if(!config) {
+  			this.c = {
+  				type: "lowpass",
+  				freq: 0.8,
+  				q: 0.2
+  			};
+  		}
   		
   		var setTypeFnc = function(v) {
+  			thisNode.c.type = v;
   			switch(v) {
   				case "highpass":
   					biqN.type = biqN.HIGHPASS;
@@ -24,6 +34,7 @@ var BiquadFilterNode = BaseNode.extend({
   		};
   		
   		var setFrequencyFnc = function(el, v) {
+  			thisNode.c.freq = v.value;
   			var minValue = 30;
   			var maxValue = context.sampleRate / 2;
   			// Logarithm (base 2) to compute how many octaves fall in the range.
@@ -36,6 +47,7 @@ var BiquadFilterNode = BaseNode.extend({
   		};
   		
   		var setQFnc = function(el, v) { 
+  			thisNode.c.q = v.value;
   			biqN.Q.value = v.value * 30; 
   			qLabel.html('Quality ' + Math.floor(biqN.Q.value));
   		};
@@ -44,6 +56,7 @@ var BiquadFilterNode = BaseNode.extend({
 		selectEl.append($('<option>').html("lowpass"));
 		selectEl.append($('<option>').html("highpass"));
 		selectEl.append($('<option>').html("bandpass"));
+		selectEl.val(this.c.type);
 		selectEl.on('change', function() {
 			setTypeFnc(this.value);
 		});
@@ -51,7 +64,7 @@ var BiquadFilterNode = BaseNode.extend({
 		el.append(selectEl);
 		el.append($('<br/>'));
 		el.append($('<br/>'));
-		setTypeFnc(selectEl.val());
+		setTypeFnc(this.c.type);
 		
 		var freqRange = $('<div>');
 		var freqLabel = $('<a href="#" rel="tooltip" title="The cutoff frequency">').tooltip();
@@ -59,13 +72,13 @@ var BiquadFilterNode = BaseNode.extend({
 			min: 0,
 			max: 1,
 			step: 0.01,
-			value: 0.8,
+			value: this.c.freq,
 			slide: setFrequencyFnc
 		});
 		el.append(freqLabel);
 		el.append(freqRange);
 		el.append($('<br/>'));
-		setFrequencyFnc(null, {value:0.8});
+		setFrequencyFnc(null, {value:this.c.freq});
 		
 		var qRange = $('<div>');
 		var qLabel = $('<a href="#" rel="tooltip" title="Controls how peaked the response will be at the cutoff frequency">').tooltip();
@@ -73,11 +86,11 @@ var BiquadFilterNode = BaseNode.extend({
 			min: 0,
 			max: 1,
 			step: 0.01,
-			value: 0.2,
+			value: this.c.q,
 			slide: setQFnc
 		});
 		el.append(qLabel);
 		el.append(qRange);
-		setQFnc(null, {value:0.2});
-	}	
+		setQFnc(null, {value:this.c.q});
+	}
 });

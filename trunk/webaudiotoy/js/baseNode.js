@@ -1,7 +1,8 @@
 var BaseNode = Class.extend({
-	init: function(index){
-    	this.idx = index;
+	init: function(index, config){
+		this.idx = index;
     	this.myConnections = new Array();
+		this.c = config;
   	},
   	createMainEl: function(createDrag, createDrop, createclose, elHeight, elWidth) {
   		var thisNode = this;
@@ -238,5 +239,8 @@ var BaseNode = Class.extend({
 	  		left: x1 < x2 ? x1 : x1 - (x1-x2)
 		}
 	},
-	shutdown: function() {}
+	shutdown: function() {},
+	getSaveData: function() {
+		return this.c;
+	}
 });
