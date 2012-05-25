@@ -25,6 +25,7 @@
 		<script src="js/waveShaperNode.js" type="text/javascript"></script>
 		<script src="js/oscillatorNode.js" type="text/javascript"></script>
 		<script src="js/microphoneNode.js" type="text/javascript"></script>
+		<script src="js/saveHandler.js" type="text/javascript"></script>
 		<script src="js/main.js" type="text/javascript"></script>
 		
 		<script type="text/javascript">
@@ -244,7 +245,10 @@
           	  <a class="brand" href="#" rel="tooltip" title="Is the shit!">WebAudioToy</a>
 				<ul class="nav pull-right">
 				  <li>
-				  	<a href="#" id="loadBtn">Load</a>
+				  	<a href="#" id="shareBtn">Share</a>
+				  </li>
+				  <li>
+				  	<a data-toggle="modal" href="#loadBox">Load</a>
 				  </li>
 				  <li>
 				  	<a data-toggle="modal" href="#saveBox">Save</a>
@@ -420,6 +424,33 @@
 	            <div class="modal-footer">
 	            	<a href="#" class="btn" data-dismiss="modal" >Cancel</a>
 	            	<a href="#" class="btn btn-primary" id="saveOkBtn">OK</a>
+	            </div>
+          	</div>
+          	<div id="loadBox" class="modal hide fade">
+	            <div class="modal-header">
+	              	<button class="close" data-dismiss="modal">&times;</button>
+	              	<h3>Load</h3>
+	            </div>
+	            <div class="modal-body">
+		            <h4>Select what to load:</h4>
+		            <select id="loadSelect"></select>
+	            </div>
+	            <div class="modal-footer">
+	            	<a href="#" class="btn" data-dismiss="modal" >Cancel</a>
+	            	<a href="#" class="btn btn-primary" id="loadOkBtn">OK</a>
+	            </div>
+          	</div>
+          	<div id="shareBox" class="modal hide fade">
+	            <div class="modal-header">
+	              	<button class="close" data-dismiss="modal">&times;</button>
+	              	<h3>Share you creation</h3>
+	            </div>
+	            <div class="modal-body">
+		            <p>Here is a Url you can use to share what you have created:</p>
+		            <a href="" id="shareLink" style="word-wrap: break-word;"></a>
+	            </div>
+	            <div class="modal-footer">
+	            	<a href="#" class="btn" data-dismiss="modal" >OK</a>
 	            </div>
           	</div>
         </div>
