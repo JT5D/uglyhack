@@ -1,6 +1,6 @@
 var ConvolverNode = BaseNode.extend({
-  	init: function(index){
-  		this._super(index);
+  	init: function(index, config){
+  		this._super(index, config);
   		this.shortName = "cn";
   		this.thingy = context.createConvolver();
   		this.name = "Convolver";
@@ -10,7 +10,15 @@ var ConvolverNode = BaseNode.extend({
   		var convN = this.thingy;
   		var thisNode = this;
   		
+  		if(!config) {
+  			this.c = {
+  				conv: "cardiod-rear-levelled",
+  				norm: true
+  			};
+  		}
+  		
   		var setConvFnc = function(v) {
+  			thisNode.c.conv = v;
   			thisNode.loader.fadeIn('fast');
   			var request = new XMLHttpRequest();
   		    request.open("GET", "conv/" + v + ".wav", true);
@@ -24,6 +32,7 @@ var ConvolverNode = BaseNode.extend({
   		};
 
   		var setNormalizeFnc = function() {
+  			thisNode.c.norm = this.checked;
   			convN.normalize.value = this.checked;
   		};
   		
@@ -55,14 +64,15 @@ var ConvolverNode = BaseNode.extend({
 		sEl.append($('<option>').html("spatialized5"));
 		sEl.append($('<option>').html("spreader50-65ms"));
 		sEl.append($('<option>').html("wildecho"));
+		sEl.val(this.c.conv);
 
 		el.append($('<a href="#" rel="tooltip" title="Impulse response used by the convolver">').tooltip().html('Impulse response'));
 		el.append(sEl);
-		setConvFnc(sEl.val());
+		setConvFnc(this.c.conv);
 
 		var normalizeChk = $('<input>').attr({
 			type: 'checkbox',
-			checked: 'true'
+			checked: this.c.norm
 		});
 		var normalizeLabel = $('<a href="#" rel="tooltip" title="Controls whether the impulse response will be scaled by an equal-power normalization">').tooltip().html('Normalize');
 		el.append($('<label>').addClass('checkbox').append(normalizeChk).append(normalizeLabel));
