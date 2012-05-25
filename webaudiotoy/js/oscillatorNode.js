@@ -1,6 +1,6 @@
 var OscillatorNode = BaseNode.extend({
-  	init: function(index){
-		this._super(index);
+  	init: function(index, config){
+		this._super(index, config);
 		this.shortName = "on";
 		this.name = "Oscillator";
 		this.icon = " icon-chevron-up";
@@ -13,8 +13,18 @@ var OscillatorNode = BaseNode.extend({
 			return;
 		}
   		var oscN = this.thingy;
+  		var thisNode = this;
+
+  		if(!config) {
+  			this.c = {
+  				t: "sine",
+  				f: 0.1,
+  				d: 0
+  			};
+  		}
   		
   		var setTypeFnc = function(v) {
+  			thisNode.c.t = v;
   			switch(v) {
   				case "sine":
   					oscN.type = oscN.SINE;
@@ -32,6 +42,7 @@ var OscillatorNode = BaseNode.extend({
   		};
   		
   		var setFrequencyFnc = function(el, v) {
+  			thisNode.c.f = v.value;
   			var minValue = 30;
   			var maxValue = context.sampleRate / 2;
   			// Logarithm (base 2) to compute how many octaves fall in the range.
@@ -44,6 +55,7 @@ var OscillatorNode = BaseNode.extend({
   		};
   		
   		var setDetuneFnc = function(el, v) {
+  			thisNode.c.d = v.value;
   			oscN.detune.value = v.value;
 			detuneLabel.html('Detune ' + v.value + ' Cents');
   		}
@@ -53,13 +65,14 @@ var OscillatorNode = BaseNode.extend({
 		selectEl.append($('<option>').html("square"));
 		selectEl.append($('<option>').html("sawtooth"));
 		selectEl.append($('<option>').html("triangle"));
+		selectEl.val(this.c.t)
 		selectEl.on('change', function() {
 			setTypeFnc(this.value);
 		});
 		el.append($('<a href="#" rel="tooltip" title="The shape of the periodic waveform">').tooltip().html('Type'));
 		el.append(selectEl);
 		el.append($('<br/>'));
-		setTypeFnc(selectEl.val());
+		setTypeFnc(this.c.t);
 		
 		var freqRange = $('<div>');
 		var freqLabel = $('<a href="#" rel="tooltip" title="The frequency of the periodic waveform.">').tooltip();
@@ -67,13 +80,13 @@ var OscillatorNode = BaseNode.extend({
 			min: 0,
 			max: 1,
 			step: 0.01,
-			value: 0.1,
+			value: this.c.f,
 			slide: setFrequencyFnc
 		});
 		el.append(freqLabel);
 		el.append(freqRange);
 		el.append($('<br/>'));
-		setFrequencyFnc(null, {value:0.1});
+		setFrequencyFnc(null, {value:this.c.f});
 		
 		var detuneRange = $('<div>');
 		var detuneLabel = $('<a href="#" rel="tooltip" title="A detuning value which will offset the frequency by the given amount">').tooltip();
@@ -81,12 +94,12 @@ var OscillatorNode = BaseNode.extend({
 			min: -100,
 			max: 100,
 			step: 1,
-			value: 0,
+			value: this.c.d,
 			slide: setDetuneFnc
 		});
 		el.append(detuneLabel);
 		el.append(detuneRange);
-		setDetuneFnc(null, {value:0});
+		setDetuneFnc(null, {value:this.c.d});
 
 		oscN.noteOn(0);
 	},

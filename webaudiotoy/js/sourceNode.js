@@ -1,6 +1,6 @@
 var SourceNode = BaseNode.extend({
-  	init: function(index){
-		this._super(index);
+  	init: function(index, config){
+		this._super(index, config);
 		this.shortName = "son";
 		this.thingy = context.createBufferSource();
 		this.thingy.loop = true;
@@ -10,6 +10,12 @@ var SourceNode = BaseNode.extend({
 	    
 		var bufferSource = this.thingy;
 		var thisNode = this;
+
+		if(!config) {
+			this.c = {
+				pr: 1
+			};
+		}
 		
 		var el = this.createMainEl(true, false, true, 175);
 		
@@ -52,6 +58,7 @@ var SourceNode = BaseNode.extend({
 
 		
 		var setPlaybackRateFnc = function(el, v) {
+			thisNode.c.pr = v.value;
 			bufferSource.playbackRate.value = v.value;
 			rateLabel.html('Rate ' + v.value);
 		} 
@@ -61,7 +68,7 @@ var SourceNode = BaseNode.extend({
 		rateRange.slider({
 			min: 0.1,
 			max: 3,
-			value: 1,
+			value: this.c.pr,
 			step: 0.05,
 			slide: setPlaybackRateFnc
 		});
@@ -69,7 +76,7 @@ var SourceNode = BaseNode.extend({
 		el.append(rateLabel);
 		el.append(rateRange);
 		el.append('<br/>');
-		setPlaybackRateFnc(null, {value: 1});
+		setPlaybackRateFnc(null, {value: this.c.pr});
 		
 		var infoEl = $('<div>');
 		infoEl.html("Drag and drop a sound file to me..");

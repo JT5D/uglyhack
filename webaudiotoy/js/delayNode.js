@@ -6,7 +6,7 @@ var DelayNode = BaseNode.extend({
 		this.name = "Delay";
 		this.icon = "icon-pause";
 		this.tooltip = "Delays the incoming audio signal by a certain amount";
-		var el = this.createMainEl(true, true, true, 90);
+		var el = this.createMainEl(true, true, true, 85);
 		var delayN = this.thingy;
 		var thisNode = this;
 		
@@ -28,12 +28,12 @@ var DelayNode = BaseNode.extend({
 			min: 0,
 			max: 0.99,
 			step: 0.01,
-			value: 0.8,
+			value: this.c.d,
 			slide: setDelayFnc
 		});
 		el.append(delayLabel);
 		el.append(delayRange);
-		setDelayFnc(null, {value:0.8});
+		setDelayFnc(null, {value:this.c.d});
 	}
 	
 });

@@ -239,8 +239,5 @@ var BaseNode = Class.extend({
 	  		left: x1 < x2 ? x1 : x1 - (x1-x2)
 		}
 	},
-	shutdown: function() {},
-	getSaveData: function() {
-		return this.c;
-	}
+	shutdown: function() {}
 });
