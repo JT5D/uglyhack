@@ -25,6 +25,7 @@
 		<script src="js/waveShaperNode.js" type="text/javascript"></script>
 		<script src="js/oscillatorNode.js" type="text/javascript"></script>
 		<script src="js/microphoneNode.js" type="text/javascript"></script>
+		<script src="js/analyzerNode.js" type="text/javascript"></script>
 		<script src="js/saveHandler.js" type="text/javascript"></script>
 		<script src="js/main.js" type="text/javascript"></script>
 		
@@ -335,6 +336,15 @@
 	    			<a href="#" onclick="nodes.push(new ScriptNode(nodes.length));">
 	    				<i class="icon-filter"></i>
 	    				Javascript
+	    			</a>
+	    		</li>
+	    		<li class="nav-header">
+	    			Other
+	    		</li>
+	    		<li>
+	    			<a href="#" onclick="nodes.push(new AnalyzerNode(nodes.length));">
+	    				<i class="icon-eye-open"></i>
+	    				Analyzer
 	    			</a>
 	    		</li>
 	  		</ul>

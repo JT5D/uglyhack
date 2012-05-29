@@ -1,6 +1,6 @@
 var DestinationNode = BaseNode.extend({
-  	init: function(index){
-  		this._super(index);
+  	init: function(index, config){
+  		this._super(index, config);
   		this.shortName = "dstn";
   		this.thingy = context.createAnalyser();
   		this.icon = "icon-volume-up";
@@ -11,18 +11,22 @@ var DestinationNode = BaseNode.extend({
 		
 		var analyzer = this.thingy;
 		this.thingy.connect(context.destination);
-	    
-	    var visMode = 0;
+		var thisNode = this;
+	    if(!config) {
+	    	this.c = {
+	    		vm: 0
+	    	};
+	    }
 
 	    var ctooltip = $('<a href="#" rel="tooltip" title="Click to change visualization">').tooltip({placement: 'bottom'});
 	    el.append(ctooltip);
 	    var soundVisualizer = new SoundVisualizer(ctooltip, 150, 120);
 	    soundVisualizer.canvas.on('click', function() {
-	    	visMode++;
-	    	if(visMode == 2) {
+	    	thisNode.c.vm++;
+	    	if(thisNode.c.vm == 2) {
 	    		soundVisualizer.clear();
-	    	} else if(visMode == 3) {
-	    		visMode = 0;
+	    	} else if(thisNode.c.vm == 3) {
+	    		thisNode.c.vm = 0;
 	    		window.requestAnimationFrame(onaudioprocess);
 	    	}
 	    })
@@ -32,11 +36,11 @@ var DestinationNode = BaseNode.extend({
 		    if(data == null) {
 		    	data = new Uint8Array(analyzer.frequencyBinCount);
 		    }
-		    if(visMode == 0) {
+		    if(thisNode.c.vm == 0) {
 		    	analyzer.getByteTimeDomainData(data);
 			    soundVisualizer.visualizeTimeDomainData(data);
 			    window.requestAnimationFrame(onaudioprocess);
-		    } else if(visMode == 1) {
+		    } else if(thisNode.c.vm == 1) {
 		    	analyzer.getByteFrequencyData(data);
 			    soundVisualizer.visualizeFrequencyData(data);
 		    	window.requestAnimationFrame(onaudioprocess);
