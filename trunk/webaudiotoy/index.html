@@ -244,13 +244,13 @@
           	  <a class="brand" href="#" rel="tooltip" title="Is the shit!">WebAudioToy</a>
 				<ul class="nav pull-right">
 				  <li>
-				  	<a href="#" id="shareBtn">Share</a>
+				  	<a href="#" id="shareBtn" rel="tooltip" title="Creates a unique url you can share with others to show what you created with this toy">Share</a>
 				  </li>
 				  <li>
-				  	<a data-toggle="modal" href="#loadBox">Load</a>
+				  	<a data-toggle="modal" href="#loadBox" rel="tooltip" title="Loads a previously saved creation from local storage">Load</a>
 				  </li>
 				  <li>
-				  	<a data-toggle="modal" href="#saveBox">Save</a>
+				  	<a data-toggle="modal" href="#saveBox" rel="tooltip" title="Saves your creation to local storage">Save</a>
 				  </li>
 				  <li>
 				  	<a data-toggle="modal" href="#aboutBox">About</a>
@@ -422,7 +422,7 @@
 	            </div>
 	            <div class="modal-footer">
 	            	<a href="#" class="btn" data-dismiss="modal" >Cancel</a>
-	            	<a href="#" class="btn btn-primary" id="saveOkBtn">OK</a>
+	            	<a href="#" class="btn btn-primary disabled" id="saveOkBtn">OK</a>
 	            </div>
           	</div>
           	<div id="loadBox" class="modal hide fade">
@@ -433,6 +433,7 @@
 	            <div class="modal-body">
 		            <h4>Select what to load:</h4>
 		            <select id="loadSelect"></select>
+		            <p id="loadNothing">You have not saved anything yet...</p>
 	            </div>
 	            <div class="modal-footer">
 	            	<a href="#" class="btn" data-dismiss="modal" >Cancel</a>

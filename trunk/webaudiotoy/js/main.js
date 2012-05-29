@@ -30,10 +30,22 @@ $(function() {
 	
 	var populateLoadSelect = function() {
 		var loadSelect = $('#loadSelect');
+		var loadNothing = $('#loadNothing');
+		var loadOkBtn = $('#loadOkBtn');
 		loadSelect.empty();
+		
 		var saves = new SaveHandler().getAllSavesInLocalStorage();
 		for(var i in saves) {
 			loadSelect.append($('<option>').html(saves[i]));
+		}
+		if(saves.length === 0) {
+			loadSelect.hide();
+			loadNothing.show();
+			loadOkBtn.addClass('disabled');
+		} else {
+			loadSelect.show();
+			loadNothing.hide();
+			loadOkBtn.removeClass('disabled');
 		}
 	}
 
@@ -77,15 +89,26 @@ $(function() {
 
 		$('#saveOkBtn').on('click', function() {
 			var saveName = $('#saveTxt').val();
-			new SaveHandler().saveToLocalStorage(saveName);
-			populateLoadSelect();
-			$('#saveBox').modal('hide');
+			if(saveName.length > 0) {
+				new SaveHandler().saveToLocalStorage(saveName);
+				populateLoadSelect();
+				$('#saveBox').modal('hide');
+			}
+		});
+		
+		$('#saveTxt').on('keyup', function() {
+			if($(this).val().length == 0) {
+				$('#saveOkBtn').addClass('disabled');
+			} else {
+				$('#saveOkBtn').removeClass('disabled');
+			}
 		});
 
 		$('#loadOkBtn').on('click', function() {
 			var saveName = $('#loadSelect').val();
 			new SaveHandler().loadFromLocalStorage(saveName);
 			$('#saveTxt').val(saveName);
+			$('#saveOkBtn').removeClass('disabled');
 			$('#loadBox').modal('hide');
 		});
 		
