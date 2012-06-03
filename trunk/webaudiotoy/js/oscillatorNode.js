@@ -9,7 +9,7 @@ var OscillatorNode = BaseNode.extend({
 		try {
 			this.thingy = context.createOscillator();
 		} catch(e) {
-			el.append($('<p>').html('Not supported by your browser'));
+			el.append($('<p>').html('Not supported by your browser. You probably need to go Chrome Canary.'));
 			return;
 		}
   		var oscN = this.thingy;

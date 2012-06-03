@@ -64,6 +64,22 @@ $(function() {
 	} catch(e) {
 		context = null;
 	}
+
+	document.onkeydown = function(e) {
+		for(var i in nodes) {
+			if(nodes[i] && nodes[i] instanceof PianoNode) {
+				nodes[i].onkeydown(e);
+			}
+		}
+	};
+
+	document.onkeyup = function(e) {
+		for(var i in nodes) {
+			if(nodes[i] && nodes[i] instanceof PianoNode) {
+				nodes[i].onkeyup(e);
+			}
+		}
+	};
 	
 	if(context == null) {
 		$('#noWebAudioBox').modal();

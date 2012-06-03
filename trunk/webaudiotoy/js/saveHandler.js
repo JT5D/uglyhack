@@ -62,6 +62,7 @@ var SaveHandler = Class.extend({
 				case 'on': node = new OscillatorNode(n.i, n.d);	 break;
 				case 'an': node = new AnalyzerNode(n.i, n.d); break;
 				case 'tts': node = new TextToSpeechNode(n.i, n.d); break;
+				case 'pn': node = new PianoNode(n.i, n.d); break;
 			}
 			node.el.offset(n.p);
 			nodes[n.i] = node;
