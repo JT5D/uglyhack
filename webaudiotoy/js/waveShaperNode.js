@@ -6,7 +6,7 @@ var WaveShaperNode = BaseNode.extend({
 		this.name = "WaveShaper";
 		this.icon = "icon-tasks";
 		this.tooltip = "Implements non-linear distortion effects";
-		var el = this.createMainEl(true, true, true, 167, 155);
+		var el = this.createMainEl(true, true, true, 166, 155);
 		var shaperN = this.thingy;
 		var thisNode = this;
 

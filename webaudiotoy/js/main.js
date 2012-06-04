@@ -57,7 +57,14 @@ $(function() {
 		} else {
 			localStorage.removeItem("beenherebefore");
 		}
-	})
+	});
+	$('#pianoInfoChk').on('change', function() {
+		if(this.checked) {
+			localStorage["shownPianoInfo"] = 'yes';
+		} else {
+			localStorage.removeItem("shownPianoInfo");
+		}
+	});
 
 	try {
 		context = new (window.AudioContext || window.webkitAudioContext)();
@@ -96,12 +103,13 @@ $(function() {
 				nodes[0].el.offset({left: 250, top: window.innerHeight/2-100});
 				nodes[1].el.offset({left: window.innerWidth - 200, top: window.innerHeight/2-150});
 			}
-		}, 1000);
-
-		if(!localStorage["beenherebefore"]) {
-			localStorage["beenherebefore"] = 'yes';
-			$('#firstTimeBox').modal();
-		}
+			
+			if(!localStorage["beenherebefore"] && !p.data) {
+				localStorage["beenherebefore"] = 'yes';
+				$('#firstTimeBox').modal();
+			}
+			
+		}, 700);
 
 		$('#saveOkBtn').on('click', function() {
 			var saveName = $('#saveTxt').val();

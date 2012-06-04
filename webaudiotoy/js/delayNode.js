@@ -6,7 +6,7 @@ var DelayNode = BaseNode.extend({
 		this.name = "Delay";
 		this.icon = "icon-pause";
 		this.tooltip = "Delays the incoming audio signal by a certain amount";
-		var el = this.createMainEl(true, true, true, 85);
+		var el = this.createMainEl(true, true, true, 78);
 		var delayN = this.thingy;
 		var thisNode = this;
 		

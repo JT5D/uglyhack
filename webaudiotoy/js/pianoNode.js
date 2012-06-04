@@ -4,9 +4,9 @@ var PianoNode = BaseNode.extend({
 		this.shortName = "pn";
 		this.name = "Piano";
 		this.icon = " icon-play";
-		this.tooltip = "Play piano on your keyboard, using an oscillator";
+		this.tooltip = "Play piano on your keyboard. ";
 		this.deleted = false;
-		var el = this.createMainEl(true, false, true, 170);
+		var el = this.createMainEl(true, false, true, 290);
 		try {
 			this.thingy = context.createOscillator();
 		} catch(e) {
@@ -19,35 +19,54 @@ var PianoNode = BaseNode.extend({
   			this.c = {
   				t: "sine",
   				d: 0,
-  				o: 2
+  				o: 2,
+  				at: 0.3,
+  				de: 0.3,
+  				su: 0.8,
+  				re: 0.3
   			};
   		}
 
   		var pianoNotes = this.pianoNotes = {};
 
-  		var shutupFnc = this.shutupFnc = function(node) {
-  			if(!node) return;
-  			node.noteOff(0);
-			for(var i in thisNode.myConnections) {
-				var n = thisNode.myConnections[i];
-				var conns = n.getConnections();
-				for(var i in conns) {
-					node.disconnect(conns[i]);
+  		var shutupFnc = this.shutupFnc = function(note) {
+  			if(!note) return;
+  			//note.gain.gain.cancelScheduledValues(context.currentTime);
+  			note.gain.gain.linearRampToValueAtTime(0.0, context.currentTime + thisNode.c.re);
+  			setTimeout(function() {
+	  			note.osc.noteOff(0);
+	  			note.osc.disconnect(note.gain);
+				for(var i in thisNode.myConnections) {
+					var n = thisNode.myConnections[i];
+					var conns = n.getConnections();
+					for(var i in conns) {
+						note.gain.disconnect(conns[i]);
+					}
 				}
-			}
+  			}, thisNode.c.re * 1000 + 50);
   		}
 
   		var soundFnc = function() {
-  			var node = context.createOscillator()
+  			var note = {};
+  			note.osc = context.createOscillator();
+  			note.gain = context.createGainNode();
+  			note.osc.connect(note.gain);
   			for(var i in thisNode.myConnections) {
 				var n = thisNode.myConnections[i];
 				var conns = n.getConnections();
 				for(var i in conns) {
-					node.connect(conns[i]);
+					note.gain.connect(conns[i]);
 				}
 			}
-			node.noteOn(0);
-			return node;
+			note.osc.noteOn(0);
+			note.gain.gain.linearRampToValueAtTime(0.0, context.currentTime);
+			note.gain.gain.linearRampToValueAtTime(1.0, context.currentTime + thisNode.c.at);
+			setTimeout(function() {
+				if(note.gain.gain.value == 1.0) {
+					note.gain.gain.linearRampToValueAtTime(thisNode.c.su, context.currentTime + thisNode.c.de);
+				}
+			},thisNode.c.at * 1000);
+			return note;
   		}
   		
   		var setTypeFnc = function(v) {
@@ -69,7 +88,7 @@ var PianoNode = BaseNode.extend({
   			}
   			if(t) {
 	  			for(var i in pianoNotes) {
-	  				if(pianoNotes[i]) pianoNotes[i].type = t;
+	  				if(pianoNotes[i]) pianoNotes[i].osc.type = t;
 	  			}
 	  		}
   		};
@@ -82,11 +101,31 @@ var PianoNode = BaseNode.extend({
   		var setDetuneFnc = function(el, v) {
   			thisNode.c.d = v.value;
   			for(var i in pianoNotes) {
-  				if(pianoNotes[i]) pianoNotes[i].detune.value = v.value;
+  				if(pianoNotes[i]) pianoNotes[i].osc.detune.value = v.value;
   			}
 			detuneLabel.html('Detune ' + v.value + ' Cents');
   		}
-
+  		
+  		var setAttackFnc = function(el, v) {
+  			thisNode.c.at = v.value;
+  			attackLabel.html('Attack ' + v.value + ' s');
+  		}
+  		
+  		var setDecayFnc = function(el, v) {
+  			thisNode.c.de = v.value;
+  			decayLabel.html('Decay ' + v.value + ' s');
+  		}
+  		
+  		var setSustainFnc = function(el, v) {
+  			thisNode.c.su = v.value;
+  			sustainLabel.html('Sustain level ' + v.value);
+  		}
+  		
+  		var setReleaseFnc = function(el, v) {
+  			thisNode.c.re = v.value;
+  			releaseLabel.html('Release ' + v.value + ' s');
+  		}
+  		
 		var pf =  {
 			Z: 65.406,
 			S: 69.296,
@@ -121,7 +160,7 @@ var PianoNode = BaseNode.extend({
 			if(!pianoNotes[note]) {
 				if(pf[note]) {
 					pianoNotes[note] = soundFnc();
-					pianoNotes[note].frequency.value = pf[note] * thisNode.c.o;
+					pianoNotes[note].osc.frequency.value = pf[note] * thisNode.c.o;
 					setTypeFnc(thisNode.c.t);
 					setDetuneFnc(null, {value:thisNode.c.d});
 				}
@@ -175,6 +214,63 @@ var PianoNode = BaseNode.extend({
 		el.append(detuneLabel);
 		el.append(detuneRange);
 		setDetuneFnc(null, {value:this.c.d});
+		
+		var attackRange = $('<div>');
+		var attackLabel = $('<a href="#" rel="tooltip" title="Attack time is the time taken for initial run-up of level from nil to peak">').tooltip();
+		attackRange.slider({
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: this.c.at,
+			slide: setAttackFnc
+		});
+		el.append(attackLabel);
+		el.append(attackRange);
+		setAttackFnc(null, {value:this.c.at});
+		
+		var decayRange = $('<div>');
+		var decayLabel = $('<a href="#" rel="tooltip" title="Decay time is the time taken for the subsequent run down from the attack level to the designated sustain level.">').tooltip();
+		decayRange.slider({
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: this.c.de,
+			slide: setDecayFnc
+		});
+		el.append(decayLabel);
+		el.append(decayRange);
+		setDecayFnc(null, {value:this.c.de});
+		
+		var sustainRange = $('<div>');
+		var sustainLabel = $('<a href="#" rel="tooltip" title="Sustain level is the level during the main sequence of the sound\'s duration, until the key is released.">').tooltip();
+		sustainRange.slider({
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: this.c.su,
+			slide: setSustainFnc
+		});
+		el.append(sustainLabel);
+		el.append(sustainRange);
+		setSustainFnc(null, {value:this.c.su});
+		
+		var releaseRange = $('<div>');
+		var releaseLabel = $('<a href="#" rel="tooltip" title="Release time is the time taken for the level to decay from the sustain level to zero after the key is released.">').tooltip();
+		releaseRange.slider({
+			min: 0,
+			max: 1,
+			step: 0.01,
+			value: this.c.re,
+			slide: setReleaseFnc
+		});
+		el.append(releaseLabel);
+		el.append(releaseRange);
+		setReleaseFnc(null, {value:this.c.re});
+		
+		if(!localStorage["shownPianoInfo"]) {
+			localStorage["shownPianoInfo"] = 'yes';
+			$('#pianoInfoBox').modal();
+		}
 
 	},
 	shutdown: function() {

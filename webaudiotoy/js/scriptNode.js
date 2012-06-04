@@ -16,7 +16,7 @@ var ScriptNode = BaseNode.extend({
 	    	};
 	    }
 		
-	    var el = this.createMainEl(true, true, true, 321, 241);
+	    var el = this.createMainEl(true, true, true, 308, 241);
 	    el.css('width', '221px');
 	    
 	    var scriptBox = $('<textarea>');

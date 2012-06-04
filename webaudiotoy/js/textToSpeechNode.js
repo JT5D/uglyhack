@@ -21,7 +21,7 @@ var TextToSpeechNode = BaseNode.extend({
 	    var setSpeedFnc = function(el, v) { thisNode.c.s = v.value; speedLabel.html('Speed ' + v.value + ' word / minute'); }
 	    var setWordGapFnc = function(el, v) { thisNode.c.g = v.value; wordGapLabel.html('Word Gap ' + v.value + ' ms'); }
 		
-	    var el = this.createMainEl(true, false, true, 328, 241);
+	    var el = this.createMainEl(true, false, true, 313, 241);
 	    el.css('width', '221px');
 	    
 	    var pitchRange = $('<div>');

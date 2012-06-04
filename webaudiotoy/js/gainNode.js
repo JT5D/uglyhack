@@ -6,7 +6,7 @@ var GainNode = BaseNode.extend({
 		this.name = "Gain";
 		this.icon = "icon-plus";
 		this.tooltip = "Changes the gain of (scales) the incoming audio signal by a certain amount";
-	    var el = this.createMainEl(true, true, true, 85);
+	    var el = this.createMainEl(true, true, true, 78);
 	    var gainN = this.thingy;
 	    var thisNode = this;
 

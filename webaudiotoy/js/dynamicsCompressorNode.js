@@ -6,7 +6,7 @@ var DynamicsCompressorNode = BaseNode.extend({
 		this.name = "Dynamic Compr";
 		this.icon = "icon-bullhorn";
 		this.tooltip = "Dynamics compression is very commonly used in musical production and game audio. It lowers the volume of the loudest parts of the signal and raises the volume of the softest parts";
-		var el = this.createMainEl(true, true, true, 319);
+		var el = this.createMainEl(true, true, true, 305);
 		var dynCmpN = this.thingy;
 		var thisNode = this;
 
