@@ -5,7 +5,7 @@ var OscillatorNode = BaseNode.extend({
 		this.name = "Oscillator";
 		this.icon = " icon-chevron-up";
 		this.tooltip = "Oscillator represents an audio source generating a periodic waveform";
-		var el = this.createMainEl(true, false, true, 185);
+		var el = this.createMainEl(true, false, true, 183);
 		try {
 			this.thingy = context.createOscillator();
 		} catch(e) {

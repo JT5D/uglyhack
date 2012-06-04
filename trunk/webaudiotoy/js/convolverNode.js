@@ -6,7 +6,7 @@ var ConvolverNode = BaseNode.extend({
   		this.name = "Convolver";
   		this.icon = "icon-random";
   		this.tooltip = "Applies a linear convolution effect given an impulse response";
-  		var el = this.createMainEl(true, true, true, 120);
+  		var el = this.createMainEl(true, true, true, 115);
   		var convN = this.thingy;
   		var thisNode = this;
   		

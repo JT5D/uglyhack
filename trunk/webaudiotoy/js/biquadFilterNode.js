@@ -6,7 +6,7 @@ var BiquadFilterNode = BaseNode.extend({
 		this.name = "Pass";
 		this.icon = "icon-signal";
 		this.tooltip = "Lets different frequencies of the audio input through";
-		var el = this.createMainEl(true, true, true, 221);
+		var el = this.createMainEl(true, true, true, 200);
   		var biqN = this.thingy;
   		var thisNode = this;
   		
