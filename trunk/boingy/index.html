@@ -5,7 +5,6 @@
       	body {
       		overflow: hidden;
       		margin: 0px;
-      		
       	}
       </style>
    </head>
@@ -24,12 +23,9 @@
 	,	b2Fixture = Box2D.Dynamics.b2Fixture
 	,	b2World = Box2D.Dynamics.b2World
 	,	b2MassData = Box2D.Collision.Shapes.b2MassData
-	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-	,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape	
    ,   b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
    ,   b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
-   ,   b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef
    ;
 	   
 	   var camera, scene, renderer, stats,
@@ -38,10 +34,12 @@
        var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
        var world;
        
+       var wallt, wallb, walll, wallr;
+       
        var fixDef = new b2FixtureDef;
        fixDef.density = 1.0;
-       fixDef.friction = 0.3;
-       fixDef.restitution = 0.2;
+       fixDef.friction = 0.5;
+       fixDef.restitution = 0.0;
        
        var bodyDef = new b2BodyDef;
 	
@@ -62,11 +60,11 @@
                   md.bodyB = body;
                   md.target.Set(mouseX, mouseY);
                   md.collideConnected = true;
-                  md.maxForce = 2800.0 * body.GetMass();
+                  md.maxForce = 800.0 * body.GetMass();
                   mouseJoint = world.CreateJoint(md);
                   body.SetAwake(true);
                } else {
-            	   var bs = 7;
+            	   var bs = 5;
             	   var hbs = bs/2;
             	   if(!getBodyAtMouse(hbs)) {
 	            	   var v = new b2Vec2(mouseX, mouseY)
@@ -104,8 +102,8 @@
 			   xl = bb.bodies.length;
 			   yl = bb.bodies[0].length;
 			   cc = bb.bodies[Math.floor(xl/2)][Math.floor(yl/2)].GetPosition();
-			   xm = 1/xl;
-			   ym = 1/yl;
+			   xm = (1/xl)*0.8;
+			   ym = (1/yl)*0.8;
 			   for(var x = 0; x < xl; ++x) {
 				    
 				    
@@ -182,14 +180,14 @@
 	        	var j = new b2DistanceJointDef();
 	      		j.Initialize(b1, b2, b1.GetWorldCenter(), b2.GetWorldCenter());
 	      		j.collideConnected = collide;
-	      		j.frequencyHz = 10.0;
+	      		j.frequencyHz = 7.0;
 	      		j.dampingRatio = 0.2;
 	      		world.CreateJoint(j);
 	         }; 
 	         
 	         for(var x = 0; x < bSizeX; ++x) {
 	         	for(var y = 0; y < bSizeY; ++y) {
-	         		var cc = (x > 0 && x < bSizeX - 1 && y > 0 && y < bSizeY - 1);
+	         		var cc = true;//(x > 0 && x < bSizeX - 1 && y > 0 && y < bSizeY - 1);
 	         		if(x < bSizeX - 1 && y < bSizeY - 1) {
 		         		createSpringJoint(bodies[x][y], bodies[x+1][y], cc); 
 		         		createSpringJoint(bodies[x][y], bodies[x][y+1], cc);
@@ -206,57 +204,25 @@
 	         		}
 	         	}
 	         }
-	         fixDef.filter.groupIndex = -1;
-	         for(var yp = 0; yp < bSizeY; yp += bSizeY-1) {
-		         for(var x = 0; x < bSizeX-1; ++x) {
-		        	fixDef.shape = new b2PolygonShape;
-		            fixDef.shape.SetAsBox(0.5,0.35);
-		            bodyDef.position.x = x+xx+0.5;
-		            bodyDef.position.y = yy+yp;
-		            bodyDef.fixedRotation = false;
-		            var body = world.CreateBody(bodyDef);
-		            body.CreateFixture(fixDef);
-		            var j = new b2RevoluteJointDef();
-		      		j.Initialize(body, bodies[x+1][yp], bodies[x+1][yp].GetWorldCenter());
-		      		j.collideConnected = false;
-		      		j.frequencyHz = 6.0;
-		      		j.dampingRatio = 0.2;
-		      		world.CreateJoint(j);
-		      		var j = new b2RevoluteJointDef();
-		            j.Initialize(body, bodies[x][yp], bodies[x][yp].GetWorldCenter());
-		      		j.collideConnected = false;
-		      		j.frequencyHz = 6.0;
-		      		j.dampingRatio = 0.2;
-		      		world.CreateJoint(j);
-		         }
-	         }
-	         for(var xp = 0; xp < bSizeX; xp += bSizeX-1) {
-		         for(var y = 0; y < bSizeY-1; ++y) {
-		        	fixDef.shape = new b2PolygonShape;
-		            fixDef.shape.SetAsBox(0.35,0.5);
-		            bodyDef.position.x = xx+xp;
-		            bodyDef.position.y = yy+y+0.5;
-		            bodyDef.fixedRotation = false;
-		            var body = world.CreateBody(bodyDef);
-		            body.CreateFixture(fixDef);
-		            var j = new b2RevoluteJointDef();
-		      		j.Initialize(body, bodies[xp][y+1], bodies[xp][y+1].GetWorldCenter());
-		      		j.collideConnected = false;
-		      		world.CreateJoint(j);
-		      		var j = new b2RevoluteJointDef();
-		            j.Initialize(body, bodies[xp][y], bodies[xp][y].GetWorldCenter());
-		      		j.collideConnected = false;
-		      		world.CreateJoint(j);
-		         }
-	         }
 	         
 	         var geo = new THREE.PlaneGeometry(bSizeX*30,bSizeY*30,bSizeX-1,bSizeY-1);
 	         geo.dynamic = true;
 	         mesh = new THREE.Mesh(geo , material );
 	         mesh.rotation.x = Math.PI/2;
+	         mesh.position.z = boingies	.length;
 	         scene.add( mesh );
 	     	 boingies.push({mesh: mesh, bodies: bodies})    
         }
+        
+    	window.addEventListener('resize', function(){
+    		renderer.setSize( window.innerWidth, window.innerHeight );
+    		camera.right = window.innerWidth;
+    		camera.bottom = -window.innerHeight;
+    		camera.updateProjectionMatrix();
+    		
+    		wallb.SetPosition(new b2Vec2(0, window.innerHeight / 30 + 2));
+    		wallr.SetPosition(new b2Vec2(window.innerWidth / 30+2.1, 0));
+    	}, false);
       
         window.onload = function() {
     	  
@@ -280,10 +246,7 @@
 	
 	       document.body.appendChild( renderer.domElement );
          
-         world = new b2World(
-               new b2Vec2(0, 8)    //gravity
-            ,  true                 //allow sleep
-         );
+         world = new b2World( new b2Vec2(0, 10), true );
          
          stats = new Stats();
      	stats.domElement.style.position = 'absolute';
@@ -293,18 +256,27 @@
          //create ground
          bodyDef.type = b2Body.b2_staticBody;
          fixDef.shape = new b2PolygonShape;
-         fixDef.shape.SetAsBox(window.innerWidth / 30, 2);
+         fixDef.shape.SetAsBox(100, 2);
+         
          bodyDef.position.Set(0, window.innerHeight / 30 + 2);
-         world.CreateBody(bodyDef).CreateFixture(fixDef);
+         wallb = world.CreateBody(bodyDef);
+         wallb.CreateFixture(fixDef);
+         
          bodyDef.position.Set(0, -2.1);
-         world.CreateBody(bodyDef).CreateFixture(fixDef);
-         fixDef.shape.SetAsBox(2, window.innerHeight / 30);
+         wallt = world.CreateBody(bodyDef);
+         wallt.CreateFixture(fixDef);
+         
+         fixDef.shape.SetAsBox(2, 100);
+         
          bodyDef.position.Set(-2.1, 0);
-         world.CreateBody(bodyDef).CreateFixture(fixDef);
+         walll = world.CreateBody(bodyDef);
+         walll.CreateFixture(fixDef);
+         
          bodyDef.position.Set(window.innerWidth / 30+2.1, 0);
-         world.CreateBody(bodyDef).CreateFixture(fixDef);
+         wallr = world.CreateBody(bodyDef);
+         wallr.CreateFixture(fixDef);
 
-         createBoingy(window.innerWidth / 60-3.5,window.innerHeight / 30-15,7,7);
+         createBoingy(window.innerWidth / 60-3.5,window.innerHeight / 60-3.5	,7,7);
          
          var textureImg = new Image();
          textureImg.onload = function(){
