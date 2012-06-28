@@ -1,6 +1,8 @@
+<!DOCTYPE HTML>
 <html>
    <head>
-      <title>Box2dWeb Demo</title>
+   	  <meta charset="utf-8" />
+      <title>Boingy</title>
       <style type="text/css">
       	body {
       		overflow: hidden;
@@ -9,11 +11,14 @@
       </style>
    </head>
    <body>
+   	 <canvas id="canvas" style="background-color:#333333; display:none;" ></canvas>
    </body>
    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
    <script type="text/javascript" src="js/Three.js"></script>
    <script type="text/javascript" src="js/Stats.js"></script>
    <script type="text/javascript">
+   
+   var debug = false;
    
    var   b2Vec2 = Box2D.Common.Math.b2Vec2
    ,  b2AABB = Box2D.Collision.b2AABB
@@ -25,6 +30,7 @@
 	,	b2MassData = Box2D.Collision.Shapes.b2MassData
 	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape	
    ,   b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+   ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
    ,   b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
    ;
 	   
@@ -84,12 +90,15 @@
             }
          
             world.Step(1 / 60, 10, 10);
+            if(debug) {
+            	world.DrawDebugData();
+            } else {
+               updateBoingeGeo();
+     	       renderer.render( scene, camera );
+            }
+   		    stats.update();
             world.ClearForces();
             
-            updateBoingeGeo();
-            
-	       renderer.render( scene, camera );
-	       stats.update();
 	
 	   }
 	   
@@ -277,6 +286,21 @@
          wallr.CreateFixture(fixDef);
 
          createBoingy(window.innerWidth / 60-3.5,window.innerHeight / 60-3.5	,7,7);
+         
+         if(debug) {
+        	//setup debug draw
+        	 var canvas = document.getElementById("canvas");
+        	 canvas.style.display = "block";
+        	 canvas.width = window.innerWidth;
+        	 canvas.height = window.innerHeight;
+             var debugDraw = new b2DebugDraw();
+             debugDraw.SetSprite(canvas.getContext("2d"));
+             debugDraw.SetDrawScale(30.0);
+             debugDraw.SetFillAlpha(0.5);
+             debugDraw.SetLineThickness(1.0);
+             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+             world.SetDebugDraw(debugDraw);
+         }
          
          var textureImg = new Image();
          textureImg.onload = function(){
