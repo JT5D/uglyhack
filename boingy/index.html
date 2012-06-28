@@ -7,6 +7,7 @@
       	body {
       		overflow: hidden;
       		margin: 0px;
+      		background: url('bg.jpg');
       	}
       </style>
    </head>
@@ -19,7 +20,7 @@
    <script type="text/javascript">
    
    var debug = false;
-   var drawScale = 15;
+   var drawScale;
    
    var   b2Vec2 = Box2D.Common.Math.b2Vec2
    ,  b2AABB = Box2D.Collision.b2AABB
@@ -68,7 +69,7 @@
                   md.bodyB = body;
                   md.target.Set(mouseX, mouseY);
                   md.collideConnected = true;
-                  md.maxForce = 700.0;
+                  md.maxForce = 500.0;
                   mouseJoint = world.CreateJoint(md);
                   body.SetAwake(true);
                } else {
@@ -96,7 +97,7 @@
                }
             }
          
-            world.Step(1 / 60, 10, 10);
+            world.Step(1 / 40, 10, 10);
             if(debug) {
             	world.DrawDebugData();
             } else {
@@ -150,8 +151,8 @@
 						   bi = 0;
 					   }
 					   wc = bb.bodies[bi].GetPosition();
-					   vs[i].x = (wc.x+(wc.x-cc.x)*0.13)*drawScale;
-					   vs[i].z = (wc.y+(wc.y-cc.y)*0.13)*drawScale;
+					   vs[i].x = (wc.x+(wc.x-cc.x)*0.17)*drawScale;
+					   vs[i].z = (wc.y+(wc.y-cc.y)*0.17)*drawScale;
 				   }
 			   }
 			   bb.mesh.geometry.verticesNeedUpdate = true;
@@ -205,7 +206,7 @@
       		world.CreateJoint(j);
          }; 
         
-        function createSquareBoingy(xx, yy, bSizeX, bSizeY) {
+        function createSquareBoingy(xx, yy, bSizeX, bSizeY, mat) {
 	         var bodies = new Array();
 	         bodyDef.type = b2Body.b2_dynamicBody;
 	         for(var x = 0; x < bSizeX; ++x) {
@@ -245,14 +246,16 @@
 	         
 	         var geo = new THREE.PlaneGeometry(bSizeX*drawScale,bSizeY*drawScale,bSizeX-1,bSizeY-1);
 	         geo.dynamic = true;
-	         mesh = new THREE.Mesh(geo , squareMaterial );
+	         mesh = new THREE.Mesh(geo , mat ? mat : squareMaterial );
 	         mesh.rotation.x = Math.PI/2;
 	         mesh.position.z = boingies.length;
 	         scene.add( mesh );
-	     	 boingies.push({mesh: mesh, bodies: bodies, type: 'square'})    
+	         var ret = {mesh: mesh, bodies: bodies, type: 'square'};
+	     	 boingies.push(ret)
+	     	 return ret;
         }
         
-        function createRoundBoingy(xx, yy, radius, numSeg) {
+        function createRoundBoingy(xx, yy, radius, numSeg, mat) {
    	        var bodies = new Array();
    		    bodyDef.type = b2Body.b2_dynamicBody;
    		    
@@ -286,25 +289,91 @@
 	         var radius_half = radius / 2;
 	         for ( var z = 0; z < geo.faces.length; z ++ ) {
 	             if ( geo.faces[ z ] instanceof THREE.Face3 ) {
-	            	 geo.faceVertexUvs[ 0 ][ z ][ 0 ].u = ( geo.vertices[ geo.faces[ z ].a ].x + radius_half ) / radius_whole;
-	            	 geo.faceVertexUvs[ 0 ][ z ][ 0 ].v = ( geo.vertices[ geo.faces[ z ].a ].z + radius_half ) / radius_whole;
-	            	 geo.faceVertexUvs[ 0 ][ z ][ 1 ].u = ( geo.vertices[ geo.faces[ z ].b ].x + radius_half ) / radius_whole;
-	            	 geo.faceVertexUvs[ 0 ][ z ][ 1 ].v = ( geo.vertices[ geo.faces[ z ].b ].z + radius_half ) / radius_whole;
-	            	 geo.faceVertexUvs[ 0 ][ z ][ 2 ].u = ( geo.vertices[ geo.faces[ z ].c ].x + radius_half ) / radius_whole;
-	            	 geo.faceVertexUvs[ 0 ][ z ][ 2 ].v = ( geo.vertices[ geo.faces[ z ].c ].z + radius_half ) / radius_whole;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 0 ].u = ( geo.vertices[ geo.faces[ z ].a ].x ) / (radius_whole*2)+0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 0 ].v = ( geo.vertices[ geo.faces[ z ].a ].z ) / (radius_whole*2)+0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 1 ].u = ( geo.vertices[ geo.faces[ z ].b ].x ) / (radius_whole*2)+0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 1 ].v = ( geo.vertices[ geo.faces[ z ].b ].z ) / (radius_whole*2)+0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 2 ].u = ( geo.vertices[ geo.faces[ z ].c ].x ) / (radius_whole*2)+0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 2 ].v = ( geo.vertices[ geo.faces[ z ].c ].z ) / (radius_whole*2)+0.5;
 	             }
 	         }
 	         
 	         geo.dynamic = true;
-	         mesh = new THREE.Mesh(geo , roundMaterial );
+	         mesh = new THREE.Mesh(geo , mat ? mat : roundMaterial );
 	         mesh.rotation.x = Math.PI/2;
 	         mesh.position.z = boingies.length;
 	         scene.add( mesh );
-	     	 boingies.push({mesh: mesh, bodies: bodies, type: 'round'})    
+	         var ret = {mesh: mesh, bodies: bodies, type: 'round'};
+	     	 boingies.push(ret)
+	     	 return ret;
+        }
+        
+        function createStickMan(cx, cy) {
+        	
+        	var shirtMat = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg") });
+        	var jeansMat = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg") })
+        	var head = createRoundBoingy(cx+0.5,cy-9.5,2,20,new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg") }));
+        	var body = createSquareBoingy(cx-2,cy-6.8,6,10, shirtMat);
+        	var left_arm = createSquareBoingy(cx-8.1,cy-5.8,7,2, shirtMat);
+        	var right_arm = createSquareBoingy(cx+3,cy-5.8,7,2, shirtMat);
+        	var left_leg = createSquareBoingy(cx-2.1,cy+2.9,3,8, jeansMat);
+        	var right_leg = createSquareBoingy(cx+1.1,cy+2.9,3,8, jeansMat);
+        	
+        	//head to body
+        	createSpringJoint(head.bodies[5], body.bodies[3][0], true, 10.0, 1.0);
+        	createSpringJoint(head.bodies[6], body.bodies[2][0], true, 10.0, 1.0);
+        	createSpringJoint(head.bodies[6], body.bodies[3][0], true, 10.0, 1.0);
+        	createSpringJoint(head.bodies[7], body.bodies[2][0], true, 10.0, 1.0);
+        	
+        	//left arm to body
+        	createSpringJoint(left_arm.bodies[6][0], body.bodies[0][1], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[6][1], body.bodies[0][2], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[6][1], body.bodies[0][1], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[6][0], body.bodies[0][2], true, 10.0, 1.0);
+        	
+        	//right arm to body
+        	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][1], true, 10.0, 1.0);
+        	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][2], true, 10.0, 1.0);
+        	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][1], true, 10.0, 1.0);
+        	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][2], true, 10.0, 1.0);
+        	
+        	//left leg to body
+        	createSpringJoint(left_leg.bodies[0][0], body.bodies[0][9], true, 10.0, 1.0);
+        	createSpringJoint(left_leg.bodies[1][0], body.bodies[1][9], true, 10.0, 1.0);
+        	createSpringJoint(left_leg.bodies[2][0], body.bodies[2][9], true, 10.0, 1.0);
+        	createSpringJoint(left_leg.bodies[0][0], body.bodies[2][9], true, 10.0, 1.0);
+        	createSpringJoint(left_leg.bodies[2][0], body.bodies[0][9], true, 10.0, 1.0);
+        	
+        	//right leg to body
+        	createSpringJoint(right_leg.bodies[0][0], body.bodies[3][9], true, 10.0, 1.0);
+        	createSpringJoint(right_leg.bodies[1][0], body.bodies[4][9], true, 10.0, 1.0);
+        	createSpringJoint(right_leg.bodies[2][0], body.bodies[5][9], true, 10.0, 1.0);
+        	createSpringJoint(right_leg.bodies[0][0], body.bodies[5][9], true, 10.0, 1.0);
+        	createSpringJoint(right_leg.bodies[2][0], body.bodies[3][9], true, 10.0, 1.0);
+
+        }
+        
+        function createStatic(xx, yy, sx, sy, material) {
+        	bodyDef.type = b2Body.b2_staticBody;
+            fixDef.shape = new b2PolygonShape;
+            fixDef.shape.SetAsBox(sx/2, sy/2);
+            
+            bodyDef.position.Set(xx, yy);
+            wallb = world.CreateBody(bodyDef);
+            wallb.CreateFixture(fixDef);
 	         
+            var geo = new THREE.PlaneGeometry(sx*drawScale,sy*drawScale,1,1);
+	        mesh = new THREE.Mesh(geo , material );
+	        mesh.rotation.x = Math.PI/2;
+	        mesh.position.x = xx*drawScale
+	        mesh.position.y = -yy*drawScale
+	        mesh.position.z = -20;
+	        scene.add( mesh );
         }
         
     	window.addEventListener('resize', function(){
+    		drawScale = window.innerWidth/150;
+    		
     		renderer.setSize( window.innerWidth, window.innerHeight );
     		camera.right = window.innerWidth;
     		camera.bottom = -window.innerHeight;
@@ -316,6 +385,8 @@
       
         window.onload = function() {
     	  
+        	drawScale = window.innerWidth/150;	
+        	
     	  scene = new THREE.Scene();
     		
     	  camera = new THREE.OrthographicCamera( 0, window.innerWidth , 0, -window.innerHeight, -1000, 1000 );
@@ -325,10 +396,13 @@
 	       scene.add( camera );
 	
 	       
-	       var roundTex = THREE.ImageUtils.loadTexture("crate.jpg");
-	       roundTex.wrapS = roundTex.wrapT = THREE.MirroredRepeatWrapping;
+	       var roundTex = THREE.ImageUtils.loadTexture("ball.gif");
 	       roundMaterial = new THREE.MeshLambertMaterial({ map: roundTex });
 	       squareMaterial = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("crate.jpg") });
+	       var concTex = THREE.ImageUtils.loadTexture("concrete.jpg");
+	       concTex.wrapS = concTex.wrapT = THREE.MirroredRepeatWrapping;
+	       concreteMaterial = new THREE.MeshLambertMaterial({ map:concTex  });
+	       
 	
 	        scene.add(new THREE.AmbientLight(0xFFFFFF));
 	        
@@ -339,7 +413,7 @@
 	
 	       document.body.appendChild( renderer.domElement );
          
-         world = new b2World( new b2Vec2(0, 10), true );
+         world = new b2World( new b2Vec2(0, 8), true );
          
          stats = new Stats();
      	stats.domElement.style.position = 'absolute';
@@ -368,9 +442,18 @@
          bodyDef.position.Set(window.innerWidth / drawScale+2.1, 0);
          wallr = world.CreateBody(bodyDef);
          wallr.CreateFixture(fixDef);
+         
+         for(var i = 0; i < 4; i++) {
+        	for(var j = 0; j < (4-i); j++) {
+	         	createStatic(i*10+5,
+	         				 window.innerHeight / drawScale-35+i*10 + j*10,
+	         				 10,
+	         				 10,
+	         				 concreteMaterial);
+        	}
+         }
 
-         createSquareBoingy(window.innerWidth / drawScale / 2 - 3.5, window.innerHeight / drawScale / 2 - 3.5, 7, 7);
-         createRoundBoingy(window.innerWidth / drawScale / 2, window.innerHeight / drawScale - 7, 2.5, 20)
+         createStickMan(50, window.innerHeight / drawScale-13);
          
          if(debug) {
         	//setup debug draw
@@ -386,16 +469,7 @@
              debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
              world.SetDebugDraw(debugDraw);
          }
-         
-         var textureImg = new Image();
-         textureImg.onload = function(){
-             animate();
-         };
-         textureImg.src = "crate.jpg";
-         
-
-
-         
+         animate();
       };
       
       
