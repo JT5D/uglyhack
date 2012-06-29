@@ -342,9 +342,9 @@
         
         function createStickMan(cx, cy) {
         	
-        	var shirtMat = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg") });
-        	var jeansMat = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg") })
-        	var head = createRoundBoingy(cx+0.5,cy-9.5,2,20,new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg") }));
+        	var shirtMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg"), shading: THREE.NoShading });
+        	var jeansMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg"), shading: THREE.NoShading })
+        	var head = createRoundBoingy(cx+0.5,cy-9.5,2,20,new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg"), shading: THREE.NoShading	 }));
         	var left_arm = createSquareBoingy(cx-8.1,cy-5.8,7,2, shirtMat);
         	var right_arm = createSquareBoingy(cx+3.6,cy-5.8,7,2, shirtMat);
         	var left_leg = createSquareBoingy(cx-2.1,cy+2.9,3,8, jeansMat);
@@ -429,19 +429,25 @@
 	
 	       
 	       var roundTex = THREE.ImageUtils.loadTexture("ball.jpg");
-	       roundMaterial = new THREE.MeshLambertMaterial({ map: roundTex });
-	       squareMaterial = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("crate.jpg") });
+	       roundMaterial = new THREE.MeshBasicMaterial({ map: roundTex, shading: THREE.NoShading });
+	       squareMaterial = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("crate.jpg"), shading: THREE.NoShading });
 	       var concTex = THREE.ImageUtils.loadTexture("concrete.jpg");
 	       concTex.wrapS = concTex.wrapT = THREE.MirroredRepeatWrapping;
-	       concreteMaterial = new THREE.MeshLambertMaterial({ map:concTex  });
+	       concreteMaterial = new THREE.MeshBasicMaterial({ map:concTex, shading: THREE.NoShading  });
 	       
-	         var bgmesh = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight,1,1) ,
-	        		 new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("bg.jpg") }) );
-	         bgmesh.rotation.x = Math.PI/2;
-	         bgmesh.position.z = -300;
-	         bgmesh.position.x = window.innerWidth/2;
-	         bgmesh.position.y = -window.innerHeight/2;
-	         scene.add( bgmesh );
+	         
+	         var bgtex = THREE.ImageUtils.loadTexture("bg.jpg");
+	         for(var x = 0; x < 5; ++x) {
+		         	for(var y = 0; y < 5; ++y) {
+				         var geo = new THREE.PlaneGeometry(window.innerWidth/5,window.innerHeight/5,1,1);
+				         var bgmesh = new THREE.Mesh(geo , new THREE.MeshBasicMaterial({ map: bgtex, shading: THREE.NoShading }) );
+				         bgmesh.rotation.x = Math.PI/2;
+				         bgmesh.position.z = -300;
+				         bgmesh.position.x = window.innerWidth/5*x+window.innerWidth/10;
+				         bgmesh.position.y = -window.innerHeight/5*y-window.innerHeight/10;
+				         scene.add( bgmesh );
+		         	}
+	         }
 	
 	        scene.add(new THREE.AmbientLight(0xFFFFFF));
 	        
