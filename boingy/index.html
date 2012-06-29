@@ -7,7 +7,6 @@
       	body {
       		overflow: hidden;
       		margin: 0px;
-      		background: url('bg.jpg');
       	}
       </style>
    </head>
@@ -16,6 +15,12 @@
    </body>
    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
    <script type="text/javascript" src="js/Three.js"></script>
+   <script type="text/javascript" src="js/ShaderExtras.js"></script>
+   <script type="text/javascript" src="js/MaskPass.js"></script>
+   <script type="text/javascript" src="js/ShaderPass.js"></script>
+   <script type="text/javascript" src="js/RenderPass.js"></script>
+   <script type="text/javascript" src="js/FilmPass.js"></script>
+   <script type="text/javascript" src="js/EffectComposer.js"></script>
    <script type="text/javascript" src="js/Stats.js"></script>
    <script type="text/javascript">
    
@@ -37,13 +42,14 @@
    ,   b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
    ;
 	   
-	   var camera, scene, renderer, stats,
+	   var camera, scene, renderer, stats, composer,
 	   geometry, material, mesh;
 	   
        var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
        var world;
        
        var wallt, wallb, walll, wallr;
+       var lastUpdate = new Date().getTime();
        
        var fixDef = new b2FixtureDef;
        fixDef.density = 1.0;
@@ -102,13 +108,24 @@
             	world.DrawDebugData();
             } else {
                updateBoingeGeo();
-     	       renderer.render( scene, camera );
+     	       //renderer.render( scene, camera );
+               renderer.clear();
+				composer.render( getFrametime() );
             }
    		    stats.update();
             world.ClearForces();
             
 	
 	   }
+	   
+	   function getFrametime() {
+
+	        var now = new Date().getTime();
+	        var tdiff = ( now - lastUpdate ) / 1000;
+	        lastUpdate = now;
+	        return tdiff;
+
+		};
 	   
 	   function updateBoingeGeo() {
 		   for(var a in boingies) {
@@ -245,8 +262,22 @@
 	         }
 	         
 	         var geo = new THREE.PlaneGeometry(bSizeX*drawScale,bSizeY*drawScale,bSizeX-1,bSizeY-1);
+	         for ( var z = 0; z < geo.faces.length; z ++ ) {
+	             if ( geo.faces[ z ] instanceof THREE.Face4 ) {
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 0 ].u = ( geo.vertices[ geo.faces[ z ].a ].x ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 0 ].v = ( geo.vertices[ geo.faces[ z ].a ].z ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 1 ].u = ( geo.vertices[ geo.faces[ z ].b ].x ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 1 ].v = ( geo.vertices[ geo.faces[ z ].b ].z ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 2 ].u = ( geo.vertices[ geo.faces[ z ].c ].x ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 2 ].v = ( geo.vertices[ geo.faces[ z ].c ].z ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 3 ].u = ( geo.vertices[ geo.faces[ z ].d ].x ) / (drawScale*10) + 0.5;
+	            	 geo.faceVertexUvs[ 0 ][ z ][ 3 ].v = ( geo.vertices[ geo.faces[ z ].d ].z ) / (drawScale*10) + 0.5;
+	             }
+	         }
+	         
 	         geo.dynamic = true;
 	         mesh = new THREE.Mesh(geo , mat ? mat : squareMaterial );
+	         mesh.doubleSided = true;
 	         mesh.rotation.x = Math.PI/2;
 	         mesh.position.z = boingies.length;
 	         scene.add( mesh );
@@ -277,9 +308,9 @@
 	         for(var i = 1 ; i < numSeg+1; i++) {
 	        	 createSpringJoint(bodies[i], bodies[0], true, 7.0, 0.1);
 	        	 if(i == 1) {
-	        		 createSpringJoint(bodies[i], bodies[numSeg], false, 10.0, 0.9);
+	        		 createSpringJoint(bodies[i], bodies[numSeg], false, 10.0, 0.5);
 	        	 } else {
-	        		 createSpringJoint(bodies[i], bodies[i-1], false, 10.0, 0.9);
+	        		 createSpringJoint(bodies[i], bodies[i-1], false, 10.0, 0.5);
 	        	 }
 	         }
 	         
@@ -300,6 +331,7 @@
 	         
 	         geo.dynamic = true;
 	         mesh = new THREE.Mesh(geo , mat ? mat : roundMaterial );
+	         mesh.doubleSided = true;
 	         mesh.rotation.x = Math.PI/2;
 	         mesh.position.z = boingies.length;
 	         scene.add( mesh );
@@ -313,11 +345,11 @@
         	var shirtMat = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg") });
         	var jeansMat = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg") })
         	var head = createRoundBoingy(cx+0.5,cy-9.5,2,20,new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg") }));
-        	var body = createSquareBoingy(cx-2,cy-6.8,6,10, shirtMat);
         	var left_arm = createSquareBoingy(cx-8.1,cy-5.8,7,2, shirtMat);
-        	var right_arm = createSquareBoingy(cx+3,cy-5.8,7,2, shirtMat);
+        	var right_arm = createSquareBoingy(cx+3.6,cy-5.8,7,2, shirtMat);
         	var left_leg = createSquareBoingy(cx-2.1,cy+2.9,3,8, jeansMat);
         	var right_leg = createSquareBoingy(cx+1.1,cy+2.9,3,8, jeansMat);
+        	var body = createSquareBoingy(cx-2,cy-6.8,6,10, shirtMat);
         	
         	//head to body
         	createSpringJoint(head.bodies[5], body.bodies[3][0], true, 10.0, 1.0);
@@ -396,22 +428,41 @@
 	       scene.add( camera );
 	
 	       
-	       var roundTex = THREE.ImageUtils.loadTexture("ball.gif");
+	       var roundTex = THREE.ImageUtils.loadTexture("ball.jpg");
 	       roundMaterial = new THREE.MeshLambertMaterial({ map: roundTex });
 	       squareMaterial = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("crate.jpg") });
 	       var concTex = THREE.ImageUtils.loadTexture("concrete.jpg");
 	       concTex.wrapS = concTex.wrapT = THREE.MirroredRepeatWrapping;
 	       concreteMaterial = new THREE.MeshLambertMaterial({ map:concTex  });
 	       
+	         var bgmesh = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight,1,1) ,
+	        		 new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("bg.jpg") }) );
+	         bgmesh.rotation.x = Math.PI/2;
+	         bgmesh.position.z = -300;
+	         bgmesh.position.x = window.innerWidth/2;
+	         bgmesh.position.y = -window.innerHeight/2;
+	         scene.add( bgmesh );
 	
 	        scene.add(new THREE.AmbientLight(0xFFFFFF));
 	        
 	       renderer = new THREE.WebGLRenderer({
 	    	   antialias: true
 	       });
+	       renderer.autoClear = false;
 	       renderer.setSize( window.innerWidth, window.innerHeight );
-	
 	       document.body.appendChild( renderer.domElement );
+	       
+	       var renderModel = new THREE.RenderPass( scene, camera );
+			var effectFilm = new THREE.FilmPass( 0.35, 0.50, 1024, false );
+
+			effectFilm.renderToScreen = true;
+
+			composer = new THREE.EffectComposer( renderer );
+
+			composer.addPass( renderModel );
+			composer.addPass( effectFilm );
+	
+	       
          
          world = new b2World( new b2Vec2(0, 8), true );
          
@@ -453,7 +504,7 @@
         	}
          }
 
-         createStickMan(50, window.innerHeight / drawScale-13);
+         createStickMan(50, window.innerHeight / drawScale-12);
          
          if(debug) {
         	//setup debug draw
