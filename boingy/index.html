@@ -15,17 +15,12 @@
    </body>
    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
    <script type="text/javascript" src="js/Three.js"></script>
-   <script type="text/javascript" src="js/ShaderExtras.js"></script>
-   <script type="text/javascript" src="js/MaskPass.js"></script>
-   <script type="text/javascript" src="js/ShaderPass.js"></script>
-   <script type="text/javascript" src="js/RenderPass.js"></script>
-   <script type="text/javascript" src="js/FilmPass.js"></script>
-   <script type="text/javascript" src="js/EffectComposer.js"></script>
    <script type="text/javascript" src="js/Stats.js"></script>
    <script type="text/javascript">
    
    var debug = false;
    var drawScale;
+   var worldScale=0.8;
    
    var   b2Vec2 = Box2D.Common.Math.b2Vec2
    ,  b2AABB = Box2D.Collision.b2AABB
@@ -42,14 +37,13 @@
    ,   b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
    ;
 	   
-	   var camera, scene, renderer, stats, composer,
+	   var camera, scene, renderer, stats,
 	   geometry, material, mesh;
 	   
        var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
        var world;
        
        var wallt, wallb, walll, wallr;
-       var lastUpdate = new Date().getTime();
        
        var fixDef = new b2FixtureDef;
        fixDef.density = 1.0;
@@ -57,6 +51,7 @@
        fixDef.restitution = 0.0;
        
        var bodyDef = new b2BodyDef;
+       bodyDef.bullet = true;
 	
 	   var boingies = new Array();
 	
@@ -75,13 +70,13 @@
                   md.bodyB = body;
                   md.target.Set(mouseX, mouseY);
                   md.collideConnected = true;
-                  md.maxForce = 500.0;
+                  md.maxForce = 500.0*worldScale;
                   mouseJoint = world.CreateJoint(md);
                   body.SetAwake(true);
                } else {
             	   var bs = 5;
             	   var hbs = bs/2;
-            	   if(!getBodyAtMouse(hbs)) {
+            	   if(!getBodyAtMouse(hbs*worldScale)) {
 	            	  var v = new b2Vec2(mouseX, mouseY)
 	            	  if(v.x > hbs && v.y > hbs && v.x < window.innerWidth / drawScale - hbs && v.y < window.innerHeight / drawScale - hbs) {
 	            	  	if(Math.random() > 0.5) {
@@ -103,14 +98,12 @@
                }
             }
          
-            world.Step(1 / 40, 10, 10);
+            world.Step(1 / 60, 10, 10);
             if(debug) {
             	world.DrawDebugData();
             } else {
                updateBoingeGeo();
-     	       //renderer.render( scene, camera );
-               renderer.clear();
-				composer.render( getFrametime() );
+     	         renderer.render( scene, camera );
             }
    		    stats.update();
             world.ClearForces();
@@ -118,14 +111,6 @@
 	
 	   }
 	   
-	   function getFrametime() {
-
-	        var now = new Date().getTime();
-	        var tdiff = ( now - lastUpdate ) / 1000;
-	        lastUpdate = now;
-	        return tdiff;
-
-		};
 	   
 	   function updateBoingeGeo() {
 		   for(var a in boingies) {
@@ -231,9 +216,9 @@
 	        	for(var y = 0; y < bSizeY; ++y) {
 	        		
 		            fixDef.shape = new b2PolygonShape;
-		            fixDef.shape.SetAsBox(0.3, 0.3);
-		            bodyDef.position.x = x+xx;
-		            bodyDef.position.y = y+yy;
+		            fixDef.shape.SetAsBox(0.3*worldScale, 0.3*worldScale);
+		            bodyDef.position.x = x*worldScale+xx;
+		            bodyDef.position.y = y*worldScale+yy;
 		            bodyDef.fixedRotation = true;
 		            var body = world.CreateBody(bodyDef);
 		            body.CreateFixture(fixDef);
@@ -290,7 +275,7 @@
    	        var bodies = new Array();
    		    bodyDef.type = b2Body.b2_dynamicBody;
    		    
-	   		 fixDef.shape = new b2CircleShape(radius*0.4);
+	   		 fixDef.shape = new b2CircleShape(radius*0.4*worldScale);
 	         bodyDef.position.x = xx;
 	         bodyDef.position.y = yy;
 	         var body = world.CreateBody(bodyDef);
@@ -298,9 +283,9 @@
 	         bodies.push(body);
 	         
 	         for(var i = 0 ; i < numSeg; i++) {
-	        	 fixDef.shape = new b2CircleShape(radius*0.15);
-		         bodyDef.position.x = xx + Math.cos(i/numSeg*Math.PI*2)*radius;
-		         bodyDef.position.y = yy + Math.sin(i/numSeg*Math.PI*2)*radius;
+	        	 fixDef.shape = new b2CircleShape(radius*0.15*worldScale);
+		         bodyDef.position.x = xx + Math.cos(i/numSeg*Math.PI*2)*radius*worldScale;
+		         bodyDef.position.y = yy + Math.sin(i/numSeg*Math.PI*2)*radius*worldScale;
 		         var body = world.CreateBody(bodyDef);
 		         body.CreateFixture(fixDef);
 		         bodies.push(body);
@@ -344,12 +329,12 @@
         	
         	var shirtMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg"), shading: THREE.NoShading });
         	var jeansMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg"), shading: THREE.NoShading })
-        	var head = createRoundBoingy(cx+0.5,cy-9.5,2,20,new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg"), shading: THREE.NoShading	 }));
-        	var left_arm = createSquareBoingy(cx-8.1,cy-5.8,7,2, shirtMat);
-        	var right_arm = createSquareBoingy(cx+3.6,cy-5.8,7,2, shirtMat);
-        	var left_leg = createSquareBoingy(cx-2.1,cy+2.9,3,8, jeansMat);
-        	var right_leg = createSquareBoingy(cx+1.1,cy+2.9,3,8, jeansMat);
-        	var body = createSquareBoingy(cx-2,cy-6.8,6,10, shirtMat);
+        	var head = createRoundBoingy(cx+0.5*worldScale,cy-9.5*worldScale,2,20,new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg"), shading: THREE.NoShading	 }));
+        	var left_arm = createSquareBoingy(cx-8.1*worldScale,cy-5.8*worldScale,7,2, shirtMat);
+        	var right_arm = createSquareBoingy(cx+3.6*worldScale,cy-5.8*worldScale,7,2, shirtMat);
+        	var left_leg = createSquareBoingy(cx-2.1*worldScale,cy+2.9*worldScale,3,8, jeansMat);
+        	var right_leg = createSquareBoingy(cx+1.1*worldScale,cy+2.9*worldScale,3,8, jeansMat);
+        	var body = createSquareBoingy(cx-2*worldScale,cy-6.8*worldScale,6,10, shirtMat);
         	
         	//head to body
         	createSpringJoint(head.bodies[5], body.bodies[3][0], true, 10.0, 1.0);
@@ -417,7 +402,7 @@
       
         window.onload = function() {
     	  
-        	drawScale = window.innerWidth/150;	
+        	drawScale = window.innerWidth/75;	
         	
     	  scene = new THREE.Scene();
     		
@@ -454,23 +439,10 @@
 	       renderer = new THREE.WebGLRenderer({
 	    	   antialias: true
 	       });
-	       renderer.autoClear = false;
 	       renderer.setSize( window.innerWidth, window.innerHeight );
 	       document.body.appendChild( renderer.domElement );
 	       
-	       var renderModel = new THREE.RenderPass( scene, camera );
-			var effectFilm = new THREE.FilmPass( 0.35, 0.50, 1024, false );
-
-			effectFilm.renderToScreen = true;
-
-			composer = new THREE.EffectComposer( renderer );
-
-			composer.addPass( renderModel );
-			composer.addPass( effectFilm );
-	
-	       
-         
-         world = new b2World( new b2Vec2(0, 8), true );
+         world = new b2World( new b2Vec2(0, 9), true );
          
          stats = new Stats();
      	stats.domElement.style.position = 'absolute';
@@ -502,15 +474,15 @@
          
          for(var i = 0; i < 4; i++) {
         	for(var j = 0; j < (4-i); j++) {
-	         	createStatic(i*10+5,
-	         				 window.innerHeight / drawScale-35+i*10 + j*10,
-	         				 10,
-	         				 10,
+	         	createStatic((i*10+5)*worldScale,
+	         				 window.innerHeight / drawScale-35*worldScale+i*10*worldScale + j*10*worldScale,
+	         				 10*worldScale,
+	         				 10*worldScale,
 	         				 concreteMaterial);
         	}
          }
 
-         createStickMan(50, window.innerHeight / drawScale-12);
+         createStickMan(50*worldScale, window.innerHeight / drawScale-12*worldScale);
          
          if(debug) {
         	//setup debug draw
