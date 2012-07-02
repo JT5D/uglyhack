@@ -7,20 +7,69 @@
       	body {
       		overflow: hidden;
       		margin: 0px;
+      		background: rgb(255,255,255); /* Old browsers */
+			background: -moz-linear-gradient(-25deg,  rgba(255,255,255,1) 0%, rgba(237,237,237,1) 50%, rgba(226,226,226,1) 51%, rgba(247,247,247,1) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(237,237,237,1)), color-stop(51%,rgba(226,226,226,1)), color-stop(100%,rgba(247,247,247,1))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(-25deg,  rgba(255,255,255,1) 0%,rgba(237,237,237,1) 50%,rgba(226,226,226,1) 51%,rgba(247,247,247,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(-25deg,  rgba(255,255,255,1) 0%,rgba(237,237,237,1) 50%,rgba(226,226,226,1) 51%,rgba(247,247,247,1) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(-25deg,  rgba(255,255,255,1) 0%,rgba(237,237,237,1) 50%,rgba(226,226,226,1) 51%,rgba(247,247,247,1) 100%); /* IE10+ */
+			background: linear-gradient(135deg,  rgba(255,255,255,1) 0%,rgba(237,237,237,1) 50%,rgba(226,226,226,1) 51%,rgba(247,247,247,1) 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+			      		
       	}
       </style>
+      <link rel="stylesheet" type="text/css" href="css/clippy.css" media="all">
    </head>
    <body>
+   	 <div style="position: fixed; bottom: 10px; left: 10px;">
+   	 	<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fuglyhack.appspot.com%2Fboingy%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=trebuchet+ms&amp;height=21&amp;appId=222442451114068" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:150px; height:21px;" allowTransparency="true"></iframe>
+   	 	<br/>
+    	 	<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/boingy/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    	 	<br/>
+	  	<g:plusone></g:plusone>
+	 </div>
    	 <canvas id="canvas" style="background-color:#333333; display:none;" ></canvas>
    </body>
    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
    <script type="text/javascript" src="js/Three.js"></script>
    <script type="text/javascript" src="js/Stats.js"></script>
+   <script type="text/javascript" src="../resources/DAT.GUI.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+	<script src="js/clippy.min.js"></script>
+   
+  	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-24008188-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+	<script type="text/javascript">
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+   
    <script type="text/javascript">
    
    var debug = false;
    var drawScale;
-   var worldScale=0.8;
+   var drawScaleConst = 100;
+   var worldScale=0.75;
+   
+   var dyn = {
+		gravity: 5   
+   };
+   
+   var clippyDude;
+   var draggedSpeak=false;
+   var createdSpeak=false;
    
    var   b2Vec2 = Box2D.Common.Math.b2Vec2
    ,  b2AABB = Box2D.Collision.b2AABB
@@ -51,9 +100,9 @@
        fixDef.restitution = 0.0;
        
        var bodyDef = new b2BodyDef;
-       bodyDef.bullet = true;
-	
+       
 	   var boingies = new Array();
+	   var statics = new Array();
 	
 	   function animate() {
 	       requestAnimationFrame( animate );
@@ -70,20 +119,30 @@
                   md.bodyB = body;
                   md.target.Set(mouseX, mouseY);
                   md.collideConnected = true;
-                  md.maxForce = 500.0*worldScale;
+                  md.maxForce = 500.0*worldScale*(1+body.GetMass()*0.05);
                   mouseJoint = world.CreateJoint(md);
                   body.SetAwake(true);
+                  if(!draggedSpeak) {
+                	draggedSpeak = true;
+                  	clippyDude.speak('Good job dragging something around!');
+                  	clippyDude.play('Congratulate');
+                  }
                } else {
-            	   var bs = 5;
-            	   var hbs = bs/2;
-            	   if(!getBodyAtMouse(hbs*worldScale)) {
+            	   var bs = 7;
+            	   var hbs = bs/2*worldScale;
+            	   if(!getBodyAtMouse(hbs)) {
 	            	  var v = new b2Vec2(mouseX, mouseY)
 	            	  if(v.x > hbs && v.y > hbs && v.x < window.innerWidth / drawScale - hbs && v.y < window.innerHeight / drawScale - hbs) {
 	            	  	if(Math.random() > 0.5) {
 	            			createSquareBoingy(v.x-hbs,v.y-hbs,bs,bs);
 	            	  	} else {
-	            			createRoundBoingy(v.x-hbs,v.y-hbs,hbs,20);
+	            			createRoundBoingy(v.x,v.y,hbs,20);
 	            	  	}
+	            	  	if(!createdSpeak) {
+	            	  		createdSpeak = true;
+	                      	clippyDude.speak('Good job creating stuff!');
+	                      	clippyDude.play('Wave');
+	                      }
 	            	  }
             	   }	
                }
@@ -103,12 +162,25 @@
             	world.DrawDebugData();
             } else {
                updateBoingeGeo();
-     	         renderer.render( scene, camera );
+               updateStaticsGeo();
+     	       renderer.render( scene, camera );
             }
    		    stats.update();
             world.ClearForces();
             
 	
+	   }
+	   
+	   function updateStaticsGeo() {
+		   for(var a in statics) {
+			   var ss = statics[a];
+			   var pos = ss.body.GetPosition(); 
+			   var rot = ss.body.GetAngle();
+			   
+			   ss.mesh.position.x = pos.x*drawScale;
+		       ss.mesh.position.y = -pos.y*drawScale;
+		       ss.mesh.rotation.y = -rot;
+		   }
 	   }
 	   
 	   
@@ -214,12 +286,13 @@
 	         for(var x = 0; x < bSizeX; ++x) {
 	        	bodies.push(new Array());
 	        	for(var y = 0; y < bSizeY; ++y) {
-	        		
+	        		var edgebody = (x == 0 || x == bSizeX - 1 || y == 0 || y == bSizeY - 1) && ((x + y) % 2 == 0);
 		            fixDef.shape = new b2PolygonShape;
 		            fixDef.shape.SetAsBox(0.3*worldScale, 0.3*worldScale);
 		            bodyDef.position.x = x*worldScale+xx;
 		            bodyDef.position.y = y*worldScale+yy;
 		            bodyDef.fixedRotation = true;
+		            bodyDef.bullet = edgebody;
 		            var body = world.CreateBody(bodyDef);
 		            body.CreateFixture(fixDef);
 		            bodies[x][y] = body;
@@ -228,20 +301,19 @@
 	         
 	         for(var x = 0; x < bSizeX; ++x) {
 	         	for(var y = 0; y < bSizeY; ++y) {
-	         		var cc = true;//(x > 0 && x < bSizeX - 1 && y > 0 && y < bSizeY - 1);
 	         		if(x < bSizeX - 1 && y < bSizeY - 1) {
-		         		createSpringJoint(bodies[x][y], bodies[x+1][y], cc, 7.0, 0.2); 
-		         		createSpringJoint(bodies[x][y], bodies[x][y+1], cc, 7.0, 0.2);
-		         		createSpringJoint(bodies[x][y], bodies[x+1][y+1], cc, 7.0, 0.2);
+		         		createSpringJoint(bodies[x][y], bodies[x+1][y], true, 7.0, 0.2); 
+		         		createSpringJoint(bodies[x][y], bodies[x][y+1], true, 7.0, 0.2);
+		         		createSpringJoint(bodies[x][y], bodies[x+1][y+1], true, 7.0, 0.2);
 	         		}
 	         		if(x > 0 && y < bSizeY - 1) {
-	         			createSpringJoint(bodies[x][y], bodies[x-1][y+1], cc, 7.0, 0.2);
+	         			createSpringJoint(bodies[x][y], bodies[x-1][y+1], true, 7.0, 0.2);
 	         		}
 	         		if (x == bSizeX - 1 && y < bSizeY - 1) {
-	         			createSpringJoint(bodies[x][y], bodies[x][y+1], cc, 7.0, 0.2);
+	         			createSpringJoint(bodies[x][y], bodies[x][y+1], true, 7.0, 0.2);
 	         		} 
 	         		if (x < bSizeX - 1 && y == bSizeY - 1) {
-	         			createSpringJoint(bodies[x][y], bodies[x+1][y], cc, 7.0, 0.2);
+	         			createSpringJoint(bodies[x][y], bodies[x+1][y], true, 7.0, 0.2);
 	         		}
 	         	}
 	         }
@@ -278,6 +350,7 @@
 	   		 fixDef.shape = new b2CircleShape(radius*0.4*worldScale);
 	         bodyDef.position.x = xx;
 	         bodyDef.position.y = yy;
+	         bodyDef.bullet = false;
 	         var body = world.CreateBody(bodyDef);
 	         body.CreateFixture(fixDef);
 	         bodies.push(body);
@@ -286,6 +359,7 @@
 	        	 fixDef.shape = new b2CircleShape(radius*0.15*worldScale);
 		         bodyDef.position.x = xx + Math.cos(i/numSeg*Math.PI*2)*radius*worldScale;
 		         bodyDef.position.y = yy + Math.sin(i/numSeg*Math.PI*2)*radius*worldScale;
+		         bodyDef.bullet = i % 2 == 0;
 		         var body = world.CreateBody(bodyDef);
 		         body.CreateFixture(fixDef);
 		         bodies.push(body);
@@ -330,10 +404,10 @@
         	var shirtMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg"), shading: THREE.NoShading });
         	var jeansMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg"), shading: THREE.NoShading })
         	var head = createRoundBoingy(cx+0.5*worldScale,cy-9.5*worldScale,2,20,new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg"), shading: THREE.NoShading	 }));
-        	var left_arm = createSquareBoingy(cx-8.1*worldScale,cy-5.8*worldScale,7,2, shirtMat);
-        	var right_arm = createSquareBoingy(cx+3.6*worldScale,cy-5.8*worldScale,7,2, shirtMat);
-        	var left_leg = createSquareBoingy(cx-2.1*worldScale,cy+2.9*worldScale,3,8, jeansMat);
-        	var right_leg = createSquareBoingy(cx+1.1*worldScale,cy+2.9*worldScale,3,8, jeansMat);
+        	var left_arm = createSquareBoingy(cx-7.7*worldScale,cy-6.8*worldScale,6,3, shirtMat);
+        	var right_arm = createSquareBoingy(cx+3.7*worldScale,cy-6.8*worldScale,6,3, shirtMat);
+        	var left_leg = createSquareBoingy(cx-2.1*worldScale,cy+2.9*worldScale,3,7, jeansMat);
+        	var right_leg = createSquareBoingy(cx+1.1*worldScale,cy+2.9*worldScale,3,7, jeansMat);
         	var body = createSquareBoingy(cx-2*worldScale,cy-6.8*worldScale,6,10, shirtMat);
         	
         	//head to body
@@ -343,16 +417,20 @@
         	createSpringJoint(head.bodies[7], body.bodies[2][0], true, 10.0, 1.0);
         	
         	//left arm to body
-        	createSpringJoint(left_arm.bodies[6][0], body.bodies[0][1], true, 10.0, 1.0);
-        	createSpringJoint(left_arm.bodies[6][1], body.bodies[0][2], true, 10.0, 1.0);
-        	createSpringJoint(left_arm.bodies[6][1], body.bodies[0][1], true, 10.0, 1.0);
-        	createSpringJoint(left_arm.bodies[6][0], body.bodies[0][2], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[5][0], body.bodies[0][0], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[5][1], body.bodies[0][1], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[5][1], body.bodies[0][0], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[5][0], body.bodies[0][1], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[5][1], body.bodies[0][2], true, 10.0, 1.0);
+        	createSpringJoint(left_arm.bodies[5][2], body.bodies[0][2], true, 10.0, 1.0);
         	
         	//right arm to body
+        	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][0], true, 10.0, 1.0);
+        	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][1], true, 10.0, 1.0);
+        	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][0], true, 10.0, 1.0);
         	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][1], true, 10.0, 1.0);
         	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][2], true, 10.0, 1.0);
-        	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][1], true, 10.0, 1.0);
-        	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][2], true, 10.0, 1.0);
+        	createSpringJoint(right_arm.bodies[0][2], body.bodies[5][2], true, 10.0, 1.0);
         	
         	//left leg to body
         	createSpringJoint(left_leg.bodies[0][0], body.bodies[0][9], true, 10.0, 1.0);
@@ -371,13 +449,15 @@
         }
         
         function createStatic(xx, yy, sx, sy, material) {
-        	bodyDef.type = b2Body.b2_staticBody;
+        	bodyDef.type = b2Body.b2_dynamicBody;
             fixDef.shape = new b2PolygonShape;
             fixDef.shape.SetAsBox(sx/2, sy/2);
+            fixDef.density = 0.5;
             
             bodyDef.position.Set(xx, yy);
-            wallb = world.CreateBody(bodyDef);
-            wallb.CreateFixture(fixDef);
+            bodyDef.bullet = false;
+            var bbb = world.CreateBody(bodyDef);
+            bbb.CreateFixture(fixDef);
 	         
             var geo = new THREE.PlaneGeometry(sx*drawScale,sy*drawScale,1,1);
 	        mesh = new THREE.Mesh(geo , material );
@@ -386,6 +466,11 @@
 	        mesh.position.y = -yy*drawScale
 	        mesh.position.z = -20;
 	        scene.add( mesh );
+
+	        fixDef.density = 1.0;
+	        var ret = {mesh: mesh, body: bbb};
+	        statics.push(ret);
+	        return ret;
         }
         
     	window.addEventListener('resize', function(){
@@ -401,8 +486,15 @@
     	}, false);
       
         window.onload = function() {
+        	
+        	var gui = new DAT.GUI({
+        		height : 1 * 32 - 1
+        	}); 
+        	gui.add(dyn, 'gravity').min(0).max(15).step(0.5).onChange(function(newValue) {
+        		world.SetGravity(new b2Vec2(0, newValue));
+        	});
     	  
-        	drawScale = window.innerWidth/75;	
+        	drawScale = window.innerWidth/drawScaleConst;	
         	
     	  scene = new THREE.Scene();
     		
@@ -421,7 +513,7 @@
 	       concreteMaterial = new THREE.MeshBasicMaterial({ map:concTex, shading: THREE.NoShading  });
 	       
 	         
-	         var bgtex = THREE.ImageUtils.loadTexture("bg.jpg");
+/* 	         var bgtex = THREE.ImageUtils.loadTexture("bg.jpg");
 	         for(var x = 0; x < 5; ++x) {
 		         	for(var y = 0; y < 5; ++y) {
 				         var geo = new THREE.PlaneGeometry(window.innerWidth/5,window.innerHeight/5,1,1);
@@ -433,7 +525,7 @@
 				         scene.add( bgmesh );
 		         	}
 	         }
-	
+ */	
 	        scene.add(new THREE.AmbientLight(0xFFFFFF));
 	        
 	       renderer = new THREE.WebGLRenderer({
@@ -442,7 +534,7 @@
 	       renderer.setSize( window.innerWidth, window.innerHeight );
 	       document.body.appendChild( renderer.domElement );
 	       
-         world = new b2World( new b2Vec2(0, 9), true );
+         world = new b2World( new b2Vec2(0, dyn.gravity), true );
          
          stats = new Stats();
      	stats.domElement.style.position = 'absolute';
@@ -455,6 +547,7 @@
          fixDef.shape.SetAsBox(1000, 2);
          
          bodyDef.position.Set(0, window.innerHeight / drawScale + 2.1);
+         bodyDef.bullet = false;
          wallb = world.CreateBody(bodyDef);
          wallb.CreateFixture(fixDef);
          
@@ -474,8 +567,8 @@
          
          for(var i = 0; i < 4; i++) {
         	for(var j = 0; j < (4-i); j++) {
-	         	createStatic((i*10+5)*worldScale,
-	         				 window.innerHeight / drawScale-35*worldScale+i*10*worldScale + j*10*worldScale,
+	         	createStatic((i*10+5)*worldScale+Math.random()*2,
+	         				 window.innerHeight / drawScale-35*worldScale+i*10*worldScale + j*11*worldScale-5,
 	         				 10*worldScale,
 	         				 10*worldScale,
 	         				 concreteMaterial);
@@ -498,6 +591,22 @@
              debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
              world.SetDebugDraw(debugDraw);
          }
+         
+         clippy.load('Clippy', function(agent){
+        	 clippyDude = agent;
+             agent.show();
+             agent.moveTo(window.innerWidth - 140, window.innerHeight - 110);
+             agent.speak('Created by @DanielPettersso using the excellent Three.js, Box2dweb, dat.gui and jquery libraries. If your framerate sucks, switch to chrome or buy some new hardware..');
+             setTimeout(function() {
+            	 if(!draggedSpeak && !createdSpeak) {
+            	 	agent.speak('You can drag stuff around using your mouse. Or click on an empty space to create new stuff.');
+	            	 setTimeout(function() {
+	                	 agent.speak('But please be gentle with the dude. You might hurt his feelings.');
+	                 }, 5000);
+            	 }
+             }, 9000);
+         });
+         
          animate();
       };
       
