@@ -235,9 +235,11 @@
 	   }
 	   
 	   document.addEventListener("mousedown", function(e) {
-           isMouseDown = true;
-           handleMouseMove(e);
-           document.addEventListener("mousemove", handleMouseMove, true);
+		   if(e.srcElement instanceof HTMLCanvasElement) {
+	           isMouseDown = true;
+	           handleMouseMove(e);
+	           document.addEventListener("mousemove", handleMouseMove, true);
+		   }
         }, true);
         
         document.addEventListener("mouseup", function() {
@@ -472,18 +474,6 @@
 	        statics.push(ret);
 	        return ret;
         }
-        
-    	window.addEventListener('resize', function(){
-    		drawScale = window.innerWidth/150;
-    		
-    		renderer.setSize( window.innerWidth, window.innerHeight );
-    		camera.right = window.innerWidth;
-    		camera.bottom = -window.innerHeight;
-    		camera.updateProjectionMatrix();
-    		
-    		wallb.SetPosition(new b2Vec2(0, window.innerHeight / drawScale + 2));
-    		wallr.SetPosition(new b2Vec2(window.innerWidth / drawScale+2.1, 0));
-    	}, false);
       
         window.onload = function() {
         	
@@ -493,6 +483,7 @@
         	gui.add(dyn, 'gravity').min(0).max(15).step(0.5).onChange(function(newValue) {
         		world.SetGravity(new b2Vec2(0, newValue));
         	});
+        	gui.close(true);
     	  
         	drawScale = window.innerWidth/drawScaleConst;	
         	
