@@ -32,6 +32,7 @@
    </body>
    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
    <script type="text/javascript" src="js/Three.js"></script>
+   <script type="text/javascript" src="js/Detector.js"></script>
    <script type="text/javascript" src="js/Stats.js"></script>
    <script type="text/javascript" src="../resources/DAT.GUI.min.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
@@ -235,7 +236,7 @@
 	   }
 	   
 	   document.addEventListener("mousedown", function(e) {
-		   if(e.srcElement instanceof HTMLCanvasElement) {
+		   if(e.target instanceof HTMLCanvasElement || e.srcElement instanceof HTMLCanvasElement) {
 	           isMouseDown = true;
 	           handleMouseMove(e);
 	           document.addEventListener("mousemove", handleMouseMove, true);
@@ -476,6 +477,11 @@
         }
       
         window.onload = function() {
+
+          if ( ! Detector.webgl ) {
+            Detector.addGetWebGLMessage();
+            return;
+          }
         	
         	var gui = new DAT.GUI({
         		height : 1 * 32 - 1
@@ -503,20 +509,6 @@
 	       concTex.wrapS = concTex.wrapT = THREE.MirroredRepeatWrapping;
 	       concreteMaterial = new THREE.MeshBasicMaterial({ map:concTex, shading: THREE.NoShading  });
 	       
-	         
-/* 	         var bgtex = THREE.ImageUtils.loadTexture("bg.jpg");
-	         for(var x = 0; x < 5; ++x) {
-		         	for(var y = 0; y < 5; ++y) {
-				         var geo = new THREE.PlaneGeometry(window.innerWidth/5,window.innerHeight/5,1,1);
-				         var bgmesh = new THREE.Mesh(geo , new THREE.MeshBasicMaterial({ map: bgtex, shading: THREE.NoShading }) );
-				         bgmesh.rotation.x = Math.PI/2;
-				         bgmesh.position.z = -300;
-				         bgmesh.position.x = window.innerWidth/5*x+window.innerWidth/10;
-				         bgmesh.position.y = -window.innerHeight/5*y-window.innerHeight/10;
-				         scene.add( bgmesh );
-		         	}
-	         }
- */	
 	        scene.add(new THREE.AmbientLight(0xFFFFFF));
 	        
 	       renderer = new THREE.WebGLRenderer({
