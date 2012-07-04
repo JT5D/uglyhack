@@ -195,8 +195,8 @@
 				   xl = bb.bodies.length;
 				   yl = bb.bodies[0].length;
 				   cc = bb.bodies[Math.floor(xl/2)][Math.floor(yl/2)].GetPosition();
-				   xm = (1/xl)*0.8;
-				   ym = (1/yl)*0.8;
+				   xm = (1/xl)*0.85;
+				   ym = (1/yl)*0.85;
 				   for(var x = 0; x < xl; ++x) {
 					    
 					    
@@ -289,12 +289,11 @@
 	         for(var x = 0; x < bSizeX; ++x) {
 	        	bodies.push(new Array());
 	        	for(var y = 0; y < bSizeY; ++y) {
-	        		var edgebody = (x == 0 || x == bSizeX - 1 || y == 0 || y == bSizeY - 1) && ((x + y) % 2 == 0);
-		            fixDef.shape = new b2PolygonShape;
-		            fixDef.shape.SetAsBox(0.3*worldScale, 0.3*worldScale);
+	        		var edgebody = (x == 0 || x == bSizeX - 1 || y == 0 || y == bSizeY - 1);
+		            fixDef.shape = new b2CircleShape(0.4*worldScale);
+		            bodyDef.fixedRotation = true;
 		            bodyDef.position.x = x*worldScale+xx;
 		            bodyDef.position.y = y*worldScale+yy;
-		            bodyDef.fixedRotation = true;
 		            bodyDef.bullet = edgebody;
 		            var body = world.CreateBody(bodyDef);
 		            body.CreateFixture(fixDef);
@@ -362,7 +361,7 @@
 	        	 fixDef.shape = new b2CircleShape(radius*0.15*worldScale);
 		         bodyDef.position.x = xx + Math.cos(i/numSeg*Math.PI*2)*radius*worldScale;
 		         bodyDef.position.y = yy + Math.sin(i/numSeg*Math.PI*2)*radius*worldScale;
-		         bodyDef.bullet = i % 2 == 0;
+		         bodyDef.bullet = true;
 		         var body = world.CreateBody(bodyDef);
 		         body.CreateFixture(fixDef);
 		         bodies.push(body);
