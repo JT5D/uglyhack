@@ -135,6 +135,12 @@
 				height:250px;
 			}
 
+			div.linecont{
+				-webkit-transform-origin: 0 0;
+			  	height: 30px;
+				cursor: pointer;
+			}
+			
 			div.line{
 				-webkit-transform-origin: 0 0;
 			  	height: 3px;
@@ -143,9 +149,11 @@
 			  	-webkit-transition: background 1s, box-shadow 1s;
 				transition: background 1s, box-shadow 1s;
 				cursor: pointer;
+				top: 15px;
+				position: relative;
 			}
 
-			div.line:hover {
+			div.linecont:hover > div.line {
 				background: rgb(255,85,85);
 				box-shadow: 0px 0px 25px 5px rgb(255, 150, 150);
 			}
