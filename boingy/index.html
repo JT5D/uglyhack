@@ -62,10 +62,10 @@
    var debug = false;
    var drawScale;
    var drawScaleConst = 100;
-   var worldScale=0.75;
+   var worldScale=0.85;
    
    var dyn = {
-		gravity: 5   
+		gravity: 7   
    };
    
    var clippyDude;
@@ -120,7 +120,7 @@
                   md.bodyB = body;
                   md.target.Set(mouseX, mouseY);
                   md.collideConnected = true;
-                  md.maxForce = 500.0*worldScale*(1+body.GetMass()*0.05);
+                  md.maxForce = 450.0*worldScale*(1+body.GetMass()*0.05);
                   mouseJoint = world.CreateJoint(md);
                   body.SetAwake(true);
                   if(!draggedSpeak) {
@@ -129,7 +129,7 @@
                   	clippyDude.play('Congratulate');
                   }
                } else {
-            	   var bs = 7;
+            	   var bs = 3+2*Math.floor(Math.random()*3);
             	   var hbs = bs/2*worldScale;
             	   if(!getBodyAtMouse(hbs)) {
 	            	  var v = new b2Vec2(mouseX, mouseY)
@@ -290,7 +290,7 @@
 	        	bodies.push(new Array());
 	        	for(var y = 0; y < bSizeY; ++y) {
 	        		var edgebody = (x == 0 || x == bSizeX - 1 || y == 0 || y == bSizeY - 1);
-		            fixDef.shape = new b2CircleShape(0.4*worldScale);
+		            fixDef.shape = new b2CircleShape(0.39*worldScale);
 		            bodyDef.fixedRotation = true;
 		            bodyDef.position.x = x*worldScale+xx;
 		            bodyDef.position.y = y*worldScale+yy;
@@ -406,8 +406,8 @@
         	var shirtMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("shirt.jpg"), shading: THREE.NoShading });
         	var jeansMat = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("jeans.jpg"), shading: THREE.NoShading })
         	var head = createRoundBoingy(cx+0.5*worldScale,cy-9.5*worldScale,2,20,new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture("face.jpg"), shading: THREE.NoShading	 }));
-        	var left_arm = createSquareBoingy(cx-7.7*worldScale,cy-6.8*worldScale,6,3, shirtMat);
-        	var right_arm = createSquareBoingy(cx+3.7*worldScale,cy-6.8*worldScale,6,3, shirtMat);
+        	var left_arm = createSquareBoingy(cx-7.7*worldScale,cy-6.8*worldScale,6,2, shirtMat);
+        	var right_arm = createSquareBoingy(cx+3.7*worldScale,cy-6.8*worldScale,6,2, shirtMat);
         	var left_leg = createSquareBoingy(cx-2.1*worldScale,cy+2.9*worldScale,3,7, jeansMat);
         	var right_leg = createSquareBoingy(cx+1.1*worldScale,cy+2.9*worldScale,3,7, jeansMat);
         	var body = createSquareBoingy(cx-2*worldScale,cy-6.8*worldScale,6,10, shirtMat);
@@ -423,16 +423,12 @@
         	createSpringJoint(left_arm.bodies[5][1], body.bodies[0][1], true, 10.0, 1.0);
         	createSpringJoint(left_arm.bodies[5][1], body.bodies[0][0], true, 10.0, 1.0);
         	createSpringJoint(left_arm.bodies[5][0], body.bodies[0][1], true, 10.0, 1.0);
-        	createSpringJoint(left_arm.bodies[5][1], body.bodies[0][2], true, 10.0, 1.0);
-        	createSpringJoint(left_arm.bodies[5][2], body.bodies[0][2], true, 10.0, 1.0);
         	
         	//right arm to body
         	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][0], true, 10.0, 1.0);
         	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][1], true, 10.0, 1.0);
         	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][0], true, 10.0, 1.0);
         	createSpringJoint(right_arm.bodies[0][0], body.bodies[5][1], true, 10.0, 1.0);
-        	createSpringJoint(right_arm.bodies[0][1], body.bodies[5][2], true, 10.0, 1.0);
-        	createSpringJoint(right_arm.bodies[0][2], body.bodies[5][2], true, 10.0, 1.0);
         	
         	//left leg to body
         	createSpringJoint(left_leg.bodies[0][0], body.bodies[0][9], true, 10.0, 1.0);
