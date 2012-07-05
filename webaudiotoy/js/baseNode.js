@@ -83,7 +83,7 @@ var BaseNode = Class.extend({
 					thisNode.updateConnectionLine(tempConnectionLine, linePosData);
 				},
 				stop: function() {
-					tempConnectionLine.remove();
+					tempConnectionLine.parent().remove();
 				}
 			});
 			dragEl.addClass('nodedrag');
@@ -160,13 +160,9 @@ var BaseNode = Class.extend({
 	createConnectionLine: function(fromEl, toEl, fromIdx, toIdx, temp) {
 		var linePosData = this.getLinePosData(fromEl, toEl, temp);
 
-	    var line = $('<div>')
-	        .appendTo('body')
-	        .addClass('line')
-	        .attr({
-	        	'data-fromIdx': fromIdx,
-	        	'data-toIdx': toIdx
-	        })
+		var lineCont = $('<div>')
+			.appendTo('body')
+			.addClass('linecont')
 	        .css({
 	          'position': 'absolute',
 	          'webkit-transform': linePosData.transform,
@@ -174,20 +170,30 @@ var BaseNode = Class.extend({
 	          'transform': linePosData.transform
 	        })
 	        .width(linePosData.length)
-	        .offset({left: linePosData.left, top: linePosData.top});
+	        .offset({left: linePosData.left, top: linePosData.top-15});
+		
+	    var line = $('<div>')
+	        .addClass('line')
+	        .attr({
+	        	'data-fromIdx': fromIdx,
+	        	'data-toIdx': toIdx
+	        })
+	        .width(linePosData.length);
 	    if(temp) {
-	    	line.addClass('templine');
+	    	lineCont.addClass('templine');
 	    } else {
-	    	line.on('click', function() {
+	    	lineCont.on('click', function() {
 	    		var fromN = nodes[line.attr('data-fromIdx')];
 				var toN = nodes[line.attr('data-toIdx')];
-				line.fadeOut(700, function() {
+				lineCont.fadeOut(700, function() {
 					fromN.disconnectFrom(toN);
 					$(this).remove();
 				});
 				
 	    	})
 	    }
+	    
+	    lineCont.append(line);
 
 	    return line;
 	},
@@ -203,13 +209,15 @@ var BaseNode = Class.extend({
 		});
 	},
 	updateConnectionLine: function(line, linePosData) {
-		line.css({
+		line.parent().css({
           'webkit-transform': linePosData.transform,
           '-moz-transform': linePosData.transform,
           'transform': linePosData.transform
         })
         .width(linePosData.length)
-        .offset({left: linePosData.left, top: linePosData.top});
+        .offset({left: linePosData.left, top: linePosData.top-15});
+		
+		line.width(linePosData.length);
 	},
 	getLinePosData: function(fromEl, toEl, temp) {
 		var fromElPos = fromEl.offset();
