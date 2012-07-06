@@ -25,6 +25,7 @@
 
 var nodes = new Array();
 var context = null;
+var connLineWidth = 30;
 
 $(function() {
 	
