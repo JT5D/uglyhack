@@ -143,6 +143,10 @@ $(function() {
 			$('#shareBox').modal();
 		})
 		populateLoadSelect();
+
+		$(document.body).on("keypress", "select", function(event) {
+			event.preventDefault();
+		});
 	}
 }); 
 
