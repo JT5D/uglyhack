@@ -545,15 +545,15 @@
          
          for(var i = 0; i < 4; i++) {
         	for(var j = 0; j < (4-i); j++) {
-	         	createStatic((i*10+5)*worldScale+Math.random()*2,
-	         				 window.innerHeight / drawScale-35*worldScale+i*10*worldScale + j*11*worldScale-5,
+	         	createStatic((i*10+5)*worldScale,
+	         				 window.innerHeight / drawScale-29*worldScale+i*10*worldScale + j*10*worldScale-5,
 	         				 10*worldScale,
 	         				 10*worldScale,
 	         				 concreteMaterial);
         	}
          }
 
-         createStickMan(50*worldScale, window.innerHeight / drawScale-12*worldScale);
+         createStickMan(15*worldScale, window.innerHeight / drawScale-41*worldScale);
          
          if(debug) {
         	//setup debug draw
