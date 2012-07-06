@@ -169,8 +169,8 @@ var BaseNode = Class.extend({
 	          '-moz-transform': linePosData.transform,
 	          'transform': linePosData.transform
 	        })
-	        .width(linePosData.length)
-	        .offset({left: linePosData.left, top: linePosData.top-15});
+	        .width(linePosData.length);
+		lineCont.offset({left: linePosData.left, top: linePosData.top-connLineWidth/2});
 		
 	    var line = $('<div>')
 	        .addClass('line')
@@ -215,7 +215,7 @@ var BaseNode = Class.extend({
           'transform': linePosData.transform
         })
         .width(linePosData.length)
-        .offset({left: linePosData.left, top: linePosData.top-15});
+        .offset({left: linePosData.left, top: linePosData.top-connLineWidth/2});
 		
 		line.width(linePosData.length);
 	},
@@ -239,12 +239,14 @@ var BaseNode = Class.extend({
 			x2 -= 15;
 		}
 
-		var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;	
+		var a = Math.atan2(y2 - y1, x2 - x1);
+		var angle  = a * 180 / Math.PI;	
+		var ld = Math.abs(Math.sin(a)*connLineWidth/2);
 		return {
 			length: Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)),
 	  		transform: 'rotate('+angle+'deg)',
-	  		top: y1 < y2 ? y1 : y1 - (y1-y2),
-	  		left: x1 < x2 ? x1 : x1 - (x1-x2)
+	  		top: y1 < y2 ? y1 + ld : y1 - (y1-y2) + ld,
+	  		left: x1 < x2 ? x1 - ld : x1 - (x1-x2) - ld
 		}
 	},
 	shutdown: function() {}
