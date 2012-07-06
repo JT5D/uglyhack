@@ -65,6 +65,7 @@ var SaveHandler = Class.extend({
 				case 'pn': node = new PianoNode(n.i, n.d); break;
 				case 'nn': node = new NoiseNode(n.i, n.d); break;
 				case 'vn': node = new VibratoNode(n.i, n.d); break;
+				case 'ptn': node = new PitchNode(n.i, n.d); break;
 			}
 			node.el.offset(n.p);
 			nodes[n.i] = node;
