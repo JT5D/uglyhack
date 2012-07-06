@@ -30,6 +30,7 @@
 		<script src="js/pianoNode.js" type="text/javascript"></script>
 		<script src="js/noiseNode.js" type="text/javascript"></script>
 		<script src="js/vibratoNode.js" type="text/javascript"></script>
+		<script src="js/pitchNode.js" type="text/javascript"></script>
 		<script src="js/saveHandler.js" type="text/javascript"></script>
 		<script src="js/main.js" type="text/javascript"></script>
 		
@@ -336,6 +337,12 @@
 	    			<a href="#" onclick="nodes.push(new VibratoNode(nodes.length));">
 	    				<i class="icon-leaf"></i>
 	    				Vibrato
+	    			</a>
+	    		</li>
+	    		<li>
+	    			<a href="#" onclick="nodes.push(new PitchNode(nodes.length));">
+	    				<i class="icon-resize-full"></i>
+	    				Pitch
 	    			</a>
 	    		</li>
 	    		<li class="nav-header">
