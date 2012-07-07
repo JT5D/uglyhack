@@ -9,6 +9,10 @@ var PianoNode = BaseNode.extend({
 		var el = this.createMainEl(true, false, true, 290);
 		try {
 			this.thingy = context.createOscillator();
+			if(typeof this.thingy.noteOn != 'function') { 
+				throw new Exception();
+			}	
+
 		} catch(e) {
 			el.append($('<p>').html('Not supported by your browser. You probably need to go Chrome Canary.'));
 			return;
