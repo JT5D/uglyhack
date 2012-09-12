@@ -148,21 +148,6 @@
 		</ul>
 	</article>
 	
-	<script>
-	
-	window.addEventListener( 'load', function() {
-		
-		var t = 0;
-		var images = document.getElementsByTagName( 'div' );
-			for ( i = 0; i < images.length; i++ ) {
-				if( images[ i ].className == 'fadeable' ) {
-					( function( i, t ) { setTimeout( function(){ i.style.opacity = 1; }, t ) } )( images[ i ], t );
-					t += 300;
-				}
-			}
-		}, false );
-	</script>
-	
 	<footer>
 		Made by Daniel Pettersson. Code at <a href="http://code.google.com/p/uglyhack/">Google Code</a>
 	</footer>
