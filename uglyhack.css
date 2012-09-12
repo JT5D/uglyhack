@@ -22,6 +22,12 @@ h1 {
 	text-align: left;
 	text-shadow: 2px 3px 3px black;
 	padding-bottom: 10px;
+	animation-duration: 1.5s;
+	-moz-animation-duration: 1.5s;
+	-webkit-animation-duration: 1.5s;
+  	animation-name: slidein;
+  	-moz-animation-name: slidein;
+  	-webkit-animation-name: slidein;
 }
 
 h2 {
@@ -45,12 +51,22 @@ h3 {
 	right: 0;
 	top: 20px;
 	text-align: right
+	animation-duration: 1.5s;
+	-moz-animation-duration: 1.5s;
+	-webkit-animation-duration: 1.5s;
+  	animation-name: slidein;
+  	-moz-animation-name: slidein;
+  	-webkit-animation-name: slidein;
 }
 
 section {
 	width: 950px;
 	margin: 0 auto 0 auto;
 	position: relative;
+	-webkit-perspective: 800; 
+	-moz-perspective: 800;
+	perspective: 800;
+	
 }
 
 article {
@@ -61,6 +77,12 @@ article {
 	border-radius: 25px;
 	-moz-border-radius: 25px;
 	-webkit-border-radius: 25px;
+	animation-duration: 3.5s;
+	-moz-animation-duration: 3.5s;
+	-webkit-animation-duration: 3.5s;
+  	animation-name: fadein;
+  	-moz-animation-name: fadein;
+  	-webkit-animation-name: fadein;
 }
 
 canvas {
@@ -88,13 +110,86 @@ li {
 	-webkit-transition: all .3s ease-in;
 	-o-transition: all .3s ease-in;
 	transition: all .3s ease-in;
+	transform: rotateX(0deg) translateZ(0px);
+	-moz-transform: rotateX(0deg) translateZ(0px);
+	-webkit-transform: rotateX(0deg) translateZ(0px);
+	animation-duration: 1.8s;
+	-moz-animation-duration: 1.8s;
+	-webkit-animation-duration: 1.8s;
+  	animation-name: slidein;
+  	-moz-animation-name: slidein;
+  	-webkit-animation-name: slidein;
 }
 
 li:hover {
-	-moz-transform: scale(1.1, 1.1);
-	-webkit-transform: scale(1.1, 1.1);
-	-o-transform: scale(1.1, 1.1);
-	transform: scale(1.1, 1.1);
+	transform: translateZ(25px);
+	-moz-transform: translateZ(25px);
+	-webkit-transform: translateZ(25px);
+}
+
+@keyframes slidein {
+  from {
+	transform: rotateX(90deg) translateZ(700px);
+	-moz-transform: rotateX(90deg) translateZ(700px);
+	-webkit-transform: rotateX(90deg) translateZ(700px);
+  }
+ 
+  to {
+	transform: rotateX(0deg) translateZ(0px);
+	-moz-transform: rotateX(0deg) translateZ(0px);
+	-webkit-transform: rotateX(0deg) translateZ(0px);
+  }
+}
+
+@-moz-keyframes slidein {
+  from {
+	transform: rotateX(90deg) translateZ(700px);
+	-moz-transform: rotateX(90deg) translateZ(700px);
+	-webkit-transform: rotateX(90deg) translateZ(700px);
+  }
+ 
+  to {
+	transform: rotateX(0deg) translateZ(0px);
+	-moz-transform: rotateX(0deg) translateZ(0px);
+	-webkit-transform: rotateX(0deg) translateZ(0px);
+  }
+}
+
+@-webkit-keyframes slidein {
+  from {
+	transform: rotateX(90deg) translateZ(700px);
+	-moz-transform: rotateX(90deg) translateZ(700px);
+	-webkit-transform: rotateX(270deg) translateZ(700px) ;
+  }
+ 
+  to {
+	transform: rotateX(0deg) translateZ(0px);
+	-moz-transform: rotateX(0deg) translateZ(0px);
+	-webkit-transform: rotateX(0deg) translateZ(0px);
+  }
+}
+
+@keyframes fadein {
+  from { background: rgba(255, 255, 255, 0.0); }
+  to { background: rgba(255, 255, 255, 0.1); }
+}
+@-moz-keyframes fadein {
+  from { background: rgba(255, 255, 255, 0.0); }
+  to { background: rgba(255, 255, 255, 0.1); }
+}
+@-webkit-keyframes fadein {
+  from { background: rgba(255, 255, 255, 0.0); }
+  to { background: rgba(255, 255, 255, 0.1); }
+}
+
+li:hover div.inner {
+	opacity: 1;
+}
+
+li:hover div.fadeable {
+	filter: grayscale(0.0);
+	-webkit-filter: grayscale(0.0);
+	-moz-filter: grayscale(0.0);
 }
 
 div.outer {
@@ -120,22 +215,22 @@ div.inner {
 	transition: opacity 0.5s ease-in;
 }
 
-li:hover div.inner {
-	opacity: 1;
-}
 
 
-.fadeable {
-	opacity: 0;
+
+div.fadeable {
 	width: 280px;
 	height: 200px;
 	border-radius: 13px;
 	-moz-border-radius: 13px;
 	-webkit-border-radius: 13px;
-	-moz-transition: opacity 1.5s ease-in;
-	-webkit-transition: opacity 1.5s ease-in;
-	-o-transition: opacity 1.5s ease-in;
-	transition: opacity 1.5s ease-in;
+	-moz-transition: all 0.5s ease-in;
+	-webkit-transition: all 0.5s ease-in;
+	-o-transition: all 0.5s ease-in;
+	transition: all 0.5s ease-in;
+	filter: grayscale(0.8);
+	-webkit-filter: grayscale(0.8);
+	-moz-filter: grayscale(0.8);
 }
 
 .headersquare {
@@ -144,6 +239,12 @@ li:hover div.inner {
 	-webkit-border-radius: 0px 0px 25px 25px;
 	background: rgba(255, 255, 255, 0.1);
 	padding: 10px;
+	animation-duration: 2.5s;
+	-moz-animation-duration: 2.5s;
+	-webkit-animation-duration: 2.5s;
+  	animation-name: fadein;
+  	-moz-animation-name: fadein;
+  	-webkit-animation-name: fadein;
 }
 
 ul {
