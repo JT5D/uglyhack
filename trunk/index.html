@@ -3,7 +3,52 @@
 	<meta charset="utf-8" />
 	<title>Uglyhack</title>	
 	
-	<LINK href="uglyhack.css" rel="stylesheet" type="text/css">
+	<link href="uglyhack.css" rel="stylesheet" type="text/css"></link>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(window).load(function () {
+			setTimeout(function() {
+				$('h1, #subtitle').css({
+					'animation-duration': '1.5s',
+					'-moz-animation-duration': '1.5s',
+					'-webkit-animation-duration': '1.5s',
+				  	'animation-name': 'slidein',
+				  	'-moz-animation-name': 'slidein',
+				  	'-webkit-animation-name': 'slidein'
+				});
+
+				$('li').css({
+					'animation-duration': '1.8s',
+					'-moz-animation-duration': '1.8s',
+					'-webkit-animation-duration': '1.8s',
+				  	'animation-name': 'slidein',
+				  	'-moz-animation-name': 'slidein',
+				  	'-webkit-animation-name': 'slidein'
+				});
+
+				$('article').css({
+					'animation-duration': '3.5s',
+					'-moz-animation-duration': '3.5s',
+					'-webkit-animation-duration': '3.5s',
+				  	'animation-name': 'fadein',
+				  	'-moz-animation-name': 'fadein',
+				  	'-webkit-animation-name': 'fadein'
+				});
+
+				$('.headersquare').css({
+					'animation-duration': '2.5s',
+					'-moz-animation-duration': '2.5s',
+					'-webkit-animation-duration': '2.5s',
+				  	'animation-name': 'fadein',
+				  	'-moz-animation-name': 'fadein',
+				  	'-webkit-animation-name': 'fadein'
+				});
+
+				$('section').show();
+			},500);
+		});
+	</script>
 </head>
 <body>
 <section>
