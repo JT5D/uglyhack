@@ -102,13 +102,12 @@ li {
 	-webkit-transform-style: preserve-3d;
     -moz-transform-style: preserve-3d;
     transform-style: preserve-3d;
-
 }
 
 li:hover {
-	transform: translateZ(25px);
-	-moz-transform: translateZ(25px);
-	-webkit-transform: translateZ(25px);
+	transform: translateZ(20px);
+	-moz-transform: translateZ(20px);
+	-webkit-transform: translateZ(20px);
 }
 
 @keyframes slidein {
@@ -177,16 +176,6 @@ li:hover {
   to { opacity: 1.0; }
 }
 
-li:hover div.inner {
-	opacity: 1;
-}
-
-li:hover div.fadeable {
-	filter: hue-rotate(180deg);
-	-moz-filter: hue-rotate(180deg);
-	-webkit-filter: hue-rotate(180deg);
-}
-
 div.outer {
 	border-radius: 15px;
 	-moz-border-radius: 15px;
@@ -196,6 +185,15 @@ div.outer {
 	-webkit-box-shadow: 3px 7px 9px rgba(0, 0, 0, 1);
 	background: rgba(255, 255, 255, 0.3);
 	padding: 5px;
+	transition: all .3s ease-in;
+	-moz-transition: all .3s ease-in;
+	-webkit-transition: all .3s ease-in;
+}
+
+li:hover div.outer {
+	box-shadow: 13px 17px 19px rgba(0, 0, 0, 1);
+	-moz-box-shadow: 13px 17px 19px rgba(0, 0, 0, 1);
+	-webkit-box-shadow: 13px 17px 19px rgba(0, 0, 0, 1);
 }
 
 div.inner {
@@ -203,7 +201,6 @@ div.inner {
 	top: 75px;
 	background: rgba(130, 130, 130, 0.5);
 	height: 50px;
-	opacity: 0;
 	transition: opacity 0.5s ease-in;
 	-moz-transition: opacity 0.5s ease-in;
 	-webkit-transition: opacity 0.5s ease-in;
@@ -218,9 +215,6 @@ div.fadeable {
 	transition: all 0.8s ease-in;
 	-moz-transition: all 0.8s ease-in;
 	-webkit-transition: all 0.8s ease-in;
-	filter: hue-rotate(0deg);
-	-moz-filter: hue-rotate(0deg);
-	-webkit-filter: hue-rotate(0deg);
 }
 
 .headersquare {
