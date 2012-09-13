@@ -12,7 +12,8 @@ body {
 	background: url( black_linen_v2.png );
 	font: normal normal normal 14px/ 1.4em Georgia;
 	color: #FFFFFF;
-	text-shadow: 1px 1px 1px black
+	text-shadow: 1px 1px 1px black;
+	overflow: hidden;
 }
 
 h1 {
@@ -58,7 +59,7 @@ article {
 	float: left;
 	padding: 10px;
 	margin: 20px 0;
-	background: rgba(255, 255, 255, 0.15);
+	background: rgba(255, 255, 255, 0.0);
 	border-radius: 25px;
 	-moz-border-radius: 25px;
 	-webkit-border-radius: 25px;
@@ -85,7 +86,7 @@ ul {
 	-webkit-perspective: 800px; 
 	-moz-perspective: 800px;
 	perspective: 800px;
-
+	min-height: 900px;
 }
 
 li {
@@ -112,12 +113,14 @@ li:hover {
 
 @keyframes slidein {
   from {
-	transform: rotateX(270deg) translateZ(700px);
-	-moz-transform: rotateX(270deg) translateZ(700px);
-	-webkit-transform: rotateX(270deg) translateZ(700px);
+  	opacity: 0.0;
+	transform: rotateX(360deg) translateZ(500px);
+	-moz-transform: rotateX(360deg) translateZ(500px);
+	-webkit-transform: rotateX(360deg) translateZ(500px);
   }
  
   to {
+  	opacity: 1.0;
 	transform: rotateX(0deg) translateZ(0px);
 	-moz-transform: rotateX(0deg) translateZ(0px);
 	-webkit-transform: rotateX(0deg) translateZ(0px);
@@ -126,20 +129,24 @@ li:hover {
 
 @-moz-keyframes slidein {
   from {
-	-moz-transform: rotateX(270deg) translateZ(700px);
+    opacity: 0.0;
+	-moz-transform: rotateX(360deg) translateZ(500px);
   }
  
   to {
+  	opacity: 1.0;
 	-moz-transform: rotateX(0deg) translateZ(0px);
   }
 }
 
 @-webkit-keyframes slidein {
   from {
-	-webkit-transform: rotateX(270deg) translateZ(700px) ;
+    opacity: 0.0;
+	-webkit-transform: rotateX(360deg) translateZ(500px);
   }
  
   to {
+  	opacity: 1.0;
 	-webkit-transform: rotateX(0deg) translateZ(0px);
   }
 }
@@ -155,6 +162,19 @@ li:hover {
 @-webkit-keyframes fadein {
   from { background: rgba(255, 255, 255, 0.0); }
   to { background: rgba(255, 255, 255, 0.15); }
+}
+
+@keyframes opin {
+  from { opacity: 0.0; }
+  to { opacity: 1.0; }
+}
+@-moz-keyframes opin {
+  from { opacity: 0.0; }
+  to { opacity: 1.0; }
+}
+@-webkit-keyframes opin {
+  from { opacity: 0.0; }
+  to { opacity: 1.0; }
 }
 
 li:hover div.inner {
@@ -222,7 +242,8 @@ footer {
 	margin: 0 auto 2em auto;
 	color: #888;
 	position: relative;
-	padding: 10px 0 0 20px
+	padding: 10px 0 0 20px;
+	display: none;
 }
 
 footer p {
