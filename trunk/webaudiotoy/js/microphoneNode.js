@@ -8,16 +8,12 @@ var MicrophoneNode = BaseNode.extend({
 		var thisNode = this;
 		var el = this.createMainEl(true, false, true);
 
-		var audioTag = $('<audio autoplay >');
-		el.append(audioTag);
-
 		var status = $('<p>');
 		el.append(status);
 
 		try {
 			var successFnc = function (stream) {
-				audioTag[0].src = window.webkitURL.createObjectURL(stream)
-				thisNode.thingy = context.createMediaElementSource(audioTag[0]);
+				thisNode.thingy = context.createMediaStreamSource(stream);
 				status.html('Recording...');
 			};
 
@@ -36,8 +32,5 @@ var MicrophoneNode = BaseNode.extend({
 		 } catch(e) {
 		 	status.html('Not yet supported in your browser. It will hopefully come soon in Chrome Canary.');
 		 }
-	},
-	shutdown: function() {
-		this.thingy.stop();
 	}
 });
