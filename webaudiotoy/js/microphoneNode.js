@@ -6,7 +6,8 @@ var MicrophoneNode = BaseNode.extend({
 		this.icon = " icon-user";
 		this.tooltip = "Gets audio input from a microphone";
 		var thisNode = this;
-		var el = this.createMainEl(true, false, true);
+		this.myLazyConnections = new Array();
+		var el = this.createMainEl(true, false, true, 128);
 
 		var status = $('<p>');
 		el.append(status);
@@ -14,11 +15,22 @@ var MicrophoneNode = BaseNode.extend({
 		try {
 			var successFnc = function (stream) {
 				thisNode.thingy = context.createMediaStreamSource(stream);
+
+				for(var i in thisNode.myLazyConnections) {
+					thisNode.connectTo(thisNode.myLazyConnections[i]);
+				}
+				for(var j in thisNode.myConnections) {
+					var toN = thisNode.myConnections[j];
+					thisNode.createConnectionLine(thisNode.el,toN.el,thisNode.idx,toN.idx, false);
+				}
+				thisNode.updateConnectionLines();
+				thisNode.myLazyConnections = new Array();
+
 				status.html('Recording...');
 			};
 
 			var errorFnc = function(e) {
-				status.html('Failed to start recording')
+				status.html('Failed to start recording');
 				console.log(e);
 			};
 
@@ -27,10 +39,14 @@ var MicrophoneNode = BaseNode.extend({
 			} else if (navigator.webkitGetUserMedia) {
 				navigator.webkitGetUserMedia({audio: true, video: false}, successFnc, errorFnc);
 			} else {
-				status.html('Not yet supported in your browser. It will hopefully come soon in Chrome Canary.');	
+				status.html('Not yet supported in your browser. Try Chrome Canary with Web Audio Input flag set.');	
 			}
 		 } catch(e) {
-		 	status.html('Not yet supported in your browser. It will hopefully come soon in Chrome Canary.');
+		 	status.html('Not yet supported in your browser. Try Chrome Canary with Web Audio Input flag set.');
 		 }
+	},
+
+	lazyConnectTo: function(node) {
+		this.myLazyConnections.push(node);
 	}
 });
