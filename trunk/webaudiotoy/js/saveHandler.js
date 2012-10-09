@@ -77,7 +77,12 @@ var SaveHandler = Class.extend({
 			if(n.c.length > 0) {
 				for(var j in n.c) {
 					var connectTo = n.c[j];
-					nodes[n.i].connectTo(nodes[connectTo]);
+					var connectFrom = nodes[n.i];
+					if(connectFrom instanceof MicrophoneNode) {
+						connectFrom.lazyConnectTo(nodes[connectTo]);
+					} else {
+						connectFrom.connectTo(nodes[connectTo]);
+					}
 				}
 			}
 		}
