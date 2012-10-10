@@ -66,6 +66,18 @@ $(function() {
 			localStorage.removeItem("shownPianoInfo");
 		}
 	});
+	
+	$('ul.nodeslist > li > a').draggable({
+		revert: true
+	});
+	$('body').droppable({
+		accept: "ul.nodeslist > li > a",
+		drop: function( event, ui ) {
+			var dEl = $(ui.draggable[0]);
+			dEl[0].onclick();
+			nodes[nodes.length - 1].el.offset({ left: event.clientX, top: event.clientY });
+		}
+	});
 
 	try {
 		context = new (window.AudioContext || window.webkitAudioContext)();
