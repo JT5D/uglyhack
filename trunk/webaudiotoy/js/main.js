@@ -66,18 +66,30 @@ $(function() {
 			localStorage.removeItem("shownPianoInfo");
 		}
 	});
+
+	var addNodeFnc = function(str) {
+		var sh = new SaveHandler();
+		var n = sh.createNodeFromString({sn: str, i: nodes.length});
+		nodes.push(n);
+		return n;
+	};
 	
 	$('ul.nodeslist > li > a').draggable({
-		revert: true,
-		stop: function() {}
+		revert: true
 	});
+
 	$('body').droppable({
 		accept: "ul.nodeslist > li > a",
 		drop: function( event, ui ) {
-			var dEl = $(ui.draggable[0]);
-			dEl[0].onclick();
-			nodes[nodes.length - 1].el.offset({ left: event.clientX, top: event.clientY });
+			var t = $(ui.draggable[0]).attr('data-nodetype');
+			var n = addNodeFnc(t);		
+			n.el.offset({ left: event.clientX, top: event.clientY });
 		}
+	});
+
+	$('ul.nodeslist > li > a').on('click', function() {
+		var t = $(this).attr('data-nodetype');
+		addNodeFnc(t);
 	});
 
 	try {

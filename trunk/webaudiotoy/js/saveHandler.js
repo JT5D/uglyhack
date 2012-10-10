@@ -47,26 +47,7 @@ var SaveHandler = Class.extend({
 		//create saved nodes
 		for(var i in save.nodes) {
 			var n = save.nodes[i];
-			var node = null;
-			switch(n.sn) {
-				case 'mn': node = new MicrophoneNode(n.i, n.d); break;
-				case 'gn': node = new GainNode(n.i, n.d); break;
-				case 'scn': node = new ScriptNode(n.i, n.d); break;
-				case 'son': node = new SourceNode(n.i, n.d); break;
-				case 'bfn': node = new BiquadFilterNode(n.i, n.d); break;
-				case 'cn': node = new ConvolverNode(n.i, n.d); break;
-				case 'deln': node = new DelayNode(n.i, n.d); break;
-				case 'dstn': node = new DestinationNode(n.i, n.d); break;
-				case 'dcn': node = new DynamicsCompressorNode(n.i, n.d); break;
-				case 'wsn': node = new WaveShaperNode(n.i, n.d); break;
-				case 'on': node = new OscillatorNode(n.i, n.d);	 break;
-				case 'an': node = new AnalyzerNode(n.i, n.d); break;
-				case 'tts': node = new TextToSpeechNode(n.i, n.d); break;
-				case 'pn': node = new PianoNode(n.i, n.d); break;
-				case 'nn': node = new NoiseNode(n.i, n.d); break;
-				case 'vn': node = new VibratoNode(n.i, n.d); break;
-				case 'ptn': node = new PitchNode(n.i, n.d); break;
-			}
+			var node = createNodeFromString(n);
 			node.el.offset(n.p);
 			nodes[n.i] = node;
 		}
@@ -98,6 +79,29 @@ var SaveHandler = Class.extend({
 				fromN.updateConnectionLines();
 			}
 		}
+	},
+	createNodeFromString: function(n) {
+		var node = null;
+		switch(n.sn) {
+			case 'mn': node = new MicrophoneNode(n.i, n.d); break;
+			case 'gn': node = new GainNode(n.i, n.d); break;
+			case 'scn': node = new ScriptNode(n.i, n.d); break;
+			case 'son': node = new SourceNode(n.i, n.d); break;
+			case 'bfn': node = new BiquadFilterNode(n.i, n.d); break;
+			case 'cn': node = new ConvolverNode(n.i, n.d); break;
+			case 'deln': node = new DelayNode(n.i, n.d); break;
+			case 'dstn': node = new DestinationNode(n.i, n.d); break;
+			case 'dcn': node = new DynamicsCompressorNode(n.i, n.d); break;
+			case 'wsn': node = new WaveShaperNode(n.i, n.d); break;
+			case 'on': node = new OscillatorNode(n.i, n.d);	 break;
+			case 'an': node = new AnalyzerNode(n.i, n.d); break;
+			case 'tts': node = new TextToSpeechNode(n.i, n.d); break;
+			case 'pn': node = new PianoNode(n.i, n.d); break;
+			case 'nn': node = new NoiseNode(n.i, n.d); break;
+			case 'vn': node = new VibratoNode(n.i, n.d); break;
+			case 'ptn': node = new PitchNode(n.i, n.d); break;
+		}
+		return node;
 	},
 	saveToLocalStorage: function(saveName) {
 		var data = this.createSaveData();

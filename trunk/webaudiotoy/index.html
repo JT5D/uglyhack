@@ -286,23 +286,23 @@
 	  				Audio sources
 	  			</li>
 	  			<li>
-	    			<a href="#" onclick="nodes.push(new SourceNode(nodes.length));">
+	    			<a href="#" data-nodetype="son">
 	    				<i class="icon-file"></i>
 	    				File
 	    			</a>
-	    			<a href="#" onclick="nodes.push(new OscillatorNode(nodes.length));">
+	    			<a href="#" data-nodetype="on">
 	    				<i class="icon-chevron-up"></i>
 		    			Oscillator
 	    			</a>
-	    			<a href="#" onclick="nodes.push(new MicrophoneNode(nodes.length));">
+	    			<a href="#" data-nodetype="mn">
 	    				<i class="icon-user"></i>
 		    			Microphone
 	    			</a>
-	    			<a href="#" onclick="nodes.push(new TextToSpeechNode(nodes.length));">
+	    			<a href="#" data-nodetype="tts">
 	    				<i class="icon-font"></i>
 		    			Text To Speech
 	    			</a>
-	    			<a href="#" onclick="nodes.push(new PianoNode(nodes.length));">
+	    			<a href="#" data-nodetype="pn">
 	    				<i class="icon-play"></i>
 		    			Piano
 	    			</a>
@@ -312,37 +312,37 @@
 	  				Simple filters
 	  			</li>
 	  			<li>
-	    			<a href="#" onclick="nodes.push(new DelayNode(nodes.length));">
+	    			<a href="#" data-nodetype="deln">
 	    				<i class="icon-pause"></i>
 	    				Delay
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new GainNode(nodes.length));">
+	    			<a href="#" data-nodetype="gn">
 	    				<i class="icon-plus"></i>
 	    				Gain
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new BiquadFilterNode(nodes.length));">
+	    			<a href="#" data-nodetype="bfn">
 	    				<i class="icon-signal"></i>
 	    				Pass
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new NoiseNode(nodes.length));">
+	    			<a href="#" data-nodetype="nn">
 	    				<i class="icon-question-sign"></i>
 	    				Noise
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new VibratoNode(nodes.length));">
+	    			<a href="#" data-nodetype="vn">
 	    				<i class="icon-leaf"></i>
 	    				Vibrato
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new PitchNode(nodes.length));">
+	    			<a href="#" data-nodetype="ptn">
 	    				<i class="icon-resize-full"></i>
 	    				Pitch
 	    			</a>
@@ -351,25 +351,25 @@
 	  				Advanced filters
 	  			</li>
 	  			<li>
-	    			<a href="#" onclick="nodes.push(new ConvolverNode(nodes.length));">
+	    			<a href="#" data-nodetype="cn">
 	    				<i class="icon-random"></i>
 	    				Convolver
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new DynamicsCompressorNode(nodes.length));">
+	    			<a href="#" data-nodetype="dcn">
 	    				<i class="icon-bullhorn"></i>
 	    				Dynamic Compression
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new WaveShaperNode(nodes.length));">
+	    			<a href="#" data-nodetype="wsn">
 	    				<i class="icon-tasks"></i>
 	    				Wave Shaper
 	    			</a>
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new ScriptNode(nodes.length));">
+	    			<a href="#" data-nodetype="scn">
 	    				<i class="icon-filter"></i>
 	    				Javascript
 	    			</a>
@@ -378,7 +378,7 @@
 	    			Other
 	    		</li>
 	    		<li>
-	    			<a href="#" onclick="nodes.push(new AnalyzerNode(nodes.length));">
+	    			<a href="#" data-nodetype="an">
 	    				<i class="icon-eye-open"></i>
 	    				Analyzer
 	    			</a>
@@ -443,15 +443,13 @@
 			       		<object data="img/Speaker_Icon.svg" type="image/svg+xml"></object>
 			       	</div>
 		            <h4>Web Audio API</h4>
-		            <p>This is kind of a toy or explorer thingy which lets you play with Web Audio API. It can play and generate audio and apply different kinds of effects.</p>
+		            <p>This is kind of a toy or explorer thingy which lets you play with Web Audio API. It can play, record and generate audio and apply different kinds of effects.</p>
 		            <h4>How do I use it?</h4>
 		            <p>To get you started, a file node and output is created right away. Just drag and drop a Audio file (mp3, ogg or whatever) from your computer to the file node.</p>
 		            <p>Then to get sound out of the speaker, drag the right handle of the file node to the left handle of the output. And voila, there should be sounds coming out of your speakers. </p>
 		            <p>But the fun starts when you connect together a combination of nodes. So you can really make your music sound bad or just create some strange sounds.</p>
 		        	<h4>Save, Load &amp; Share</h4>
 		            <p>When you have created some cool effect. Use the Save, Load &amp; Share buttons to save it locally or share it with the world.</p>
-		            <h4>How about that microphone?</h4>
-		            <p>The microphone input node is implemented, but currently no browser supports it correctly. It will hopefully land soon in Chrome.</p>
 		            <label class="checkbox">
 						<input type="checkbox" checked="true" id="firstTimeChk"> Don't show this again
 					</label>
