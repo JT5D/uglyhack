@@ -68,7 +68,8 @@ $(function() {
 	});
 	
 	$('ul.nodeslist > li > a').draggable({
-		revert: true
+		revert: true,
+		stop: function() {}
 	});
 	$('body').droppable({
 		accept: "ul.nodeslist > li > a",
