@@ -69,9 +69,9 @@ var BaseNode = Class.extend({
 		}
 		header.append(closeBtn);
 		
+		var tempConnectionLine = null;
 		if(createDrag) {
 			var dragEl = $('<div>');
-			var tempConnectionLine = null;
 			dragEl.draggable({
 				revert: true,
 				snap: '.nodedrop',
@@ -84,6 +84,21 @@ var BaseNode = Class.extend({
 				},
 				stop: function() {
 					tempConnectionLine.parent().remove();
+				}
+			});
+			dragEl.droppable({
+				accept: ".nodedrop",
+				drop: function( event, ui ) {
+					var dEl = $(ui.draggable[0]);
+					var dragFromIndex = dEl.attr('data-nodeIndex');
+					var fromN = nodes[thisNode.idx];
+					var toN = nodes[dragFromIndex];
+
+					$('.templine').remove();
+					if(fromN.connectTo(toN)) {
+						toN.createConnectionLine(fromN.el,toN.el,fromN.idx,toN.idx, false);
+						toN.updateConnectionLines();
+					}
 				}
 			});
 			dragEl.addClass('nodedrag');
@@ -101,9 +116,24 @@ var BaseNode = Class.extend({
 			var dropEl = $('<div>');
 			dropEl.addClass('nodedrop');
 			dropEl.addClass('nodehandle');
+			dropEl.attr('data-nodeIndex', this.idx);
 			dropEl.offset({
-				top: el.height()/2-10,	
+				top: el.height()/2-(createDrag?61:39),	
 				left: -28
+			});
+			dropEl.draggable({
+				revert: true,
+				snap: '.nodedrag',
+				start: function() {
+					tempConnectionLine = thisNode.createConnectionLine(thisNode.el, dropEl, null, null, true)
+				},
+				drag: function() {
+					var linePosData = thisNode.getLinePosData(thisNode.el, dropEl, true, true);
+					thisNode.updateConnectionLine(tempConnectionLine, linePosData, true);
+				},
+				stop: function() {
+					tempConnectionLine.parent().remove();
+				}
 			});
 			dropEl.droppable({
 				accept: ".nodedrag",
@@ -114,9 +144,9 @@ var BaseNode = Class.extend({
 					var toN = nodes[thisNode.idx];
 
 					$('.templine').remove();
-					if(nodes[dragFromIndex].connectTo(thisNode)) {
-						thisNode.createConnectionLine(fromN.el,toN.el,fromN.idx,toN.idx, false);
-						thisNode.updateConnectionLines();
+					if(fromN.connectTo(toN)) {
+						toN.createConnectionLine(fromN.el,toN.el,fromN.idx,toN.idx, false);
+						toN.updateConnectionLines();
 					}
 				}
 			});
@@ -219,7 +249,7 @@ var BaseNode = Class.extend({
 		
 		line.width(linePosData.length);
 	},
-	getLinePosData: function(fromEl, toEl, temp) {
+	getLinePosData: function(fromEl, toEl, temp, reverse) {
 		var fromElPos = fromEl.offset();
 		var toElPos = toEl.offset();
 
@@ -227,7 +257,7 @@ var BaseNode = Class.extend({
 		var fromElHeight = fromEl.height();
 		var toElHeight = toEl.height();
 
-		var x1 = fromElPos.left+fromElWidth;
+		var x1 = fromElPos.left+(reverse?2:fromElWidth);
 		var y1 = fromElPos.top+fromElHeight/2;
 		var x2 = toElPos.left;
 		var y2 = toElPos.top+toElHeight/2;
