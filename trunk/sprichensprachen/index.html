@@ -6,17 +6,33 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
 		<link href='http://fonts.googleapis.com/css?family=Autour+One' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="js/jquery.jplayer.min.js"></script>
 		<script src="js/main.js" type="text/javascript"></script>
 		
 		<style>
-		 #speakP {
+		 body {
 		 	font-family: 'Autour One', cursive;
 		 }
 		</style> 
 	</head>
 	
 	<body>
+		<audio id="audioSrc" preload="auto" autobuffer src=""> 
+		</audio>
+
+		target language
+		<select id="langselect">
+			<option>en</option>
+			<option>es</option>
+			<option>fr</option>
+			<option>sv</option>
+			<option>de</option>
+		</select>
+		<div id="jp"></div>
+
+		<div id="browserLang"></div>
 	  	<p id="speakP"></p>
+	  	<p id="transP"></p>
 
        	<div style="position: fixed; bottom: 10px; left: 10px;">
      	 	<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://uglyhack.appspot.com/sprichensprachen/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
