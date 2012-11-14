@@ -100,54 +100,61 @@ $(function() {
 		  	span.css('color', 'red');
 		  	$('#speakP').html(span);
 		});
-	} ;
+	};
 	
-	if(typeof (SpeechRecognition) === 'function') {
-		sr = new SpeechRecognition();
-	} else if(typeof (webkitSpeechRecognition) === 'function') {
-		sr = new webkitSpeechRecognition();
-	} else if(typeof (mozSpeechRecognition) === 'function') {
-		sr = new mozSpeechRecognition();
-	}
-
-	if(sr != null) {	
-		sr.continuous = true;
-	    sr.onresult = function(event) {
-		    var con = event.result[0].confidence;
-		    
-		    if(con == 0.0) {
-		    	return;
-		    }
-		    
-		    $('#transP').html('');
-
-		    if(con > confidence) {
-		      	var tr = event.result[0].transcript;
-		      	translateAndSpeak(tr, con);
-		      	$('#whatyousaid').html('What you said with ' + Math.floor(con*100) + '% confidence')
-
-		    } else {
-		    	$('#whatyousaid').html('What you said');
-		   		var span = $('<span>').html('I\'m not sure I heard you right. Confidence was ' + Math.floor(con*100) + '%');
-			  	span.css('color', 'red');
-			  	$('#speakP').html(span);
-			}
-
-		};
-	    
-	    sr.onend = function(event) { 
-	    	sr.start();
-	    };
- 	    
-		sr.start();
-	} else {
-		$('#noSpeechBox').modal();
-		return;
-	}
+	$('.navbar').css('height', '40px');
 	
-	if(!localStorage["beenherebefore"]) {
-		localStorage["beenherebefore"] = 'yes';
-		$('#firstTimeBox').modal();
-	}
+	setTimeout(function() {
+		
+		$('.navbar > .navbar-inner > .container').fadeIn('slow');
+	
+		if(typeof (SpeechRecognition) === 'function') {
+			sr = new SpeechRecognition();
+		} else if(typeof (webkitSpeechRecognition) === 'function') {
+			sr = new webkitSpeechRecognition();
+		} else if(typeof (mozSpeechRecognition) === 'function') {
+			sr = new mozSpeechRecognition();
+		}
+	
+		if(sr != null) {	
+			sr.continuous = true;
+		    sr.onresult = function(event) {
+			    var con = event.result[0].confidence;
+			    
+			    if(con == 0.0) {
+			    	return;
+			    }
+			    
+			    $('#transP').html('');
+	
+			    if(con > confidence) {
+			      	var tr = event.result[0].transcript;
+			      	translateAndSpeak(tr, con);
+			      	$('#whatyousaid').html('What you said with ' + Math.floor(con*100) + '% confidence')
+	
+			    } else {
+			    	$('#whatyousaid').html('What you said');
+			   		var span = $('<span>').html('I\'m not sure I heard you right. Confidence was ' + Math.floor(con*100) + '%');
+				  	span.css('color', 'red');
+				  	$('#speakP').html(span);
+				}
+	
+			};
+		    
+		    sr.onend = function(event) { 
+		    	sr.start();
+		    };
+	 	    
+			sr.start();
+		} else {
+			$('#noSpeechBox').modal();
+			return;
+		}
+		
+		if(!localStorage["beenherebefore"]) {
+			localStorage["beenherebefore"] = 'yes';
+			$('#firstTimeBox').modal();
+		}
+	}, 1500);
 	
 }); 
