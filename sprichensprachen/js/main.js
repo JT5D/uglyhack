@@ -51,7 +51,7 @@ $(function() {
 	});
 
 	$.getJSON('https://www.googleapis.com/language/translate/v2/languages?key=' + gApiKey + '&target=en&callback=?', function(data) {
-		var bl = navigator.language.substr(0,2);
+		var bl = sourceLang;
 		for(var i in data.data.languages) {
 			var l = data.data.languages[i];
 		    if(l.language == bl) {
@@ -74,7 +74,7 @@ $(function() {
 	var translateAndSpeak = function(speakStr, con) {
 		$('#speakP').html($('<span>').html(speakStr));
 
-		if(targetLang == navigator.language.substr(0,2)) {
+		if(targetLang == sourceLang) {
 			$('#transP').html($('<span>').html(speakStr));
 			iframeSpeak(speakStr);
 			return;
