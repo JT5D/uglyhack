@@ -16,11 +16,19 @@
         	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
         	font-family: 'Open Sans', sans-serif;
         	font-size: 113%;
+        	
+        	background-image: url(img/subtle_freckles.png);
+			background-repeat: repeat;
       	}
 
       	.well {
       		margin-bottom: 5px;
+      		background-color: #FCFCFC;
       	}	
+      	
+      	.ui-widget-content {
+      		background-color: #FCFCFC;
+      	}
 
       	a[rel=tooltip] {
 	    	color: rgb(51, 51, 51);
@@ -29,6 +37,36 @@
 	    a[rel="tooltip"]:hover {
 	    	text-decoration: none;
 	    }
+	    
+	    .btn-large.disabled {
+	    	min-width: 190px;
+	    	opacity: 1;
+	    	background-image: -webkit-linear-gradient(top,white,#E6E6E6);
+	    }
+	    
+	    .navbar-fixed-top {
+	    	box-shadow: 0px 5px 15px rgba(50, 50, 50, 0.4);
+	    }
+	    
+	    .navbar-fixed-bottom {
+	    	box-shadow: 0px -5px 15px rgba(50, 50, 50, 0.4);
+	    }
+	    
+	    .dropdown-menu {
+	    	min-width: 222px;
+	    	max-height:	300px;
+	    	overflow-y: scroll;
+	    	overflow-x: hidden;
+	    }
+	    
+	    #confidenceRange {
+	    	margin-top: 3px;
+	    }
+	    
+	    #confidenceRange .ui-slider-handle {
+	    	background-image: -webkit-linear-gradient(top,white,#E6E6E6);
+	    }
+	    
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -39,15 +77,9 @@
   </head>
 
   <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
           <a class="brand" href="#">SprichenSprachen</a>
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">
@@ -58,14 +90,29 @@
         </div>
       </div>
     </div>
+    
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
+    	<div class="navbar-inner">
+    		<div class="container">
+	    		<ul class="nav pull-right">
+	              <li style="padding: 10px;">
+	              	<a href="http://twitter.com/share" class="twitter-share-button" data-url="https://uglyhack.appspot.com/sprichensprachen/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
+	              </li>
+	              <li style="padding: 8px;">
+      			  	<g:plusone></g:plusone>
+	              </li>
+	            </ul>
+    		</div>
+    	</div>
+    </div>
 
-    <div class="container">
+    <div class="container" style="margin-top: 40px;">
 
 		<div class="row">
-			<div class="span3">
+			<div class="span3 offset1">
 				<a href="#" rel="tooltip" title="Select the language you want to speak in." class="toool">Speak in</a><br/>
 				<div class="btn-group">
-				  <button class="btn btn-large inactive" id="speakBtn">Spanish</button>
+				  <button class="btn btn-large disabled" id="speakBtn"></button>
 				  <button class="btn btn-large dropdown-toggle" data-toggle="dropdown">
 				    <span class="caret"></span>
 				  </button>
@@ -83,15 +130,15 @@
 				<a href="#" rel="tooltip" title="When you speak into your microphone. The result of speech recognition will appear here." class="toool" id="whatyousaid">What you said</a>
 				<div class="well" id="speakP" style="min-height: 100px;"></div>
 			</div>
-			<div class="span2"></div>
+			<div class="span1"></div>
 		</div>
 		
 		<div class="row">
-			<div class="span6 offset4">
+			<div class="span6 offset5">
 				<a href="#" rel="tooltip" title="How confident does the browser need to be that it heard you right?" id="confidenceLabel" class="toool">Confidence 40%</a>
 				<div id="confidenceRange"></div>
 			</div>
-			<div class="span2"></div>
+			<div class="span1"></div>
 		</div>
 		
 		<div class="row">
@@ -100,10 +147,10 @@
 		</div>
 		
 		<div class="row">
-			<div class="span3">
+			<div class="span3 offset1">
 				<a href="#" rel="tooltip" title="The text above will be translated to the language selected here." class="toool">Translate to</a><br/>
 				<div class="btn-group">
-				  <button class="btn btn-large inactive" id="transBtn">Spanish</button>
+				  <button class="btn btn-large disabled" id="transBtn" style="min-width: 190px;">Spanish</button>
 				  <button class="btn btn-large dropdown-toggle" data-toggle="dropdown">
 				    <span class="caret"></span>
 				  </button>
@@ -120,9 +167,8 @@
 				<a href="#" rel="tooltip" title="The translated text below will be spoken by the browser. Make sure your speakers are turned on." class="toool">What I said</a>
 				<div class="well" id="transP" style="min-height: 100px;"></div>
 			</div>
-			<div class="span2"></div>
+			<div class="span1"></div>
 		</div>
-
 	  	
 	  	<div id="contactBox" class="modal hide fade">
             <div class="modal-header">
@@ -175,13 +221,21 @@
             <div class="modal-footer">
             	<a href="#" class="btn" data-dismiss="modal" >Close</a>
             </div>
-      	</div>	
+      	</div>
+      	
+      	<div id="noSpeechBox" class="modal hide fade">
+            <div class="modal-header">
+              	<button class="close" data-dismiss="modal">&times;</button>
+              	<h3>No Web Speech API</h3>
+            </div>
+            <div class="modal-body">
+	            <p>You do not seem to have Web Speech API enabled. Try using Google Chrome and enable Speech JavaScript API in <a href="chrome://flags">chrome://flags</a></p>
+            </div>
+            <div class="modal-footer">
+            	<a href="#" class="btn" data-dismiss="modal" >Close</a>
+            </div>
+      	</div>		
 
-       	<div style="position: fixed; bottom: 10px; left: 10px;">
-     	 	<a href="http://twitter.com/share" class="twitter-share-button" data-url="https://uglyhack.appspot.com/sprichensprachen/" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
-     	 	<br/>
-		  	<g:plusone></g:plusone>
-		</div>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-24008188-1']);

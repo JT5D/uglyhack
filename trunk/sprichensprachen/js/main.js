@@ -26,7 +26,6 @@ var gApiKey = 'AIzaSyBFbIbIAybTBKW_HWtLWtS6IDSPf-gK5Uk';
 
 $(function() {
 
-
 	$('#confidenceRange').slider({
 		min: 0.01,
 		max: 0.99,
@@ -39,7 +38,8 @@ $(function() {
 	});
 
 	$('.toool').tooltip({
-		placement: 'bottom'
+		placement: 'bottom',
+		delay: { show: 200, hide: 300 }
 	});
 
 	$('#firstTimeChk').on('change', function() {
@@ -49,11 +49,6 @@ $(function() {
 			localStorage.removeItem("beenherebefore");
 		}
 	});
-
-	if(!localStorage["beenherebefore"]) {
-		localStorage["beenherebefore"] = 'yes';
-		$('#firstTimeBox').modal();
-	}
 
 	$.getJSON('https://www.googleapis.com/language/translate/v2/languages?key=' + gApiKey + '&target=en&callback=?', function(data) {
 		var bl = navigator.language.substr(0,2);
@@ -146,6 +141,13 @@ $(function() {
  	    
 		sr.start();
 	} else {
-		$('#speakP').append($('<span>').html('You do not seem to have any Javascript Speech API enabled. Try using Google Chrome and enable Speech JavaScript API in <a href="chrome://flags">chrome://flags</a>'));
+		$('#noSpeechBox').modal();
+		return;
 	}
+	
+	if(!localStorage["beenherebefore"]) {
+		localStorage["beenherebefore"] = 'yes';
+		$('#firstTimeBox').modal();
+	}
+	
 }); 
