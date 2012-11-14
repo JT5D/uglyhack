@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <title>SprichenSprachen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="This site does continuous voice translation without any plugins. Its all done in Javascript and Google REST API:s">
+    <meta name="author" content="Daniel Pettersson">
 
     <!-- Le styles -->
 	<link href="css/jquery-ui.css" rel="stylesheet">
@@ -30,7 +30,6 @@
 	    	text-decoration: none;
 	    }
     </style>
-    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -62,28 +61,49 @@
 
     <div class="container">
 
-      	
-
 		<div class="row">
-			<div class="span4">
+			<div class="span3">
+				<a href="#" rel="tooltip" title="Select the language you want to speak in." class="toool">Speak in</a><br/>
+				<div class="btn-group">
+				  <button class="btn btn-large inactive" id="speakBtn">Spanish</button>
+				  <button class="btn btn-large dropdown-toggle" data-toggle="dropdown">
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" id="speakDropMenu">
+				    <li><a href="#fr" onclick="return setSourceLang(this);">French</a></li>
+				    <li><a href="#en" onclick="return setSourceLang(this);">English</a></li>
+				    <li><a href="#es" onclick="return setSourceLang(this);">Spanish</a></li>
+				    <li><a href="#de" onclick="return setSourceLang(this);">German</a></li>
+				    <li class="divider"></li>
+				  </ul>
+				</div>
+			</div>
+		
+			<div class="span6 offset1">
 				<a href="#" rel="tooltip" title="When you speak into your microphone. The result of speech recognition will appear here." class="toool" id="whatyousaid">What you said</a>
+				<div class="well" id="speakP" style="min-height: 100px;"></div>
 			</div>
-			<div class="span2 offset1">
-				<a href="#" rel="tooltip" title="The text to the left will be translated to the language selected here." class="toool">Translate to</a> 
+			<div class="span2"></div>
+		</div>
+		
+		<div class="row">
+			<div class="span6 offset4">
+				<a href="#" rel="tooltip" title="How confident does the browser need to be that it heard you right?" id="confidenceLabel" class="toool">Confidence 40%</a>
+				<div id="confidenceRange"></div>
 			</div>
-			<div class="span4 offset1">
-				<a href="#" rel="tooltip" title="The translated text below will be spoken by the browser. Make sure your speakers are turned on." class="toool">What I said</a>
+			<div class="span2"></div>
+		</div>
+		
+		<div class="row">
+			<div class="span12" style="height: 50px;">
 			</div>
 		</div>
-
+		
 		<div class="row">
-			<div class="span4">
-				
-				<div class="well" id="speakP"></div>
-			</div>
-			<div class="span2 offset1">
+			<div class="span3">
+				<a href="#" rel="tooltip" title="The text above will be translated to the language selected here." class="toool">Translate to</a><br/>
 				<div class="btn-group">
-				  <button class="btn btn-large" id="transBtn">Spanish</button>
+				  <button class="btn btn-large inactive" id="transBtn">Spanish</button>
 				  <button class="btn btn-large dropdown-toggle" data-toggle="dropdown">
 				    <span class="caret"></span>
 				  </button>
@@ -96,21 +116,11 @@
 				  </ul>
 				</div>
 			</div>
-			<div class="span4 offset1">
-				
-				<div class="well" id="transP"></div>
+			<div class="span6 offset1">
+				<a href="#" rel="tooltip" title="The translated text below will be spoken by the browser. Make sure your speakers are turned on." class="toool">What I said</a>
+				<div class="well" id="transP" style="min-height: 100px;"></div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="span4">
-				<a href="#" rel="tooltip" title="How confident does the browser need to be that it heard you right?" id="confidenceLabel" class="toool">Confidence 40%</a>
-				<div id="confidenceRange"></div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="span4">
-				<a href="#" rel="tooltip" title="If you want to speak in another language. Change your language in browser settings." class="pull-right toool" id="browserLang"></a>
-			</div>
+			<div class="span2"></div>
 		</div>
 
 	  	

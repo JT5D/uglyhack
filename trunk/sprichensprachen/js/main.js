@@ -1,5 +1,19 @@
+var sr = null;
 var targetLang = 'es';
+var sourceLang = navigator.language.substr(0,2);
 var confidence = 0.4;
+
+function setSourceLang(el) {
+	sourceLang = el.href.substr(el.href.length-2, 2);
+	
+	if(sr) {
+		sr.abort();
+		sr.lang = sourceLang;
+	}
+	$('#speakBtn').html(el.text);
+	
+	return false;
+}
 
 
 function setTargetLang(el) {
@@ -49,8 +63,9 @@ $(function() {
 		        bl = l.name;
 		    }
 		    $('#transDropMenu').append($('<li><a href="#' + l.language + '" onclick="return setTargetLang(this);">' + l.name + '</a></li>'));
+		    $('#speakDropMenu').append($('<li><a href="#' + l.language + '" onclick="return setSourceLang(this);">' + l.name + '</a></li>'));
 		}
-		$('#browserLang').html('You should speak in ' + bl);
+		$('#speakBtn').html(bl);
 	})
 
 	var iframeSpeak = function(transText) {
@@ -71,7 +86,7 @@ $(function() {
 		}
 
       	$.getJSON('https://www.googleapis.com/language/translate/v2?key=' + gApiKey + '&source=' + 
-			navigator.language.substr(0,2) + '&target=' + targetLang + '&q=' + encodeURIComponent(speakStr) + '&callback=?', function(data) {
+      			sourceLang + '&target=' + targetLang + '&q=' + encodeURIComponent(speakStr) + '&callback=?', function(data) {
 
 			if(data.error) {
 				var span = $('<span>').html(data.error.message);
@@ -92,7 +107,6 @@ $(function() {
 		});
 	} ;
 	
-	var sr = null;
 	if(typeof (SpeechRecognition) === 'function') {
 		sr = new SpeechRecognition();
 	} else if(typeof (webkitSpeechRecognition) === 'function') {
@@ -105,6 +119,11 @@ $(function() {
 		sr.continuous = true;
 	    sr.onresult = function(event) {
 		    var con = event.result[0].confidence;
+		    
+		    if(con == 0.0) {
+		    	return;
+		    }
+		    
 		    $('#transP').html('');
 
 		    if(con > confidence) {
@@ -113,6 +132,7 @@ $(function() {
 		      	$('#whatyousaid').html('What you said with ' + Math.floor(con*100) + '% confidence')
 
 		    } else {
+		    	$('#whatyousaid').html('What you said');
 		   		var span = $('<span>').html('I\'m not sure I heard you right. Confidence was ' + Math.floor(con*100) + '%');
 			  	span.css('color', 'red');
 			  	$('#speakP').html(span);
@@ -123,13 +143,9 @@ $(function() {
 	    sr.onend = function(event) { 
 	    	sr.start();
 	    };
-
-	    sr.onstart = function(event) {
-	    	console.log('start');
-	    };
  	    
 		sr.start();
 	} else {
-		$('#speakP').append($('<span>').html('You do not seem to have any Javascript Speech API enabled. Try using Chrome Canary and enable Speech JavaScript API in chrome://flags'))
+		$('#speakP').append($('<span>').html('You do not seem to have any Javascript Speech API enabled. Try using Google Chrome and enable Speech JavaScript API in <a href="chrome://flags">chrome://flags</a>'));
 	}
 }); 
