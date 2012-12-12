@@ -38,6 +38,8 @@
 		newScript.onload = init;
 		headID.appendChild(newScript);
 
+		var drawData;
+
 		function init() {
 			var socket = io.connect('http://' + window.location.hostname);
 			var canvas = document.getElementById('canvas');
@@ -48,31 +50,50 @@
 			var okToRequestAnimationFrame = true;
 
 			var scaleData = function(d) {
-				d.x *= scale;
-				d.y *= scale;
-				d.y -= scroll;
-				d.w *= scale;
-				d.h *= scale;
-				return d;
-			};
-
-			socket.on('draw', function (data) {
-				if(okToRequestAnimationFrame) {
-					okToRequestAnimationFrame = false;
-					requestAnimationFrame(function() {
-						ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-						for (var i = 0; i < data.length; i ++) {
-							scaleData(data[i]);
-						}
-
-						drawShadows(data);
-						drawShapes(data);
-
-						okToRequestAnimationFrame = true;
+				var ret = [];
+				for (var i = 0; i < d.length; i ++) {
+					ret.push({
+						x: d[i].x * scale,
+						y: (d[i].y * scale) - scroll,
+						r: d[i].r,
+						c: d[i].c,
+						w: d[i].w * scale,
+						h: d[i].h * scale
 					});
 				}
+				return ret;
+			};
+
+			socket.on('d', function (data) {
+				drawData = data;
+				doDraw();
 			});
+
+			socket.on('u', function (data) {
+				var d;
+				for (var i = 0; i < data.length; i ++) {
+//					xx + '_' + yy + '_' + rr + '_' + g
+					d = data[i].split('_');
+
+					drawData[d[3]].x = d[0];
+					drawData[d[3]].y = d[1];
+					drawData[d[3]].r = d[2];
+				}
+				if(okToRequestAnimationFrame) {
+					doDraw();
+				}
+			});
+
+			function doDraw() {
+				okToRequestAnimationFrame = false;
+				requestAnimationFrame(function() {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					var data = scaleData(drawData);
+					drawShadows(data);
+					drawShapes(data);
+					okToRequestAnimationFrame = true;
+				});
+			}
 
 			function drawShadows(data) {
 				ctx.fillStyle="rgba(40, 40, 40, 0.5)";
@@ -130,25 +151,25 @@
 
 			document.addEventListener("mousedown", function(e) {
 				document.addEventListener("mousemove", handleMouseMove, true);
-				socket.emit('mousedown', {i: 0, x: e.clientX/scale, y: (e.clientY+scroll)/scale});
+				socket.emit('md', {i: 0, x: (e.clientX/scale).toFixed(1), y: ((e.clientY+scroll)/scale).toFixed(1)});
 				e.preventDefault();
 			}, true);
 
 			document.addEventListener("mouseup", function(e) {
 				document.removeEventListener("mousemove", handleMouseMove, true);
-				socket.emit('mouseup', {i: 0});
+				socket.emit('mu', {i: 0});
 				e.preventDefault();
 			}, true);
 
 			function handleMouseMove(e) {
-				socket.emit('mousemove', {i: 0, x: e.clientX/scale, y: (e.clientY+scroll)/scale});
+				socket.emit('mm', {i: 0, x: (e.clientX/scale).toFixed(1), y: ((e.clientY+scroll)/scale).toFixed(1)});
 				e.preventDefault();
 			};
 
 			canvas.addEventListener("touchstart", function(e) {
 				for(var q = 0; q < e.changedTouches.length; q++) {
 					var touch = e.changedTouches[q];
-					socket.emit('mousedown', {i: touch.identifier, x: touch.clientX/scale, y: (touch.clientY+scroll)/scale});
+					socket.emit('md', {i: touch.identifier, x: (touch.clientX/scale).toFixed(1), y: ((touch.clientY+scroll)/scale).toFixed(1)});
 				}
 				e.preventDefault();
 			}, false);
@@ -156,7 +177,7 @@
 			canvas.addEventListener("touchend", function(e) {
 				for(var q = 0; q < e.changedTouches.length; q++) {
 					var touch = e.changedTouches[q];
-					socket.emit('mouseup', {i: touch.identifier});
+					socket.emit('mu', {i: touch.identifier});
 				}
 				e.preventDefault();
 			}, false);
@@ -164,7 +185,7 @@
 			canvas.addEventListener("touchmove", function(e) {
 				for(var q = 0; q < e.changedTouches.length; q++) {
 					var touch = e.changedTouches[q];
-					socket.emit('mousemove', {i: touch.identifier, x: touch.clientX/scale, y: (touch.clientY+scroll)/scale});
+					socket.emit('mm', {i: touch.identifier, x: (touch.clientX/scale).toFixed(1), y: ((touch.clientY+scroll)/scale).toFixed(1)});
 				}
 				e.preventDefault();
 			}, false);
@@ -178,6 +199,7 @@
 
 				scale = window.innerWidth / 1000.0;
 				scroll = (3000 * scale) - canvas.height;
+				doDraw();
 			}
 		}
 	};

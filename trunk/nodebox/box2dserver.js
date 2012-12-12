@@ -1,28 +1,13 @@
 var Box2D = require('./box2d.js');
-
-// Keep a reference to the Box2D World
 var world;
-
-// The scale between Box2D units and pixels
 var SCALE = 30;
-
-//Create the ground
-var size = 50;
+var size = 70;
 var w = 1000; 
 var h = 3000;
-
 var fps = 30;
-
-// 360 degrees in radians.
 var PI2 = Math.PI * 2;
+var drawData;
 
-//Cache the canvas DOM reference
-var canvas;
-
-//Are we debug drawing
-var debug = false;
-
-// Shorthand "imports"
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
 	b2BodyDef = Box2D.Dynamics.b2BodyDef,
 	b2AABB = Box2D.Collision.b2AABB,
@@ -43,9 +28,9 @@ function createObjects(x, y, width, height, circle) {
 	var domObj = {id:'foo'};
 	var domPos = {left:x, top:y};
 	
-    var x = (domPos.left) + width;
-    var y = (domPos.top) + height;
-    var body = createBox(x,y,width,height, false, circle);
+	var x = (domPos.left) + width;
+	var y = (domPos.top) + height;
+	var body = createBox(x,y,width,height, false, circle);
 	body.m_userData = {domObj:domObj, width:width, height:height, circle: circle ? true : false, setup: true};
 }
 
@@ -56,7 +41,7 @@ function createBox(x,y,width,height, static, circle) {
 	bodyDef.position.y = y / SCALE
 
 	var fixDef = new b2FixtureDef;
- 	fixDef.density = 1.5;
+ 	fixDef.density = 1.0;
  	fixDef.friction = 0.3;
  	fixDef.restitution = 0.65;
 
@@ -72,20 +57,32 @@ function createBox(x,y,width,height, static, circle) {
 	return world.CreateBody(bodyDef).CreateFixture(fixDef);
 }
 
-function getDrawData() {
+function getUpdateData() {
 	var ret = [];
+	var oldDrawData = drawData;
+	drawData = [];
 
+	var g = 0;
 	for (var b = world.m_bodyList; b; b = b.m_next) {
 		for (var f = b.m_fixtureList; f; f = f.m_next) {
 			if (f.m_userData) {
-				ret.push({
-					x: (f.m_body.m_xf.position.x * SCALE) -  f.m_userData.width,
-					y: (f.m_body.m_xf.position.y * SCALE) - f.m_userData.height,
-					r: (f.m_body.m_sweep.a + PI2) % PI2,
+				var xx = ((f.m_body.m_xf.position.x * SCALE) -  f.m_userData.width).toFixed(1);
+				var yy = ((f.m_body.m_xf.position.y * SCALE) - f.m_userData.height).toFixed(1);
+				var rr = ((f.m_body.m_sweep.a + PI2) % PI2).toFixed(2);
+				if(oldDrawData && oldDrawData[g] && 
+				   (xx != oldDrawData[g].x || yy != oldDrawData[g].y || rr != oldDrawData[g].r)) {
+					ret.push(xx + '_' + yy + '_' + rr + '_' + g);
+				}
+
+				drawData.push({
+					x: xx,
+					y: yy,
+					r: rr,
 					c: f.m_userData.circle,
-					w: f.m_userData.width * 2,
-					h: f.m_userData.height * 2
+					w: (f.m_userData.width * 2).toFixed(1),
+					h: (f.m_userData.height * 2).toFixed(1)
 				});
+				g++;
 			}
 		}
 	}
@@ -113,7 +110,7 @@ function dragBodyAtMouse(ss, socket) {
 		md.bodyB = selectedBody;
 		md.target.Set(ss.x/SCALE, ss.y/SCALE);
 		md.collideConnected = true;
-		md.maxForce = 700.0;
+		md.maxForce = 2000.0;
 		var mouseJoint = world.CreateJoint(md);
 		selectedBody.SetAwake(true);
 
@@ -139,7 +136,10 @@ function update(connections) {
 	, 10 //position iterations
 	);
 
-	io.sockets.volatile.emit('draw', getDrawData());
+	var upd = getUpdateData();
+	if(upd.length > 0) {
+		io.sockets.volatile.emit('u', upd);
+	}
 	world.ClearForces();
 
 	if(!allBodiesSleeping()) {
@@ -158,7 +158,7 @@ function init(connections) {
 	);
 
 		//Create DOB OBjects
-	for(var i = 0; i < 25; i++) {
+	for(var i = 0; i < 15; i++) {
 		createObjects(Math.random()* (w-size),
 				 h - Math.random() * (h/3) - size,
 				 (Math.random()*size)+5,
@@ -171,6 +171,7 @@ function init(connections) {
 	createBox(0,0,1,h, true);
 	createBox(w,0,1,h, true);
 
+	getUpdateData();
 	update(connections)
 }
 
@@ -187,11 +188,7 @@ server.listen(pport);
 io.sockets.on('connection', function (socket) {
 	connections.push(socket);
 	console.log('client connected ' + connections.length); 	
-
-	if(allBodiesSleeping()) {
-		console.log('client connected and simulation stopped, simulate once');
-		update(connections);
-	}
+	socket.emit('d', drawData);	
 	
 	socket.on('disconnect', function () {
 		var index = connections.indexOf(socket);
@@ -200,7 +197,7 @@ io.sockets.on('connection', function (socket) {
 
 	});
 
-	socket.on('mousedown', function(data) {
+	socket.on('md', function(data) {
 		if(allBodiesSleeping()) {
 			console.log('got user input, start simulation');
 			setTimeout(function() {update(connections)},1000/fps);
@@ -208,7 +205,7 @@ io.sockets.on('connection', function (socket) {
 		dragBodyAtMouse(data, socket);
 	});
 
-	socket.on('mouseup', function(data) {
+	socket.on('mu', function(data) {
 		socket.get('mousejoint'+data.i, function (err, mouseJoint) {
 			if(mouseJoint) {
 				world.DestroyJoint(mouseJoint);
@@ -217,7 +214,7 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('mousemove', function(data) {
+	socket.on('mm', function(data) {
 		socket.get('mousejoint'+data.i, function (err, mouseJoint) {
 			if(mouseJoint) {
 				mouseJoint.SetTarget(new b2Vec2(data.x/SCALE, data.y/SCALE));
