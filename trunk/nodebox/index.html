@@ -10,32 +10,57 @@
 				background-image:url('/img/gray_jean.png');
 				background-repeat:repeat;
 			}
-			
-			#infoicon {
+
+			.info {
 				position: fixed;
 				top: 5px;
 				right: 5px;
 				background: black;
-				width:30px;
-				height: 30px;
-				text-align: center;
 				border-radius: 15px;
-				font-size: 25px;
-				cursor: pointer;
 				-webkit-box-shadow: 0px 0px 10px rgba(50, 50, 50, 0.75);
 				-moz-box-shadow:    0px 0px 10px rgba(50, 50, 50, 0.75);
 				box-shadow:         0px 0px 10px rgba(50, 50, 50, 0.75);
-	
+				transition: all 1s;
+				-moz-transition: all 1s;
+				-webkit-transition: all 1s;
+				-o-transition: all 1s;
+			}
+			
+			#infoicon {
+				width:30px;
+				height: 30px;
+				text-align: center;
+				font-size: 25px;
+				cursor: pointer;
+				opacity: 1;
 			}
 
 			#infobox {
+				padding: 15px;
+				opacity: 0;
+				font-size: 15px;
+				width: 225px;
 			}
+
+			a {
+				color:white;
+			}  
+			
 		</style>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 	<body>
 		<canvas id="canvas" width="900" height="500"></canvas>
-		<div id="infoicon">i</div>	
+		<div id="infobox" class="info">
+			This is a multi user, multi touch, multi device block building toy. Try playing with it simultaneously on your tablet, phone and desktop.<br/><br/>
+
+			Made by Daniel Pettersson<br/>
+			Using Node.js, Express, Socket.io and Box2d<br/><br/>
+			Hosted by Nodejitsu<br/><br/>
+			Code at <a href="http://code.google.com/p/uglyhack/source/browse/#svn%2Ftrunk%2Fnodebox">Google code</a><br/><br/>
+			<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://box.jit.su" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script><g:plusone></g:plusone>
+		</div>	
+		<div id="infoicon" class="info">i</div>	
 	</body>
 	<script>
 
@@ -53,11 +78,14 @@
 
 	window.onload=function() {
 
-		document.getElementById('infoicon').addEventListener("click", function(e) { clickInfoIcon(); });
-
-		function clickInfoIcon() {
-			alert('hej');
-		}
+		document.getElementById('infoicon').addEventListener("click", function(e) { 
+			document.getElementById('infobox').style.opacity = '1'; 
+			document.getElementById('infoicon').style.opacity = '0'; 
+		});
+		document.getElementById('infoicon').addEventListener("mouseover", function(e) { 
+			document.getElementById('infobox').style.opacity = '1'; 
+			document.getElementById('infoicon').style.opacity = '0'; 
+		});
 
 		var headID = document.getElementsByTagName("head")[0];         
 		var newScript = document.createElement('script');
@@ -168,6 +196,8 @@
 			document.addEventListener("mousedown", function(e) {
 				document.addEventListener("mousemove", handleMouseMove, true);
 				socket.emit('md', {i: 0, x: (e.clientX/scale).toFixed(1), y: ((e.clientY+scroll)/scale).toFixed(1)});
+				document.getElementById('infobox').style.opacity = '0'; 
+				document.getElementById('infoicon').style.opacity = '1'; 
 				e.preventDefault();
 			}, true);
 
@@ -187,6 +217,8 @@
 					var touch = e.changedTouches[q];
 					socket.emit('md', {i: touch.identifier, x: (touch.clientX/scale).toFixed(1), y: ((touch.clientY+scroll)/scale).toFixed(1)});
 				}
+				document.getElementById('infobox').style.opacity = '0'; 
+				document.getElementById('infoicon').style.opacity = '1'; 
 				e.preventDefault();
 			}, false);
 
@@ -221,5 +253,23 @@
 			}
 		}
 	};
+	</script>
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-24008188-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+	<script type="text/javascript">
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
 	</script>
 </html>
