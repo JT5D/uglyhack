@@ -1,6 +1,6 @@
 var Box2D = require('./box2d.js');
 var world;
-var SCALE = 30;
+var SCALE = 50;
 var size = 70;
 var w = 1000; 
 var h = 3000;
@@ -24,17 +24,17 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
 
 
 
-function createObjects(x, y, width, height, circle) {
+function createObjects(x, y, width, height) {
 	var domObj = {id:'foo'};
 	var domPos = {left:x, top:y};
 	
 	var x = (domPos.left) + width;
 	var y = (domPos.top) + height;
-	var body = createBox(x,y,width,height, false, circle);
-	body.m_userData = {domObj:domObj, width:width, height:height, circle: circle ? true : false, setup: true};
+	var body = createBox(x,y,width,height, false);
+	body.m_userData = {domObj:domObj, width:width, height:height};
 }
 
-function createBox(x,y,width,height, static, circle) {
+function createBox(x,y,width,height, static) {
 	var bodyDef = new b2BodyDef;
 	bodyDef.type = static ? b2Body.b2_staticBody : b2Body.b2_dynamicBody;
 	bodyDef.position.x = x / SCALE;
@@ -45,15 +45,9 @@ function createBox(x,y,width,height, static, circle) {
  	fixDef.friction = 0.3;
  	fixDef.restitution = 0.65;
 
- 	if (circle) {
- 		var circleShape = new b2CircleShape;
-		circleShape.m_radius = width / SCALE;
+	fixDef.shape = new b2PolygonShape;
+	fixDef.shape.SetAsBox(width / SCALE, height / SCALE);
 
-		fixDef.shape = circleShape;
- 	} else {
-		fixDef.shape = new b2PolygonShape;
-		fixDef.shape.SetAsBox(width / SCALE, height / SCALE);
- 	}
 	return world.CreateBody(bodyDef).CreateFixture(fixDef);
 }
 
@@ -78,7 +72,6 @@ function getUpdateData() {
 					x: xx,
 					y: yy,
 					r: rr,
-					c: f.m_userData.circle,
 					w: (f.m_userData.width * 2).toFixed(1),
 					h: (f.m_userData.height * 2).toFixed(1)
 				});
@@ -162,8 +155,7 @@ function init(connections) {
 		createObjects(Math.random()* (w-size),
 				 h - Math.random() * (h/3) - size,
 				 (Math.random()*size)+5,
-				(Math.random()*size)+5,
-				 false);//Math.random() > .5);
+				(Math.random()*size)+5);
 	}
 
 	createBox(0, 0 , w, 10, true);
@@ -232,7 +224,8 @@ app.get('/img/gray_jean.png', function (req, res) {
   res.sendfile(__dirname + '/img/gray_jean.png');
 });
 
-
-
+app.get('/img/wood.jpg', function (req, res) {
+  res.sendfile(__dirname + '/img/wood.jpg');
+});
 
 init(connections);
