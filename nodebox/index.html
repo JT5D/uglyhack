@@ -1,0 +1,185 @@
+<html>
+	<head>
+		<style type="text/css">
+			body {
+				margin:0;
+				padding:0;
+				border:none;
+				color:#fff;
+				overflow: hidden;
+				background-image:url('/img/gray_jean.png');
+				background-repeat:repeat;
+			}
+		</style>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	</head>
+	<body>
+		<canvas id="canvas" width="900" height="500"></canvas>
+	</body>
+	<script>
+
+
+	(function() {
+
+		var vendors = ['ms', 'moz', 'webkit', 'o'];
+		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+			window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+			window.cancelAnimationFrame = 
+			window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+		}
+	}());
+
+
+	window.onload=function() {
+		var headID = document.getElementsByTagName("head")[0];         
+		var newScript = document.createElement('script');
+		newScript.type = 'text/javascript';
+		newScript.src = '/socket.io/socket.io.js';
+		newScript.onload = init;
+		headID.appendChild(newScript);
+
+		function init() {
+			var socket = io.connect('http://' + window.location.hostname);
+			var canvas = document.getElementById('canvas');
+			var scale, scroll;
+			doResize();
+
+			var ctx = canvas.getContext("2d");
+			var okToRequestAnimationFrame = true;
+
+			var scaleData = function(d) {
+				d.x *= scale;
+				d.y *= scale;
+				d.y -= scroll;
+				d.w *= scale;
+				d.h *= scale;
+				return d;
+			};
+
+			socket.on('draw', function (data) {
+				if(okToRequestAnimationFrame) {
+					okToRequestAnimationFrame = false;
+					requestAnimationFrame(function() {
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+						for (var i = 0; i < data.length; i ++) {
+							scaleData(data[i]);
+						}
+
+						drawShadows(data);
+						drawShapes(data);
+
+						okToRequestAnimationFrame = true;
+					});
+				}
+			});
+
+			function drawShadows(data) {
+				ctx.fillStyle="rgba(40, 40, 40, 0.5)";
+				var ww, hh, d;
+				for (var i = 0; i < data.length; i ++) {
+
+					d = data[i];
+					ww = d.w/2;
+					hh = d.h/2;
+
+					if(d.c) {
+						ctx.beginPath();
+						ctx.arc(d.x + ww+5, d.y + hh+5, ww, 0 , 2 * Math.PI, false);
+						ctx.fill();
+					} else {
+						ctx.save(); 
+						ctx.translate(d.x+ww+5,d.y+hh+5);
+						ctx.rotate(d.r);
+						ctx.fillRect(-ww,-hh,d.w,d.h);		
+						ctx.restore();				
+					}
+				}
+			}
+
+			function drawShapes(data) {
+				ctx.fillStyle="#FF1111";
+				ctx.lineWidth = 2;
+				ctx.strokeStyle = '#000000';
+				var ww, hh, d;
+				for (var i = 0; i < data.length; i ++) {
+
+					d = data[i];
+					ww = d.w/2;
+					hh = d.h/2;
+
+					if(d.c) {
+						ctx.beginPath();
+						ctx.arc(d.x + ww, d.y + hh, ww, 0 , 2 * Math.PI, false);
+						ctx.fill();
+						ctx.stroke();
+					} else {
+						ctx.save(); 
+						ctx.translate(d.x+ww,d.y+hh);
+						ctx.rotate(d.r);
+						ctx.beginPath();
+						ctx.rect(-ww,-hh,d.w,d.h);		
+						ctx.fill();
+						ctx.stroke();
+						ctx.restore();				
+					}
+				}
+			}
+			
+
+
+			document.addEventListener("mousedown", function(e) {
+				document.addEventListener("mousemove", handleMouseMove, true);
+				socket.emit('mousedown', {i: 0, x: e.clientX/scale, y: (e.clientY+scroll)/scale});
+				e.preventDefault();
+			}, true);
+
+			document.addEventListener("mouseup", function(e) {
+				document.removeEventListener("mousemove", handleMouseMove, true);
+				socket.emit('mouseup', {i: 0});
+				e.preventDefault();
+			}, true);
+
+			function handleMouseMove(e) {
+				socket.emit('mousemove', {i: 0, x: e.clientX/scale, y: (e.clientY+scroll)/scale});
+				e.preventDefault();
+			};
+
+			canvas.addEventListener("touchstart", function(e) {
+				for(var q = 0; q < e.changedTouches.length; q++) {
+					var touch = e.changedTouches[q];
+					socket.emit('mousedown', {i: touch.identifier, x: touch.clientX/scale, y: (touch.clientY+scroll)/scale});
+				}
+				e.preventDefault();
+			}, false);
+
+			canvas.addEventListener("touchend", function(e) {
+				for(var q = 0; q < e.changedTouches.length; q++) {
+					var touch = e.changedTouches[q];
+					socket.emit('mouseup', {i: touch.identifier});
+				}
+				e.preventDefault();
+			}, false);
+
+			canvas.addEventListener("touchmove", function(e) {
+				for(var q = 0; q < e.changedTouches.length; q++) {
+					var touch = e.changedTouches[q];
+					socket.emit('mousemove', {i: touch.identifier, x: touch.clientX/scale, y: (touch.clientY+scroll)/scale});
+				}
+				e.preventDefault();
+			}, false);
+
+			window.addEventListener('resize', doResize, false);
+			window.addEventListener('orientationchange', doResize, false);
+
+			function doResize() {
+				canvas.width  = window.innerWidth;
+		  		canvas.height = window.innerHeight;
+
+				scale = window.innerWidth / 1000.0;
+				scroll = (3000 * scale) - canvas.height;
+			}
+		}
+	};
+	</script>
+</html>
