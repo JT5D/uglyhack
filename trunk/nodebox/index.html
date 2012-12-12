@@ -66,6 +66,9 @@
 		newScript.onload = init;
 		headID.appendChild(newScript);
 
+		var wood = new Image();
+		wood.src = '/img/wood.jpg';
+
 		var drawData;
 
 		function init() {
@@ -75,6 +78,9 @@
 			doResize();
 
 			var ctx = canvas.getContext("2d");
+			ctx.fillStyle="rgba(40, 40, 40, 0.5)";
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = '#201000';
 			var okToRequestAnimationFrame = true;
 
 			var scaleData = function(d) {
@@ -100,7 +106,6 @@
 			socket.on('u', function (data) {
 				var d;
 				for (var i = 0; i < data.length; i ++) {
-//					xx + '_' + yy + '_' + rr + '_' + g
 					d = data[i].split('_');
 
 					drawData[d[3]].x = d[0];
@@ -124,7 +129,6 @@
 			}
 
 			function drawShadows(data) {
-				ctx.fillStyle="rgba(40, 40, 40, 0.5)";
 				var ww, hh, d;
 				for (var i = 0; i < data.length; i ++) {
 
@@ -132,24 +136,15 @@
 					ww = d.w/2;
 					hh = d.h/2;
 
-					if(d.c) {
-						ctx.beginPath();
-						ctx.arc(d.x + ww+5, d.y + hh+5, ww, 0 , 2 * Math.PI, false);
-						ctx.fill();
-					} else {
-						ctx.save(); 
-						ctx.translate(d.x+ww+5,d.y+hh+5);
-						ctx.rotate(d.r);
-						ctx.fillRect(-ww,-hh,d.w,d.h);		
-						ctx.restore();				
-					}
+					ctx.save(); 
+					ctx.translate(d.x+ww+5,d.y+hh+5);
+					ctx.rotate(d.r);
+					ctx.fillRect(-ww,-hh,d.w,d.h);		
+					ctx.restore();				
 				}
 			}
 
 			function drawShapes(data) {
-				ctx.fillStyle="#FF1111";
-				ctx.lineWidth = 2;
-				ctx.strokeStyle = '#000000';
 				var ww, hh, d;
 				for (var i = 0; i < data.length; i ++) {
 
@@ -157,21 +152,14 @@
 					ww = d.w/2;
 					hh = d.h/2;
 
-					if(d.c) {
-						ctx.beginPath();
-						ctx.arc(d.x + ww, d.y + hh, ww, 0 , 2 * Math.PI, false);
-						ctx.fill();
-						ctx.stroke();
-					} else {
-						ctx.save(); 
-						ctx.translate(d.x+ww,d.y+hh);
-						ctx.rotate(d.r);
-						ctx.beginPath();
-						ctx.rect(-ww,-hh,d.w,d.h);		
-						ctx.fill();
-						ctx.stroke();
-						ctx.restore();				
-					}
+					ctx.save(); 
+					ctx.translate(d.x+ww,d.y+hh);
+					ctx.rotate(d.r);
+					ctx.drawImage(wood, 0, 0, d.w, d.h, -ww,-hh, d.w,d.h);
+					ctx.beginPath();
+					ctx.rect(-ww,-hh,d.w,d.h);		
+					ctx.stroke();
+					ctx.restore();				
 				}
 			}
 			
