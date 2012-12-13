@@ -1,12 +1,13 @@
 var Box2D = require('./box2d.js');
 var world;
-var SCALE = 50;
+var SCALE = 100;
 var size = 70;
 var w = 1000; 
 var h = 3000;
-var fps = 30;
+var fps = 60;
 var PI2 = Math.PI * 2;
 var drawData;
+var chats = [];
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
 	b2BodyDef = Box2D.Dynamics.b2BodyDef,
@@ -43,7 +44,7 @@ function createBox(x,y,width,height, static) {
 	var fixDef = new b2FixtureDef;
  	fixDef.density = 1.0;
  	fixDef.friction = 0.3;
- 	fixDef.restitution = 0.65;
+ 	fixDef.restitution = 0.25;
 
 	fixDef.shape = new b2PolygonShape;
 	fixDef.shape.SetAsBox(width / SCALE, height / SCALE);
@@ -154,8 +155,8 @@ function init(connections) {
 	for(var i = 0; i < 15; i++) {
 		createObjects(Math.random()* (w-size),
 				 h - Math.random() * (h/3) - size,
-				 (Math.random()*size)+5,
-				(Math.random()*size)+5);
+				 (Math.random()*size)+15,
+				(Math.random()*size/2)+15);
 	}
 
 	createBox(0, 0 , w, 10, true);
@@ -180,6 +181,9 @@ server.listen(pport);
 io.sockets.on('connection', function (socket) {
 	connections.push(socket);
 	console.log('client connected ' + connections.length); 	
+	for(var i = 0; i < chats.length; i++) {
+		socket.emit('s', chats[i]);
+	}
 	socket.emit('d', drawData);	
 	
 	socket.on('disconnect', function () {
@@ -214,6 +218,17 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
+	socket.on('s', function(data) {
+		var d = new Date();
+		var ss = d.toTimeString().substr(0,8) + ' > ' + data;
+		io.sockets.emit('s', ss);
+
+		if(chats.length > 20) {
+			chats.shift();
+		}
+		chats.push(ss);
+	});
+
 });
 
 app.get('/', function (req, res) {
@@ -226,6 +241,10 @@ app.get('/img/gray_jean.png', function (req, res) {
 
 app.get('/img/wood.jpg', function (req, res) {
   res.sendfile(__dirname + '/img/wood.jpg');
+});
+
+app.get('/css/bootstrap.min.css', function (req, res) {
+  res.sendfile(__dirname + '/css/bootstrap.min.css');
 });
 
 init(connections);
