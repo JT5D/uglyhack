@@ -1,10 +1,10 @@
 var Box2D = require('./box2d.js');
 var world;
-var SCALE = 75;
+var SCALE = 70;
 var size = 70;
 var w = 1000; 
 var h = 3000;
-var fps = 45;
+var fps = 30;
 var PI2 = Math.PI * 2;
 var drawData;
 var chats = [];
