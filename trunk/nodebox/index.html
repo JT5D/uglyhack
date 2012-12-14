@@ -133,7 +133,7 @@
 				<div id="chatlist">
 				</div>
 				<div id="chatinput" class="input-append">
-					<input type="text" id="say"><button type="button" id="saybtn" class="btn"/>Say</button>
+					<input type="text" id="say" autofocus="autofocus"><button type="button" id="saybtn" class="btn"/>Say</button>
 				</div>
 				<div id="chatbox-arrow"></div>
 			</div>
@@ -277,7 +277,7 @@
 					ctx.save(); 
 					ctx.translate(d.x+ww,d.y+hh);
 					ctx.rotate(d.r);
-					ctx.drawImage(wood, 0, 0, d.w, d.h, -ww,-hh, d.w,d.h);
+					ctx.drawImage(wood, 2, 2, d.w, d.h, -ww,-hh, d.w,d.h);
 					ctx.beginPath();
 					ctx.rect(-ww,-hh,d.w,d.h);		
 					ctx.stroke();
