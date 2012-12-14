@@ -53,25 +53,18 @@
 				width: 30px;
 			}
 
-			#chatbox-hover:hover > #chatbox {
-				left: 0%;
-			}
-
 			#chatbox {
 				position: fixed;
-				left: -66%;
+				left: 0%;
 				top: 0px;
 				height: 100%;
 				width: 66%;
+				max-width: 400px;
 				background: black;
 				border-top-right-radius: 25px;
 				border-bottom-right-radius: 25px;
 				-moz-box-shadow:    0px 0px 10px 3px rgba(50, 50, 50, 0.75);
 				box-shadow:         0px 0px 10px 3px rgba(50, 50, 50, 0.75);
-				transition: all 0.5s;
-				-moz-transition: all 0.5s;
-				-webkit-transition: all 0.5s;
-				-o-transition: all 0.5s;
 			}
 
 			#chatbox-arrow {
@@ -160,7 +153,12 @@
 	}());
 
 
-	window.onload=function() {
+	$(function() {
+
+		$('#chatbox').offset({ left: -($('#chatbox').width()) });
+		$('#chatbox-hover').on('mouseover', function() {
+			$('#chatbox').clearQueue().stop().animate({ left: '0px' });
+		});
 
 		document.getElementById('infoicon').addEventListener("click", function(e) { 
 			document.getElementById('infobox').style.opacity = '1'; 
@@ -320,6 +318,7 @@
 				socket.emit('md', {i: 0, x: (e.clientX/scale).toFixed(1), y: ((e.clientY+scroll)/scale).toFixed(1)});
 				document.getElementById('infobox').style.opacity = '0'; 
 				document.getElementById('infoicon').style.opacity = '1'; 
+				$('#chatbox').clearQueue().stop().animate({ left: '-'+$('#chatbox').width()+'px' });
 				e.preventDefault();
 			}, true);
 
@@ -341,6 +340,7 @@
 				}
 				document.getElementById('infobox').style.opacity = '0'; 
 				document.getElementById('infoicon').style.opacity = '1'; 
+				$('#chatbox').clearQueue().stop().animate({ left: '-'+$('#chatbox').width()+'px' });
 				e.preventDefault();
 			}, false);
 
@@ -374,7 +374,7 @@
 				}
 			}
 		}
-	};
+	});
 	</script>
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];
