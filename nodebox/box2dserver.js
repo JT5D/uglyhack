@@ -186,6 +186,15 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('d', drawData);	
 	
 	socket.on('disconnect', function () {
+
+		for(var i = 0; i < 10; i++) {
+			socket.get('mousejoint'+i, function (err, mouseJoint) {
+				if(mouseJoint) {
+					world.DestroyJoint(mouseJoint);
+				}
+			});
+		}
+
 		var index = connections.indexOf(socket);
 		connections.splice(index,1);
 		console.log('user disconnected ' + connections.length);
