@@ -15,23 +15,18 @@
 				-webkit-box-shadow: 0px 0px 10px rgba(50, 50, 50, 0.75);
 				-moz-box-shadow:    0px 0px 10px rgba(50, 50, 50, 0.75);
 				box-shadow:         0px 0px 10px rgba(50, 50, 50, 0.75);
-				transition: all 1s;
-				-moz-transition: all 1s;
-				-webkit-transition: all 1s;
-				-o-transition: all 1s;
 			}
 			
 			#infoicon {
 				top: 5px;
 				right: 5px;
 				width:36px;
-				height: 26px;
+				height: 31px;
 				text-align: center;
 				font-size: 25px;
 				cursor: pointer;
-				opacity: 1;
 				border-radius: 18px;
-				padding-top: 10px;
+				padding-top: 5px;
 				color: white;
 			}
 
@@ -39,71 +34,10 @@
 				top: 0px;
 				right: 0px;
 				padding: 15px;
-				opacity: 0;
+				display: none;
 				width: 225px;
 				border-bottom-left-radius: 15px;
 				color: #AAAAAA;
-			}
-
-			#chatbox-hover {
-				position: fixed;
-				left: 0%;
-				top: 30%;
-				height: 40%;
-				width: 30px;
-			}
-
-			#chatbox {
-				position: fixed;
-				left: 0%;
-				top: 0px;
-				height: 100%;
-				width: 66%;
-				max-width: 400px;
-				background: black;
-				border-top-right-radius: 25px;
-				border-bottom-right-radius: 25px;
-				-moz-box-shadow:    0px 0px 10px 3px rgba(50, 50, 50, 0.75);
-				box-shadow:         0px 0px 10px 3px rgba(50, 50, 50, 0.75);
-			}
-
-			#chatbox-arrow {
-				left: 100%;
-				border: solid transparent;
-				content: " ";
-				height: 0;
-				width: 0;
-				position: absolute;
-				pointer-events: none;
-				border-color: rgba(0, 0, 0, 0);
-				border-left-color: black;
-				border-width: 20px;
-				top: 50%;
-				margin-top: -20px;
-			}
-
-			#chatinput {
-				position: absolute;
-				bottom: 0%;
-				width: 100%;
-				padding-right: 65px;
-				box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-			}
-
-			#say {
-				height: 30px;
-				width: 100%;
-			}
-			
-
-			#chatlist {
-				position: absolute;
-				padding: 5px;
-				bottom: 30px;
-				color: #AAAAAA;
-				word-break: break-all;
 			}
 
 			a {
@@ -111,14 +45,13 @@
 			}  
 			
 		</style>
-				<link href="/css/bootstrap.min.css" rel="stylesheet">
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 	<body>
 		<canvas id="canvas" width="900" height="500"></canvas>
 		<div id="infobox" class="info">
-			This is a multi user, multi touch, multi device block building toy. Try playing with it simultaneously on your tablet, phone and desktop.<br/><br/>
+			This is a multi user, multi touch, multi device block building toy. Try playing with it simultaneously on your tablet, phone and desktop by dragging the blocks around.<br/><br/>
 
 			Made by Daniel Pettersson<br/>
 			Using Node.js, Express, Socket.io and Box2d<br/><br/>
@@ -127,16 +60,6 @@
 			<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://box.jit.su" data-count="horizontal" data-via="DanielPettersso">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
 		</div>	
 		<div id="infoicon" class="info">i</div>	
-		<div id="chatbox-hover">
-			<div id="chatbox">
-				<div id="chatlist">
-				</div>
-				<div id="chatinput" class="input-append">
-					<input type="text" id="say" autofocus="autofocus"><button type="button" id="saybtn" class="btn"/>Say</button>
-				</div>
-				<div id="chatbox-arrow"></div>
-			</div>
-		</div>
 	</body>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script>
@@ -155,20 +78,11 @@
 
 	$(function() {
 
-		$('#chatbox').offset({ left: -($('#chatbox').width()) });
-		$('#chatbox-hover').on('mouseover', function() {
-			$('#chatbox').clearQueue().stop().animate({ left: '0px' });
+		$('#infoicon').on('click', function() { 
+			$('#infobox').fadeIn('slow'); 
+			$('#infoicon').fadeOut('slow'); 
 		});
-
-		document.getElementById('infoicon').addEventListener("click", function(e) { 
-			document.getElementById('infobox').style.opacity = '1'; 
-			document.getElementById('infoicon').style.opacity = '0'; 
-		});
-		document.getElementById('infoicon').addEventListener("mouseover", function(e) { 
-			document.getElementById('infobox').style.opacity = '1'; 
-			document.getElementById('infoicon').style.opacity = '0'; 
-		});
-
+		
 		var headID = document.getElementsByTagName("head")[0];         
 		var newScript = document.createElement('script');
 		newScript.type = 'text/javascript';
@@ -227,19 +141,6 @@
 				}
 			});
 
-			socket.on('s', function (data) {
-				var d = new Date();
-
-				var p = document.createElement('p');
-				p.appendChild(document.createTextNode(data));
-				document.getElementById('chatlist').appendChild(p);
-
-				if(animateArrow) {
-					$('#chatbox-arrow').clearQueue().stop().animate({ left: '95%' }).animate({ left: '100%' })
-					.animate({ left: '95%' }).animate({ left: '100%' }).animate({ left: '95%' }).animate({ left: '100%' });
-				}
-			});
-
 			function doDraw() {
 				okToRequestAnimationFrame = false;
 				requestAnimationFrame(function() {
@@ -289,36 +190,11 @@
 				}
 			}
 
-			document.getElementById('say').addEventListener("keypress", function(e) {
-				if (e.keyCode == 13) {
-					say();
-			        return false;
-			    }
-			    return true;
-			});
-			
-			document.getElementById('saybtn').addEventListener("click", say);
-
-			var say = function() {
-				var val = document.getElementById('say').value;
-				if(val && val != '') {
-					socket.emit('s', val);
-					animateArrow = false;
-				}
-
-				document.getElementById('say').value = '';
-				setTimeout(function() {
-					animateArrow = true;
-
-				},400);
-			};
-
 			canvas.addEventListener("mousedown", function(e) {
 				canvas.addEventListener("mousemove", handleMouseMove, true);
 				socket.emit('md', {i: 0, x: (e.clientX/scale).toFixed(1), y: ((e.clientY+scroll)/scale).toFixed(1)});
-				document.getElementById('infobox').style.opacity = '0'; 
-				document.getElementById('infoicon').style.opacity = '1'; 
-				$('#chatbox').clearQueue().stop().animate({ left: '-'+$('#chatbox').width()+'px' });
+				$('#infobox').fadeOut('slow'); 
+				$('#infoicon').fadeIn('slow'); 
 				e.preventDefault();
 			}, true);
 
@@ -338,9 +214,8 @@
 					var touch = e.changedTouches[q];
 					socket.emit('md', {i: touch.identifier, x: (touch.clientX/scale).toFixed(1), y: ((touch.clientY+scroll)/scale).toFixed(1)});
 				}
-				document.getElementById('infobox').style.opacity = '0'; 
-				document.getElementById('infoicon').style.opacity = '1'; 
-				$('#chatbox').clearQueue().stop().animate({ left: '-'+$('#chatbox').width()+'px' });
+				$('#infobox').fadeOut('slow'); 
+				$('#infoicon').fadeIn('slow'); 
 				e.preventDefault();
 			}, false);
 
@@ -377,14 +252,16 @@
 	});
 	</script>
 	<script type="text/javascript">
+
 	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-24008188-1']);
+	  _gaq.push(['_setAccount', 'UA-37087118-1']);
 	  _gaq.push(['_trackPageview']);
 
 	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	  })();
+
 	</script>
 </html>
