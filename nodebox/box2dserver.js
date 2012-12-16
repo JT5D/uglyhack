@@ -7,7 +7,7 @@ var h = 3000;
 var fps = 30;
 var PI2 = Math.PI * 2;
 var drawData;
-var chats = [];
+var simulating = true;
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
 	b2BodyDef = Box2D.Dynamics.b2BodyDef,
@@ -110,6 +110,7 @@ function dragBodyAtMouse(ss, socket) {
 
 		socket.set('mousejoint'+ss.i, mouseJoint);
 	}
+	return selectedBody != null;
 }
 
 function allBodiesSleeping() {
@@ -139,6 +140,7 @@ function update(connections) {
 	if(!allBodiesSleeping()) {
 		setTimeout(function() {update(connections)},1000/fps);
 	} else {
+		simulating = false;
 		console.log('all bodies are sleeping. stop simulation');
 	}
 }
@@ -181,9 +183,6 @@ server.listen(pport);
 io.sockets.on('connection', function (socket) {
 	connections.push(socket);
 	console.log('client connected ' + connections.length); 	
-	for(var i = 0; i < chats.length; i++) {
-		socket.emit('s', chats[i]);
-	}
 	socket.emit('d', drawData);	
 	
 	socket.on('disconnect', function () {
@@ -194,11 +193,13 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('md', function(data) {
-		if(allBodiesSleeping()) {
+		var gotBody = dragBodyAtMouse(data, socket);
+		if(!simulating && gotBody) {
 			console.log('got user input, start simulation');
+			simulating = true;
 			setTimeout(function() {update(connections)},1000/fps);
 		}
-		dragBodyAtMouse(data, socket);
+		
 	});
 
 	socket.on('mu', function(data) {
@@ -217,18 +218,6 @@ io.sockets.on('connection', function (socket) {
 			}
 		});
 	});
-
-	socket.on('s', function(data) {
-		var d = new Date();
-		var ss = d.toTimeString().substr(0,8) + ' > ' + data;
-		io.sockets.emit('s', ss);
-
-		if(chats.length > 20) {
-			chats.shift();
-		}
-		chats.push(ss);
-	});
-
 });
 
 app.get('/', function (req, res) {
@@ -241,10 +230,6 @@ app.get('/img/gray_jean.png', function (req, res) {
 
 app.get('/img/wood.jpg', function (req, res) {
   res.sendfile(__dirname + '/img/wood.jpg');
-});
-
-app.get('/css/bootstrap.min.css', function (req, res) {
-  res.sendfile(__dirname + '/css/bootstrap.min.css');
 });
 
 init(connections);
