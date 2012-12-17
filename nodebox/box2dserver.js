@@ -84,19 +84,19 @@ function getUpdateData() {
 };
 
 function dragBodyAtMouse(ss, socket) {
-	var aabb = new b2AABB();
-	aabb.lowerBound.Set(ss.x/SCALE - 0.01, ss.y/SCALE - 0.01);
-	aabb.upperBound.Set(ss.x/SCALE + 0.01, ss.y/SCALE + 0.01);
+	var p = new b2Vec2();
+	p.x = ss.x/SCALE;
+	p.y = ss.y/SCALE;
 
 	var selectedBody = null;
 
-	world.QueryAABB(function(fixture) {
+	world.QueryPoint(function(fixture) {
 		if(fixture.GetBody().GetType() != b2Body.b2_staticBody) {
 			selectedBody = fixture.GetBody();
 			return false;
 		}
 		return true;
-        }, aabb);
+        }, p);
 
 	if(selectedBody) {
 		var md = new b2MouseJointDef();
