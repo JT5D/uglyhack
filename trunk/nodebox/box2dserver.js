@@ -99,16 +99,21 @@ function dragBodyAtMouse(ss, socket) {
         }, p);
 
 	if(selectedBody) {
-		var md = new b2MouseJointDef();
-		md.bodyA = world.GetGroundBody();
-		md.bodyB = selectedBody;
-		md.target.Set(ss.x/SCALE, ss.y/SCALE);
-		md.collideConnected = true;
-		md.maxForce = 2000.0;
-		var mouseJoint = world.CreateJoint(md);
-		selectedBody.SetAwake(true);
+		socket.get('mousejoint'+ss.i, function (err, mouseJoint) {
+			if(mouseJoint) {
+				world.DestroyJoint(mouseJoint);
+			}
+			var md = new b2MouseJointDef();
+			md.bodyA = world.GetGroundBody();
+			md.bodyB = selectedBody;
+			md.target.Set(ss.x/SCALE, ss.y/SCALE);
+			md.collideConnected = true;
+			md.maxForce = 2000.0;
+			var mJ = world.CreateJoint(md);
+			selectedBody.SetAwake(true);
 
-		socket.set('mousejoint'+ss.i, mouseJoint);
+			socket.set('mousejoint'+ss.i, mJ);
+		});
 	}
 	return selectedBody != null;
 }
@@ -210,7 +215,6 @@ io.sockets.on('connection', function (socket) {
 			simulating = true;
 			setTimeout(function() {update(connections)},1000/fps);
 		}
-		
 	});
 
 	socket.on('mu', function(data) {
