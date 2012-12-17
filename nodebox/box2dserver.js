@@ -1,6 +1,6 @@
 var Box2D = require('./box2d.js');
 var world;
-var SCALE = 70;
+var SCALE = 50;
 var size = 70;
 var w = 1000; 
 var h = 3000;
@@ -255,8 +255,8 @@ app.get('/img/gray_jean.png', function (req, res) {
   res.sendfile(__dirname + '/img/gray_jean.png');
 });
 
-app.get('/img/wood.jpg', function (req, res) {
-  res.sendfile(__dirname + '/img/wood.jpg');
+app.get('/img/wood.png', function (req, res) {
+  res.sendfile(__dirname + '/img/wood.png');
 });
 
 app.get('/css/alertify.css', function (req, res) {

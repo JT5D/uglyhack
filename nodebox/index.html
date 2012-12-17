@@ -94,9 +94,6 @@
 		newScript.onload = init;
 		headID.appendChild(newScript);
 
-		var wood = new Image();
-		wood.src = '/img/wood.jpg';
-
 		var drawData;
 
 		var animateArrow = true;
@@ -108,6 +105,14 @@
 			doResize();
 
 			var ctx = canvas.getContext("2d");
+
+			var pattern;
+			var image = new Image();
+			image.src = '/img/wood.png';
+			image.onload = function() {
+				pattern = ctx.createPattern(image, "repeat");
+			}
+
 			
 			var okToRequestAnimationFrame = true;
 
@@ -152,12 +157,13 @@
 			function doDraw() {
 				okToRequestAnimationFrame = false;
 				requestAnimationFrame(function() {
-					ctx.fillStyle="rgba(40, 40, 40, 0.5)";
+					ctx.fillStyle = "rgba(40, 40, 40, 0.2)";
+					ctx.strokeStyle = 'rgba(20, 20, 20, 0.7)';
 					ctx.lineWidth = 2;
-					ctx.strokeStyle = '#201000';
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
 					var data = scaleData(drawData);
 					drawShadows(data);
+					if(pattern) ctx.fillStyle = pattern
 					drawShapes(data);
 					okToRequestAnimationFrame = true;
 				});
@@ -190,7 +196,7 @@
 					ctx.save(); 
 					ctx.translate(d.x+ww,d.y+hh);
 					ctx.rotate(d.r);
-					ctx.drawImage(wood, 2, 2, d.w, d.h, -ww,-hh, d.w,d.h);
+					ctx.fillRect(-ww,-hh,d.w,d.h);	
 					ctx.beginPath();
 					ctx.rect(-ww,-hh,d.w,d.h);		
 					ctx.stroke();
