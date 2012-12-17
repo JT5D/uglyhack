@@ -101,6 +101,7 @@ function dragBodyAtMouse(ss, socket) {
 	if(selectedBody) {
 		socket.get('mousejoint'+ss.i, function (err, mouseJoint) {
 			if(mouseJoint) {
+				mouseJoints.splice(mouseJoints.indexOf(mouseJoint), 1);
 				world.DestroyJoint(mouseJoint);
 			}
 			var md = new b2MouseJointDef();
@@ -113,6 +114,7 @@ function dragBodyAtMouse(ss, socket) {
 			selectedBody.SetAwake(true);
 
 			socket.set('mousejoint'+ss.i, mJ);
+			mouseJoints.push(mJ);
 		});
 	}
 	return selectedBody != null;
@@ -142,7 +144,7 @@ function update(connections) {
 	}
 	world.ClearForces();
 
-	if(!allBodiesSleeping()) {
+	if(mouseJoints.length > 0 || !allBodiesSleeping()) {
 		setTimeout(function() {update(connections)},1000/fps);
 	} else {
 		simulating = false;
@@ -176,6 +178,7 @@ function init(connections) {
 }
 
 var connections = [];
+var mouseJoints = [];
 
 var app = require('express')()
   , server = require('http').createServer(app)
@@ -197,13 +200,13 @@ io.sockets.on('connection', function (socket) {
 		for(var i = 0; i < 10; i++) {
 			socket.get('mousejoint'+i, function (err, mouseJoint) {
 				if(mouseJoint) {
+					mouseJoints.splice(mouseJoints.indexOf(mouseJoint), 1);
 					world.DestroyJoint(mouseJoint);
 				}
 			});
 		}
 
-		var index = connections.indexOf(socket);
-		connections.splice(index,1);
+		connections.splice(connections.indexOf(socket), 1);
 		console.log('user disconnected ' + connections.length);
 		logUsersToClients();
 	});
@@ -220,6 +223,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('mu', function(data) {
 		socket.get('mousejoint'+data.i, function (err, mouseJoint) {
 			if(mouseJoint) {
+				mouseJoints.splice(mouseJoints.indexOf(mouseJoint), 1);
 				world.DestroyJoint(mouseJoint);
 				socket.set('mousejoint'+data.i, null);
 			}
