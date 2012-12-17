@@ -182,7 +182,9 @@ server.listen(pport);
 
 io.sockets.on('connection', function (socket) {
 	connections.push(socket);
-	console.log('client connected ' + connections.length); 	
+	console.log('client connected ' + connections.length);
+	logUsersToClients();
+
 	socket.emit('d', drawData);	
 	
 	socket.on('disconnect', function () {
@@ -198,7 +200,7 @@ io.sockets.on('connection', function (socket) {
 		var index = connections.indexOf(socket);
 		connections.splice(index,1);
 		console.log('user disconnected ' + connections.length);
-
+		logUsersToClients();
 	});
 
 	socket.on('md', function(data) {
@@ -229,6 +231,14 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
+function logUsersToClients() {
+	if(connections.length == 1) {
+		io.sockets.emit('s', 'You are currently the only user.');
+	} else {
+		io.sockets.emit('s', 'Now there are ' + connections.length + ' users.');
+	}
+}
+
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
@@ -239,6 +249,14 @@ app.get('/img/gray_jean.png', function (req, res) {
 
 app.get('/img/wood.jpg', function (req, res) {
   res.sendfile(__dirname + '/img/wood.jpg');
+});
+
+app.get('/css/alertify.css', function (req, res) {
+  res.sendfile(__dirname + '/css/alertify.css');
+});
+
+app.get('/js/alertify.min.js', function (req, res) {
+  res.sendfile(__dirname + '/js/alertify.min.js');
 });
 
 init(connections);

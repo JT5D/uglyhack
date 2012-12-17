@@ -45,6 +45,7 @@
 			}  
 			
 		</style>
+		<link rel="stylesheet" href="/css/alertify.css" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
@@ -62,6 +63,7 @@
 		<div id="infoicon" class="info">i</div>	
 	</body>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/alertify.min.js"></script>
 	<script>
 
 
@@ -139,6 +141,10 @@
 				if(okToRequestAnimationFrame) {
 					doDraw();
 				}
+			});
+
+			socket.on('s', function (data) {
+				alertify.log(data);
 			});
 
 			function doDraw() {
