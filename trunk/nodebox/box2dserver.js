@@ -109,7 +109,7 @@ function dragBodyAtMouse(ss, socket) {
 			md.bodyB = selectedBody;
 			md.target.Set(ss.x/SCALE, ss.y/SCALE);
 			md.collideConnected = true;
-			md.maxForce = 2000.0;
+			md.maxForce = 90.0;
 			var mJ = world.CreateJoint(md);
 			selectedBody.SetAwake(true);
 
@@ -168,10 +168,11 @@ function init(connections) {
 				(Math.random()*size/2)+15);
 	}
 
-	createBox(0, 0 , w, 10, true);
-	createBox(0, h , w, 1, true);
-	createBox(0,0,1,h, true);
-	createBox(w,0,1,h, true);
+	var wt = 200;
+	createBox(0, -wt , w, wt, true);
+	createBox(0, h+wt , w, wt, true);
+	createBox(-wt,0,wt,h, true);
+	createBox(w+wt,0,wt,h, true);
 
 	getUpdateData();
 	update(connections)
