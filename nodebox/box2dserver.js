@@ -8,6 +8,7 @@ var fps = 30;
 var PI2 = Math.PI * 2;
 var drawData;
 var simulating = true;
+var md;
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
 	b2BodyDef = Box2D.Dynamics.b2BodyDef,
@@ -116,12 +117,8 @@ function dragBodyAtMouse(ss, socket) {
 				mouseJoints.splice(mouseJoints.indexOf(mouseJoint), 1);
 				world.DestroyJoint(mouseJoint);
 			}
-			var md = new b2MouseJointDef();
-			md.bodyA = world.GetGroundBody();
 			md.bodyB = selectedBody;
 			md.target.Set(ss.x/SCALE, ss.y/SCALE);
-			md.collideConnected = true;
-			md.maxForce = 120.0;
 			var mJ = world.CreateJoint(md);
 			selectedBody.SetAwake(true);
 
@@ -161,7 +158,6 @@ function update(connections) {
 		setTimeout(function() {update(connections)},1000/fps);
 	} else {
 		simulating = false;
-		console.log('all bodies are sleeping. stop simulation');
 	}
 }
 
@@ -172,6 +168,11 @@ function init(connections) {
 	new b2Vec2(0, 10) //gravity
 	, true //allow sleep
 	);
+	
+	md = new b2MouseJointDef();
+	md.bodyA = world.GetGroundBody();
+	md.collideConnected = true;
+	md.maxForce = 120.0;
 
 		//Create DOB OBjects
 	for(var i = 0; i < 15; i++) {
@@ -204,7 +205,6 @@ server.listen(pport);
 
 io.sockets.on('connection', function (socket) {
 	connections.push(socket);
-	console.log('client connected ' + connections.length);
 	logUsersToClients();
 
 	socket.emit('d', drawData);	
@@ -221,14 +221,12 @@ io.sockets.on('connection', function (socket) {
 		}
 
 		connections.splice(connections.indexOf(socket), 1);
-		console.log('user disconnected ' + connections.length);
 		logUsersToClients();
 	});
 
 	socket.on('md', function(data) {
 		var gotBody = dragBodyAtMouse(data, socket);
 		if(!simulating && gotBody) {
-			console.log('got user input, start simulation');
 			simulating = true;
 			setTimeout(function() {update(connections)},1000/fps);
 		}
