@@ -83,6 +83,18 @@ function getUpdateData() {
 	return ret;
 };
 
+function getJointData() {
+	var ret = [];
+	var jj, aa ,ab;
+	for (var y = 0; y < mouseJoints.length; y++) {
+		jj = mouseJoints[y];
+		aa = jj.GetAnchorA();
+		ab = jj.GetAnchorB();
+		ret.push((aa.x*SCALE).toFixed(1) + '_' + (aa.y*SCALE).toFixed(1) + '_' + (ab.x*SCALE).toFixed(1) + '_' + (ab.y*SCALE).toFixed(1));
+	}
+	return ret;
+}
+
 function dragBodyAtMouse(ss, socket) {
 	var p = new b2Vec2();
 	p.x = ss.x/SCALE;
@@ -109,7 +121,7 @@ function dragBodyAtMouse(ss, socket) {
 			md.bodyB = selectedBody;
 			md.target.Set(ss.x/SCALE, ss.y/SCALE);
 			md.collideConnected = true;
-			md.maxForce = 90.0;
+			md.maxForce = 120.0;
 			var mJ = world.CreateJoint(md);
 			selectedBody.SetAwake(true);
 
@@ -140,8 +152,9 @@ function update(connections) {
 
 	var upd = getUpdateData();
 	if(upd.length > 0) {
-		io.sockets.volatile.emit('u', upd);
+		io.sockets.volatile.emit('u', {u: upd, j: getJointData()});
 	}
+	
 	world.ClearForces();
 
 	if(mouseJoints.length > 0 || !allBodiesSleeping()) {

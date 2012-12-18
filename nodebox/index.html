@@ -95,6 +95,7 @@
 		headID.appendChild(newScript);
 
 		var drawData;
+		var jointsData;
 
 		var animateArrow = true;
 		var showMsg = true;
@@ -106,6 +107,7 @@
 			doResize();
 
 			var ctx = canvas.getContext("2d");
+			ctx.lineCap= 'round';
 
 			var pattern;
 			var image = new Image();
@@ -139,13 +141,14 @@
 
 			socket.on('u', function (data) {
 				var d;
-				for (var i = 0; i < data.length; i ++) {
-					d = data[i].split('_');
+				for (var i = 0; i < data.u.length; i ++) {
+					d = data.u[i].split('_');
 
 					drawData[d[3]].x = d[0];
 					drawData[d[3]].y = d[1];
 					drawData[d[3]].r = d[2];
 				}
+				jointsData = data.j;
 				if(okToRequestAnimationFrame) {
 					doDraw();
 				}
@@ -170,6 +173,9 @@
 					drawShadows(data);
 					if(pattern) ctx.fillStyle = pattern
 					drawShapes(data);
+					ctx.strokeStyle = 'rgba(200, 0, 0, 0.3)';
+					ctx.lineWidth = 6;
+					if(jointsData) drawJoints();
 					okToRequestAnimationFrame = true;
 				});
 			}
@@ -206,6 +212,26 @@
 					ctx.rect(-ww,-hh,d.w,d.h);		
 					ctx.stroke();
 					ctx.restore();				
+				}
+			}
+			
+			function drawJoints() {
+				var x1,x2,y1,y2,d;
+				for (var i = 0; i < jointsData.length; i ++) {
+					d = jointsData[i].split('_');
+
+					x1 = d[0] * scale;
+					y1 = (d[1] * scale) - scroll;
+					x2 = d[2] * scale;
+					y2 = (d[3] * scale) - scroll;
+					
+					ctx.arc(x1, y1, 10, 0 , 2 * Math.PI, false);
+					ctx.arc(x2, y2, 15, 0 , 2 * Math.PI, false);
+					
+					ctx.beginPath();
+					ctx.moveTo(x1,y1);
+					ctx.lineTo(x2,y2);
+					ctx.stroke();
 				}
 			}
 
