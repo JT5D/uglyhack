@@ -97,6 +97,7 @@
 		var drawData;
 
 		var animateArrow = true;
+		var showMsg = true;
 
 		function init() {
 			var socket = io.connect('http://' + window.location.hostname);
@@ -151,7 +152,11 @@
 			});
 
 			socket.on('s', function (data) {
-				alertify.log(data, "", 1500);
+				if(showMsg) {
+					showMsg = false;
+					alertify.log(data, "", 1500);
+					setTimeout(function() { showMsg = true; }, 15000);
+				}
 			});
 
 			function doDraw() {
