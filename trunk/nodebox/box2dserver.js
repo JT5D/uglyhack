@@ -174,7 +174,7 @@ function init(connections) {
 	);
 
 		//Create DOB OBjects
-	for(var i = 0; i < 15; i++) {
+	for(var i = 0; i < 13; i++) {
 		createObjects(Math.random()* (w-size),
 				 h - Math.random() * (h/3) - size,
 				 (Math.random()*size)+15,
