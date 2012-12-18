@@ -1,6 +1,6 @@
 {
   "name": "nodebox",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "dependencies": {
     "socket.io": "0.9.x",
     "express": "3.x"
