@@ -22,10 +22,9 @@ var ScriptNode = BaseNode.extend({
 	    var scriptBox = $('<textarea>');
 	    var compileButton = $('<input>');
 	    var errorMsg = this.thingy.errorMsg = $('<div>');
-	    errorMsg.css({
-	    	float: 'right',
-	    	width: '159px',
-	    	height:	'36px',
+	    errorMsg.css({ 'float': 'right', 
+	    	'width': '159px',
+	    	'height': '36px',
 	    	'overflow-y': 'auto',
 	    	'overflow-x': 'hidden'
 	    });
