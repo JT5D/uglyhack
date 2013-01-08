@@ -47,7 +47,7 @@ var SaveHandler = Class.extend({
 		//create saved nodes
 		for(var i in save.nodes) {
 			var n = save.nodes[i];
-			var node = createNodeFromString(n);
+			var node = this.createNodeFromString(n);
 			node.el.offset(n.p);
 			nodes[n.i] = node;
 		}
