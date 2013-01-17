@@ -14,6 +14,17 @@ body {
 	color: #FFFFFF;
 	text-shadow: 1px 1px 1px black;
 	overflow: hidden;
+	height: 100%;
+}
+
+.content {
+	width: 100%;
+	height: 100%;
+	display:block;
+
+	position:absolute;
+	top:0;
+	left:0;
 }
 
 h1 {
@@ -35,10 +46,9 @@ h2 {
 }
 
 h3 {
-	font-size: 35px;
 	font-weight: normal;
 	text-align: center;
-	padding: 13px;
+	line-height: 100%;
 }
 
 #subtitle {
@@ -49,28 +59,10 @@ h3 {
 }
 
 section {
-	width: 950px;
+	width: 75%;
 	margin: 0 auto 0 auto;
 	position: relative;
-	display:none;
-}
-
-article {
-	float: left;
-	padding: 10px;
-	margin: 20px 0;
-	background: rgba(255, 255, 255, 0.0);
-	border-radius: 25px;
-	-moz-border-radius: 25px;
-	-webkit-border-radius: 25px;
-}
-
-canvas {
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0
+	z-index: 1000;
 }
 
 a {
@@ -82,101 +74,9 @@ p {
 	margin-bottom: 1em
 }
 
-ul {
-	-webkit-perspective: 800px; 
-	-moz-perspective: 800px;
-	perspective: 800px;
-	min-height: 900px;
-}
-
-li {
-	list-style-type: none;
-	float: left;
-	margin: 10px;
-	transition: all .3s ease-in;
-	-moz-transition: all .3s ease-in;
-	-webkit-transition: all .3s ease-in;
-	transform: rotateX(0deg) translateZ(0px);
-	-moz-transform: rotateX(0deg) translateZ(0px);
-	-webkit-transform: rotateX(0deg) translateZ(0px);
-	-webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-}
-
-li:hover {
-	transform: translateZ(20px);
-	-moz-transform: translateZ(20px);
-	-webkit-transform: translateZ(20px);
-}
-
-@keyframes slidein {
-  from {
-  	opacity: 0.0;
-	transform: rotateX(360deg) translateZ(500px);
-	-moz-transform: rotateX(360deg) translateZ(500px);
-	-webkit-transform: rotateX(360deg) translateZ(500px);
-  }
- 
-  to {
-  	opacity: 1.0;
-	transform: rotateX(0deg) translateZ(0px);
-	-moz-transform: rotateX(0deg) translateZ(0px);
-	-webkit-transform: rotateX(0deg) translateZ(0px);
-  }
-}
-
-@-moz-keyframes slidein {
-  from {
-    opacity: 0.0;
-	-moz-transform: rotateX(360deg) translateZ(500px);
-  }
- 
-  to {
-  	opacity: 1.0;
-	-moz-transform: rotateX(0deg) translateZ(0px);
-  }
-}
-
-@-webkit-keyframes slidein {
-  from {
-    opacity: 0.0;
-	-webkit-transform: rotateX(360deg) translateZ(500px);
-  }
- 
-  to {
-  	opacity: 1.0;
-	-webkit-transform: rotateX(0deg) translateZ(0px);
-  }
-}
-
-@keyframes fadein {
-  from { background: rgba(255, 255, 255, 0.0); }
-  to { background: rgba(255, 255, 255, 0.15); }
-}
-@-moz-keyframes fadein {
-  from { background: rgba(255, 255, 255, 0.0); }
-  to { background: rgba(255, 255, 255, 0.15); }
-}
-@-webkit-keyframes fadein {
-  from { background: rgba(255, 255, 255, 0.0); }
-  to { background: rgba(255, 255, 255, 0.15); }
-}
-
-@keyframes opin {
-  from { opacity: 0.0; }
-  to { opacity: 1.0; }
-}
-@-moz-keyframes opin {
-  from { opacity: 0.0; }
-  to { opacity: 1.0; }
-}
-@-webkit-keyframes opin {
-  from { opacity: 0.0; }
-  to { opacity: 1.0; }
-}
-
-div.outer {
+div.experiment {
+	position: absolute;
+	width: 281px;
 	border-radius: 15px;
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
@@ -185,61 +85,41 @@ div.outer {
 	-webkit-box-shadow: 3px 7px 9px rgba(0, 0, 0, 1);
 	background: rgba(255, 255, 255, 0.3);
 	padding: 5px;
-	transition: all .3s ease-in;
-	-moz-transition: all .3s ease-in;
-	-webkit-transition: all .3s ease-in;
-}
-
-li:hover div.outer {
-	box-shadow: 13px 17px 19px rgba(0, 0, 0, 1);
-	-moz-box-shadow: 13px 17px 19px rgba(0, 0, 0, 1);
-	-webkit-box-shadow: 13px 17px 19px rgba(0, 0, 0, 1);
+	top: 0px;
+	left: 0px;
 }
 
 div.inner {
 	position: relative;
-	top: 75px;
+	top: 35%;
 	background: rgba(130, 130, 130, 0.5);
-	height: 50px;
-	transition: opacity 0.5s ease-in;
-	-moz-transition: opacity 0.5s ease-in;
-	-webkit-transition: opacity 0.5s ease-in;
+	height: 20%;
+	padding: 5%;
 }
 
 div.fadeable {
-	width: 280px;
-	height: 200px;
+	width: 100%;
+	height: 100%;
 	border-radius: 13px;
 	-moz-border-radius: 13px;
 	-webkit-border-radius: 13px;
-	transition: all 0.8s ease-in;
-	-moz-transition: all 0.8s ease-in;
-	-webkit-transition: all 0.8s ease-in;
 }
 
 .headersquare {
 	border-radius: 0px 0px 25px 25px;
 	-moz-border-radius: 0px 0px 25px 25px;
 	-webkit-border-radius: 0px 0px 25px 25px;
-	background: rgba(255, 255, 255, 0.15);
+	background: rgba(100, 100, 100, 0.85);
 	padding: 10px;
-}
 
-ul {
-	margin-bottom: 1em;
-	width: 930px
 }
 
 footer {
-	clear: both;
-	width: 930px;
-	margin: 0 auto 2em auto;
-	color: #888;
-	position: relative;
-	padding: 10px 0 0 20px;
-	display: none;
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
 }
 
-footer p {
-	margin: 0
+.clearfix {
+	clear: both;
 }
