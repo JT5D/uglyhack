@@ -3,6 +3,7 @@
 	<meta charset="utf-8" />
 	<meta name="description" content="HTML5 experiments. Stuff without purpose.">
     <meta name="author" content="Daniel Pettersson">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<title>Uglyhack</title>	
 	
 	<link href="uglyhack.css" rel="stylesheet" type="text/css"></link>
@@ -14,6 +15,7 @@
 		var experiments = [];
 		var mousex = null;
 		var mousey = null;
+		var timer = 0;
 
 		function initialize() {
 			var globalScale = window.innerWidth/2000;
@@ -28,7 +30,6 @@
 			var mouseForce = 0.008/globalScale;
 			var expScaleRad = 300*globalScale;
 			var expScaleFact = 0.6;
-
 
 			function Experiment(name, href, logo) {
 				this.name = name;
@@ -118,6 +119,20 @@
 						}
 						
 					}
+				} else if(this.scale > 1.0) {
+					this.scale /= 1.05;
+				}
+
+				ddy = this.y - (window.innerHeight/2 + Math.sin(timer/30)*window.innerHeight/6 - hh/this.scale/2);
+				ddx = this.x - (window.innerWidth/2 + Math.cos(timer/30)*window.innerWidth/6 - ww/this.scale/2);
+				if(Math.abs(ddx) > 1 || Math.abs(ddy) > 1) {
+					f = Math.sqrt(Math.pow(ddx, 2) + Math.pow(ddy, 2));
+					if(f < 200) {
+						f = 100 + f/2;
+					}
+					f = f*f*mouseForce;
+					fx -= ddx/f;
+					fy -= ddy/f;
 				}
 
 				if(this.y < borderForceWidth) {
@@ -193,11 +208,11 @@
 				'font-size': 100*globalScale + 'px'
 			});
 			$('h2').css({
-				'font-size': 40*globalScale + 'px'
+				'font-size': 60*globalScale + 'px'
 			});
 			$('#html5img').css({
-				width: 63*globalScale + 'px',
-				height: 64*globalScale + 'px'
+				width: 80*globalScale + 'px',
+				height: 80*globalScale + 'px'
 			});
 		}
 
@@ -206,10 +221,15 @@
 			  	mousex = event.pageX;
 			  	mousey = event.pageY;
 			});
+			$(".content").mouseout(function(event) {
+			  	mousex = null;
+			  	mousey = null;
+			});
 
 			initialize();
 
 			var animate = function() {
+				timer++;
 				for(var i = 0; i < experiments.length; i++) {
 					experiments[i].calcForces();
 				}
@@ -232,25 +252,27 @@
 				initialize();
 			}
 
-			canvas.addEventListener("touchstart", function(e) {
+			var content = document.getElementById('content');
+			content.addEventListener("touchstart", function(e) {
 				mousex = e.changedTouches[0].clientX;
 				mousey = e.changedTouches[0].clientY;
 			}, false);
 
-			canvas.addEventListener("touchend", function(e) {
+			content.addEventListener("touchend", function(e) {
 				mousex = null;
 				mousey = null;
 			}, false);
 
-			canvas.addEventListener("touchmove", function(e) {
+			content.addEventListener("touchmove", function(e) {
 				mousex = e.changedTouches[0].clientX;
 				mousey = e.changedTouches[0].clientY;
+				e.preventDefault();
 			}, false);
 		});
 	</script>
 </head>
 <body>
-	<div class="content">
+	<div class="content" id="content">
 		<section>
 			<div class="headersquare">
 			<h1><img src="html5.png" id="html5img" />Uglyhack</h1>
