@@ -11,11 +11,30 @@
 	<script src="resources/RequestAnimationFrame.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
+
+		var expInfo = [
+			['Box Jitsu', 'http://box.jit.su', 'nodebox/logo.jpg'],
+			['SprichSprach', 'https://uglyhack.appspot.com/sprichensprachen/', 'sprichensprachen/logo.jpg'],
+			['Boingy', 'boingy/', 'boingy/logo.jpg'],
+			['WebAudioToy', 'webaudiotoy/', 'webaudiotoy/logo.jpg'],
+			['JFokus', 'jfokus/', 'jfokus/logo.jpg'],
+			['Systemet', 'systemet/', 'systemet/logo.jpg'],
+			['Hypnotron', 'hypnotron/', 'hypnotron/logo.jpg'],
+			['VideoFx', 'videofx/', 'videofx/logo.jpg'],
+			['CubeVideo', 'cubevideo/', 'cubevideo/logo.jpg'],
+			['Twittergraph', 'twittergraph/', 'twittergraph/logo.jpg'],
+			['Artistgraph', 'artistgraph/', 'artistgraph/logo.jpg'],
+			['3d Cube', '3d/', '3d/logo.jpg'],
+			['Chaosdraw', 'chaosdraw/', 'chaosdraw/logo.jpg'],
+			['Shake', 'shake/', 'shake/logo.jpg']
+		];
 		
 		var experiments = [];
 		var mousex = null;
 		var mousey = null;
 		var timer = 0;
+
+		var loading = true;
 
 		function initialize() {
 			var globalScale = window.innerWidth/2000;
@@ -66,6 +85,7 @@
 				this.exp.append(a);
 				
 				$('.content').append(this.exp);
+				this.exp.fadeIn('slow');
 
 				return this;
 			};
@@ -107,9 +127,11 @@
 						f = Math.sqrt(Math.pow(ddx, 2) + Math.pow(ddy, 2));
 
 						if(f < expScaleRad) {
-							this.scale = 1 + ((expScaleRad - f)/expScaleRad)*expScaleFact;
+							if(this.scale < 1 + ((expScaleRad - f)/expScaleRad)*expScaleFact) {
+								this.scale += 0.04;
+							}
 						} else if(this.scale > 1.0) {
-							this.scale /= 1.05;
+							this.scale -= 0.02;
 						}
 
 						if(f < 30) {
@@ -159,7 +181,7 @@
 			};
 
 			Experiment.prototype.move = function() {
-				var transStr = 'translate(' + this.x + 'px, ' + this.y +'px) scale(' + this.scale + ')';
+				var transStr = 'translate(' + this.x + 'px, ' + this.y +'px) scale(' + this.scale + ') rotateY(' + this.dx*3 + 'deg) rotateX(' + this.dy*3 + 'deg)';
 				this.exp.css({
 					'z-index': this.scale > (1+expScaleFact*0.8) ? 150 : 100,
 					'-webkit-transform': transStr,
@@ -168,21 +190,6 @@
 					'-ms-transform': transStr
 				});
 			};
-
-			experiments.push( new Experiment('Box Jitsu', 'http://box.jit.su', 'nodebox/logo.jpg').init() );
-			experiments.push( new Experiment('SprichSprach', 'https://uglyhack.appspot.com/sprichensprachen/', 'sprichensprachen/logo.jpg').init() );
-			experiments.push( new Experiment('Boingy', 'boingy/', 'boingy/logo.jpg').init() );
-			experiments.push( new Experiment('WebAudioToy', 'webaudiotoy/', 'webaudiotoy/logo.jpg').init() );
-			experiments.push( new Experiment('JFokus', 'jfokus/', 'jfokus/logo.jpg').init() );
-			experiments.push( new Experiment('Systemet', 'systemet/', 'systemet/logo.jpg').init() );
-			experiments.push( new Experiment('Hypnotron', 'hypnotron/', 'hypnotron/logo.jpg').init() );
-			experiments.push( new Experiment('VideoFx', 'videofx/', 'videofx/logo.jpg').init() );
-			experiments.push( new Experiment('CubeVideo', 'cubevideo/', 'cubevideo/logo.jpg').init() );
-			experiments.push( new Experiment('Twittergraph', 'twittergraph/', 'twittergraph/logo.jpg').init() );
-			experiments.push( new Experiment('Artistgraph', 'artistgraph/', 'artistgraph/logo.jpg').init() );
-			experiments.push( new Experiment('3d Cube', '3d/', '3d/logo.jpg').init() );
-			experiments.push( new Experiment('Chaosdraw', 'chaosdraw/', 'chaosdraw/logo.jpg').init() );
-			experiments.push( new Experiment('Shake', 'shake/', 'shake/logo.jpg').init() );
 
 			$('h1').css({
 				'font-size': 100*globalScale + 'px'
@@ -194,6 +201,30 @@
 				width: 80*globalScale + 'px',
 				height: 80*globalScale + 'px'
 			});
+
+			var loadIdx = 0;
+
+			var loadExp = function() {
+				if(loadIdx < expInfo.length) {
+					var img = new Image();
+					img.src = expInfo[loadIdx][2];
+					img.onload = function () {
+						setTimeout(function() {
+							experiments.push( 
+								new Experiment(
+									expInfo[loadIdx][0], 
+									expInfo[loadIdx][1], 
+									expInfo[loadIdx][2]).init() 
+								);	
+							loadIdx++;
+							loadExp();					
+						}, 100);
+					}
+				} else {
+					loading = false;
+				}
+			}
+			loadExp();
 		}
 
 		$(window).load(function () {
@@ -225,11 +256,14 @@
 			window.addEventListener('orientationchange', doResize, false);
 
 			function doResize() {
-				mousex = null;
-				mousey = null;
-				experiments = [];
-				$('.experiment').remove();
-				initialize();
+				if(!loading) {
+					loading = true;
+					mousex = null;
+					mousey = null;
+					experiments = [];
+					$('.experiment').remove();
+					initialize();
+				}
 			}
 
 			var content = document.getElementById('content');
