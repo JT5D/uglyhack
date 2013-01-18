@@ -90,6 +90,8 @@ div.experiment {
 	left: 0px;
 
 	display: none;
+
+	-webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(20%, transparent), to(rgba(255, 255, 255, 0.15)));
 }
 
 div.inner {
