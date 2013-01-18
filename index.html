@@ -44,14 +44,14 @@
 
 			var friction = 0.9;
 			var force = 0.02/globalScale;
-			var borderForceWidth = window.innerWidth/10;
+			var borderForceWidth = window.innerWidth/7;
 			var borderForceHeight = 220*globalScale/2;
 			var borderForce = 0.01/globalScale;
 			var mouseForce = 0.04/globalScale;
 			var expScaleRad = 250*globalScale;
 			var expScaleFact = 0.6;
 
-			function Experiment(name, href, logo) {
+			function Experiment(name, href, logo, idx) {
 				this.name = name;
 				this.href = href;
 				this.logo = logo;
@@ -62,6 +62,7 @@
 				this.scale = 1.0;
 				this.x = Math.random() * (window.innerWidth - expwidth);
 				this.y = Math.random() * (window.innerHeight - expheight);
+				this.idx = idx;
 			};
 
 			Experiment.prototype.init = function() {
@@ -184,7 +185,7 @@
 			Experiment.prototype.move = function() {
 				var transStr = null;
 				if(Modernizr.csstransforms3d) {
-					transStr = 'translate(' + this.x + 'px, ' + this.y +'px) scale(' + this.scale + ') rotateY(' + this.dx*2.5 + 'deg) rotateX(' + this.dy*2.5 + 'deg)';
+					transStr = 'translate3d(' + this.x + 'px, ' + this.y +'px, ' + this.idx*2 + 'px)  scale(' + this.scale + ') rotateY(' + this.dx*2.5 + 'deg) rotateX(' + this.dy*2.5 + 'deg)';
 				} else {
 					transStr = 'translate(' + this.x + 'px, ' + this.y +'px) scale(' + this.scale + ')';
 				}
@@ -221,7 +222,8 @@
 								new Experiment(
 									expInfo[loadIdx][0], 
 									expInfo[loadIdx][1], 
-									expInfo[loadIdx][2]).init() 
+									expInfo[loadIdx][2],
+									loadIdx).init() 
 								);	
 							loadIdx++;
 							loadExp();					
