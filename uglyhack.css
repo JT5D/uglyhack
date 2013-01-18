@@ -12,7 +12,7 @@ body {
 	background: url( black_linen_v2.png );
 	font: normal normal normal 14px/ 1.4em Georgia;
 	color: #FFFFFF;
-	text-shadow: 1px 1px 2px black;
+	text-shadow: 1px 1px 3px black;
 	overflow: hidden;
 	height: 100%;
 }
@@ -84,7 +84,7 @@ div.experiment {
 	-moz-border-radius: 10%;
 	-webkit-border-radius: 10%;
 	
-	background: rgb(100, 100, 100);
+	background: rgba(100, 100, 100, 0.5);
 	padding: 0.35%;
 	top: 0px;
 	left: 0px;
