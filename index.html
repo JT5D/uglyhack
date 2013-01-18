@@ -22,13 +22,13 @@
 			var expwidth = 280*globalScale;
 			var expheight = 200*globalScale;
 
-			var bounceFactor = 0.7;
 			var friction = 0.9;
 			var force = 0.02/globalScale;
-			var borderForceWidth = window.innerWidth/15;
-			var borderForce = 0.03/globalScale;
-			var mouseForce = 0.008/globalScale;
-			var expScaleRad = 300*globalScale;
+			var borderForceWidth = window.innerWidth/10;
+			var borderForceHeight = 220*globalScale/2;
+			var borderForce = 0.01/globalScale;
+			var mouseForce = 0.04/globalScale;
+			var expScaleRad = 250*globalScale;
 			var expScaleFact = 0.6;
 
 			function Experiment(name, href, logo) {
@@ -105,6 +105,13 @@
 					ddx = this.x - (mousex - ww/this.scale/2);
 					if(Math.abs(ddx) > 1 || Math.abs(ddy) > 1) {
 						f = Math.sqrt(Math.pow(ddx, 2) + Math.pow(ddy, 2));
+
+						if(f < expScaleRad) {
+							this.scale = 1 + ((expScaleRad - f)/expScaleRad)*expScaleFact;
+						} else if(this.scale > 1.0) {
+							this.scale /= 1.05;
+						}
+
 						if(f < 30) {
 							f = 15 + f/2;
 						}
@@ -112,11 +119,6 @@
 						fx -= ddx/f;
 						fy -= ddy/f;
 
-						if(f < expScaleRad) {
-							this.scale = 1 + ((expScaleRad - f)/expScaleRad)*expScaleFact;
-						} else if(this.scale > 1.0) {
-							this.scale /= 1.05;
-						}
 						
 					}
 				} else if(this.scale > 1.0) {
@@ -135,11 +137,11 @@
 					fy -= ddy/f;
 				}
 
-				if(this.y < borderForceWidth) {
-					fy += (borderForceWidth - this.y)*borderForce;
+				if(this.y < window.innerHeight/2 - borderForceHeight) {
+					fy += (window.innerHeight/2 - borderForceHeight - this.y)*borderForce;
 				}
-				if(this.y > window.innerHeight-hh - borderForceWidth) {
-					fy -= (borderForceWidth - (window.innerHeight-hh-this.y))*borderForce;
+				if(this.y > window.innerHeight/2 + borderForceHeight - hh) {
+					fy -= (this.y+ hh - (window.innerHeight/2 + borderForceHeight))*borderForce;
 				}
 
 				if(this.x < borderForceWidth) {
@@ -147,28 +149,6 @@
 				}
 				if(this.x > window.innerWidth-ww - borderForceWidth) {
 					fx -= (borderForceWidth - (window.innerWidth-ww-this.x))*borderForce;
-				}
-
-				if(this.y < 0) {
-					this.y = 0;
-					this.dx = this.dx*bounceFactor;
-					this.dy = -this.dy*bounceFactor;
-				}
-				if(this.y > window.innerHeight-hh) {
-					this.y = window.innerHeight-hh;
-					this.dx = this.dx*bounceFactor;
-					this.dy = -this.dy*bounceFactor;
-				}
-
-				if(this.x < 0) {
-					this.x = 0;
-					this.dx = -this.dx*bounceFactor;
-					this.dy = this.dy*bounceFactor;
-				}
-				if(this.x > window.innerWidth-ww) {
-					this.x = window.innerWidth-ww;
-					this.dx = -this.dx*bounceFactor;
-					this.dy = this.dy*bounceFactor;
 				}
 
 				this.dx += fx;
@@ -181,7 +161,7 @@
 			Experiment.prototype.move = function() {
 				var transStr = 'translate(' + this.x + 'px, ' + this.y +'px) scale(' + this.scale + ')';
 				this.exp.css({
-					'z-index': Math.floor(this.scale*100),
+					'z-index': this.scale > (1+expScaleFact*0.8) ? 150 : 100,
 					'-webkit-transform': transStr,
 					'-moz-transform': transStr,
 					'transform': transStr,
