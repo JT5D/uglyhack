@@ -210,6 +210,12 @@
 				height: 80*globalScale + 'px'
 			});
 
+			$('.headersquare').show().css({
+				top: -150*globalScale + 'px'})
+			.animate({
+				top: '0px'
+			}, 300);
+
 			var loadIdx = 0;
 
 			var loadExp = function() {
