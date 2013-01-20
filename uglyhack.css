@@ -45,7 +45,7 @@ h2 {
 	font-weight: normal;
 	font-style: italic;
 	text-align: left;
-	padding-right: 20px
+	padding-right: 20px;
 }
 
 h3 {
@@ -116,7 +116,9 @@ div.fadeable {
 	-webkit-border-radius: 0px 0px 10% 10%;
 	background: rgba(100, 100, 100, 0.85);
 	padding: 1%;
-
+	position: absolute;
+	width: 100%;
+	display: none;
 }
 
 footer {
@@ -127,6 +129,3 @@ footer {
 	font-size: 8pt;
 }
 
-.clearfix {
-	clear: both;
-}
