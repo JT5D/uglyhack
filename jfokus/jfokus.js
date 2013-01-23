@@ -94,6 +94,15 @@ $('#schedulePage').live('pageinit', function(){
 
 
 $('#speakersPage').live('pageinit', function(){
+	$("#speakersUl").listview({
+	  autodividersSelector: function ( li ) {
+	    var out = li.find('h3').text()[0];
+
+	    return out;
+	  }
+	});
+	$("#speakersUl").listview('refresh');
+
 	$("#speakersUl").delegate(".listUlItem", "click", function() {
 		getDataForTemplate({
 			url: 'http://www.jfokus.se/rest/v1/events/speakers/' + this.id,
