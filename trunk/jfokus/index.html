@@ -1,5 +1,4 @@
 <!DOCTYPE html> 
-<!-- <html manifest="cache.manifest"> -->
 <html>
 	<head> 
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -19,9 +18,9 @@
 		</script>
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1"> 
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
-		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+		<link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+		<script src="jquery-1.8.2.min.js"></script>
+		<script src="jquery.mobile-1.2.0.min.js"></script>
 		<script type="text/javascript" src="handlebars-1.0.rc2.js"></script>
 		
 		<style type="text/css">
@@ -41,11 +40,6 @@
 				float: left;
 			}
 			
-			.speakerTalkLink{
-				color: blue;
-				text-decoration: underline;
-				cursor: pointer;
-			}
 		</style>
 		
 		<script type="text/javascript" src="jfokus.js"></script>
@@ -98,14 +92,14 @@
 				<a id="speakersButton" data-icon="star" class="ui-btn-right">Speakers</a>
 				<div data-role="navbar">
 					<ul id="daynavbar">
-						<li><a href="#" class="ui-btn-active">Day one</a></li>
-						<li><a href="#">Day two</a></li>
-						<li><a href="#">Day three</a></li>
+						<li data-day="1"><a href="#" class="ui-btn-active">Day one</a></li>
+						<li data-day="2"><a href="#">Day two</a></li>
+						<li data-day="3"><a href="#">Day three</a></li>
 					</ul>
 				</div>
 			</div>
 			<div data-role="content">
-				<ul data-role="listview" data-inset="true" data-divider-theme="a" id="scheduleUl">
+				<ul data-role="listview" data-inset="true" data-filter="true" data-divider-theme="a" id="scheduleUl">
 				</ul>
 			</div>
 		</div>
@@ -116,7 +110,9 @@
 					<div class="hiddenPresUri" style="display: none;">{{presentationUri}}</div>
 					<a>
 						<h3>{{title}}</h3>
-						<p>{{substr 10 16 fromTime}} - {{substr 10 16 toTime}}, {{room}}</p>
+						<p>
+							{{substr 10 16 fromTime}} - {{substr 10 16 toTime}}, {{room}}{{#each speakers}}, {{speaker}}{{/each}} 
+						</p>
 					</a>
 				</li>
 				{{else}}
@@ -179,6 +175,9 @@
 						<img src="{{imageURI}}" width="63" height="80" />
 						<h3>{{firstName}} {{lastName}}</h3>
 						<p>{{company}}</p>
+						<div class="ui-li-count">
+							{{talks.length}}
+						</div>
 					</a>
 				</li>
 			{{/each}}  			
@@ -189,7 +188,7 @@
 				<a href="#speakersPage" data-icon="back" data-direction="reverse">Back</a>
 				<h1>Speaker</h1>
 			</div>
-			<div data-role="content" id="speakerDetailsUl">
+			<div data-role="content" id="speakerDetailsContent">
 			</div>
 		</div>
 		<script id="speakerDetails-template" type="text/x-handlebars-template">
@@ -198,20 +197,19 @@
 				<img src="{{imageURI}}" class="portrait"/>
 				{{bio}}
 				<br clear="all">
-				<p><b>Talks</b>
+				<br clear="all">
+				<ul data-role="listview" data-inset="true" data-divider-theme="a" id="speakerDetailsUl">
+					<li data-role="list-divider">Talks</li>
 					{{#each talks}}
-						<div class="speakerTalkLink">
-							<div class="hiddenPresUri" style="display: none;">{{presentationUri}}</div>
-							{{title}}
-						</div>
+						<li class="listUlItem" data-presuri="{{presentationUri}}">
+							<a>
+								{{title}}
+							</a>
+						</li>
 					{{/each}}
-				</p>
+				</ul>
+			
 			{{/with}}  	
 		</script>
-		
-		
-
-
-
 	</body>
 </html>

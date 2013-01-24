@@ -1,6 +1,7 @@
 var JFokus = {
+	useYql: true,
+	baseUrl: 'http://www.jfokus.se/rest/v1/events',
 	selEventId: null,	
-	speakersListLoaded: false,
 	getTemplate: function(templateName) {
 		if(!JFokus._compiledTemplates[templateName]) {
 			JFokus._initHelpers();
@@ -17,7 +18,8 @@ var JFokus = {
 		}
 	},
 	_compiledTemplates: {},
-	_initedTemplates: false
+	_initedTemplates: false,
+	ajaxCache: {}
 }
 
 $(document).bind( "pagebeforechange", function( e, data ) {
@@ -43,7 +45,7 @@ $('#mainPage').live('pageinit', function(){
 	});
 	
 	getDataForTemplate({
-		url: 'http://www.jfokus.se/rest/v1/events',
+		url: JFokus.baseUrl,
 		ul: '#mainUl',
 		template: JFokus.getTemplate('#event-template')
 	});
@@ -54,7 +56,7 @@ $('#mainPage').live('pageinit', function(){
 
 $('#schedulePage').live('pageinit', function(){
 	$("#daynavbar").delegate("li", "click", function() {
-		getScheduleList(this.nodeIndex, JFokus.selEventId);
+		getScheduleList($(this).data('day'), JFokus.selEventId);
 	});
 	
 	$("#scheduleUl").delegate(".listUlItem", "click", function() {
@@ -65,28 +67,24 @@ $('#schedulePage').live('pageinit', function(){
 	});
 	
 	$('#speakersButton').bind('click', function() {
-		if(!JFokus.speakersListLoaded) {
-			getDataForTemplate({
-				url: 'http://www.jfokus.se/rest/v1/events/' + JFokus.selEventId + '/speakers',
-				ul: '#speakersUl',
-				template: JFokus.getTemplate('#speakers-template'),
-				postFnc: function(config, data) {
-					$.mobile.changePage( $('#speakersPage'));
-					JFokus.speakersListLoaded = true;
-				},
-				dataProcessFnc: function(data) {
-					data.items.sort(function(a, b) {
-						var diff = a.firstName.localeCompare(b.firstName);
-						if(diff == 0) {
-							diff = a.lastName.localeCompare(b.lastName);
-						}
-						return diff;
-					});
-				}
-			});
-		} else {
-			$.mobile.changePage( $('#speakersPage'));
-		}
+		getDataForTemplate({
+			url: JFokus.baseUrl + '/' + JFokus.selEventId + '/speakers',
+			ul: '#speakersUl',
+			template: JFokus.getTemplate('#speakers-template'),
+			postFnc: function(config, data) {
+				clearFilter('#speakersPage');
+				$.mobile.changePage( $('#speakersPage'));
+			},
+			dataProcessFnc: function(data) {
+				data.items.sort(function(a, b) {
+					var diff = a.firstName.localeCompare(b.firstName);
+					if(diff == 0) {
+						diff = a.lastName.localeCompare(b.lastName);
+					}
+					return diff;
+				});
+			}
+		});
 	});
 });
 
@@ -105,11 +103,15 @@ $('#speakersPage').live('pageinit', function(){
 
 	$("#speakersUl").delegate(".listUlItem", "click", function() {
 		getDataForTemplate({
-			url: 'http://www.jfokus.se/rest/v1/events/speakers/' + this.id,
-			ul: '#speakerDetailsUl',
+			url: JFokus.baseUrl + '/speakers/' + this.id,
+			ul: '#speakerDetailsContent',
 			template: JFokus.getTemplate('#speakerDetails-template'),
 			postFnc: function(config, data) {
 				$.mobile.changePage( $('#speakerDetailsPage'));
+				var listul = $('#speakerDetailsUl');
+				if(!listul.hasClass('ui-listview')) {
+					listul.listview();
+				}
 			}
 		});
 	});
@@ -119,8 +121,8 @@ $('#speakersPage').live('pageinit', function(){
 
 
 $('#speakerDetailsPage').live('pageinit', function(){
-	$("#speakerDetailsUl").delegate(".speakerTalkLink", "click", function() {
-		var presUri = $(this).find('.hiddenPresUri').text();
+	$("#speakerDetailsContent").delegate("#speakerDetailsUl .listUlItem", "click", function() {
+		var presUri = $(this).data('presuri');
 		getPresentationDetails(presUri, '#speakerDetailsPage');
 	});
 });
@@ -153,12 +155,19 @@ function getPresentationDetails(presUri, backUri) {
 	});
 }
 
+function clearFilter(page) {
+	$(page + ' form.ui-listview-filter input').each(function () {
+		$(this).val('');
+	});
+}
+
 function getScheduleList(day, eventId) {
 	getDataForTemplate({
-		url: 'http://www.jfokus.se/rest/v1/events/' + eventId + '/schedule/day/' + day,
+		url: JFokus.baseUrl + '/' + eventId + '/schedule/day/' + day,
 		ul: '#scheduleUl',
 		template: JFokus.getTemplate('#schedule-template'),
 		postFnc: function(config, data) {
+			clearFilter('#schedulePage');
 			$.mobile.changePage( $('#schedulePage'));
 		},
 		dataProcessFnc: function(data) {
@@ -187,15 +196,9 @@ function getScheduleList(day, eventId) {
 }
 
 function getDataForTemplate(config) {
-	$.mobile.showPageLoadingMsg();
-	$.getJSON(getYql(config.url), function(response) { 
-		if(response.query.results == null) {
-			alert('Something went wrong with your request. Maybe you reached your api quota limit. It is reset every hour.');
-		}
-			
-		var data = { items: jQuery.parseJSON(response.query.results.body.p) };
-		
-		if(config.dataProcessFnc != undefined) {
+	
+	var handleResponse = function(data, cached) {
+		if(!cached && config.dataProcessFnc != undefined) {
 			config.dataProcessFnc(data);
 		}
 		
@@ -214,12 +217,39 @@ function getDataForTemplate(config) {
 		if(config.postFnc != undefined) {
 			config.postFnc(config, data);
 		}
-		
-	}).complete(function() { 
-		$.mobile.hidePageLoadingMsg(); 
-	});
+	};
+
+	var cachedData = JFokus.ajaxCache[config.url];
+
+	if(cachedData) {
+		handleResponse(cachedData, true);
+	} else {
+		$.mobile.showPageLoadingMsg();
+		$.getJSON(getYql(config.url), function(response) {
+			var data = { items: null };
+
+			if(JFokus.useYql) { 
+				if(response.query.results == null) {
+					alert('Something went wrong with your YQL request. Maybe you reached your api quota limit. It is reset every hour.');
+				}
+				data.items = jQuery.parseJSON(response.query.results.body.p);
+			} else {
+				data.items = response;
+			}
+
+			JFokus.ajaxCache[config.url] = data;
+			handleResponse(data, false);
+			
+		}).complete(function() { 
+			$.mobile.hidePageLoadingMsg(); 
+		});
+	}
 }
 
 function getYql(site) {
-	return 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '"') + '&format=json&callback=?';
+	if(JFokus.useYql) {
+		return 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '"') + '&format=json&callback=?';
+	} else {
+		return site;
+	}
 }
