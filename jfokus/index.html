@@ -19,6 +19,7 @@
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1"> 
 		<link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+		<link rel="stylesheet" href="loader.css" />
 		<script src="jquery-1.8.2.min.js"></script>
 		<script src="jquery.mobile-1.2.0.min.js"></script>
 		<script type="text/javascript" src="handlebars-1.0.rc2.js"></script>
@@ -45,6 +46,35 @@
 		<script type="text/javascript" src="jfokus.js"></script>
 	</head> 
 	<body> 
+		<div data-role="page" id="loadingPage">
+			<div data-role="header" data-position="fixed">
+				<h1>Jfokus</h1>
+			</div>
+			<div data-role="content">
+				<div class="windows8">
+					<div class="wBall" id="wBall_1">
+						<div class="wInnerBall">
+						</div>
+					</div>
+					<div class="wBall" id="wBall_2">
+						<div class="wInnerBall">
+						</div>
+					</div>
+					<div class="wBall" id="wBall_3">
+						<div class="wInnerBall">
+						</div>
+					</div>
+					<div class="wBall" id="wBall_4">
+						<div class="wInnerBall">
+						</div>
+					</div>
+					<div class="wBall" id="wBall_5">
+						<div class="wInnerBall">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div data-role="page" id="mainPage">
 			<div data-role="header" data-position="fixed">
 				<h1>Jfokus</h1>
@@ -87,12 +117,12 @@
 		
 		<div data-role="page" id="schedulePage">
 			<div data-role="header" data-position="fixed">
-				<a href="#mainPage" data-icon="back" data-direction="reverse">Back</a>
+				<a href="#mainPage" data-icon="back" data-direction="reverse">Events</a>
 				<h1>Schedule</h1>
 				<a id="speakersButton" data-icon="star" class="ui-btn-right">Speakers</a>
 				<div data-role="navbar">
 					<ul id="daynavbar">
-						<li data-day="1"><a href="#" class="ui-btn-active">Day one</a></li>
+						<li data-day="1"><a href="#">Day one</a></li>
 						<li data-day="2"><a href="#">Day two</a></li>
 						<li data-day="3"><a href="#">Day three</a></li>
 					</ul>
@@ -160,7 +190,7 @@
 		
 		<div data-role="page" id="speakersPage">
 			<div data-role="header" data-position="fixed">
-				<a href="#schedulePage" data-icon="back" data-direction="reverse">Back</a>
+				<a href="#schedulePage" data-icon="back" data-direction="reverse">Schedule</a>
 				<h1>Speakers</h1>
 			</div>
 			<div data-role="content">

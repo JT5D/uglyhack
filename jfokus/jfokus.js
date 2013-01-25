@@ -143,6 +143,30 @@
         });
     }
 
+    function getDayFromLocalStorage() {
+        try {
+            var day, dayIdx;
+            day = localStorage.getItem('selday');
+            if (day === null || day === undefined) {
+                day = 1;
+            }
+            $('#daynavbar li a').removeClass('ui-btn-active');
+            dayIdx = day - 1;
+            $('#daynavbar li:eq(' + dayIdx + ') a').addClass('ui-btn-active');
+
+            return day;
+        } catch (e) {
+            return 1;
+        }
+    }
+
+    function saveDayToLocalStorage(day) {
+        try {
+            localStorage.setItem('selday', day);
+        } catch (e) {
+        }
+    }
+
     $(document).bind("pagebeforechange", function (e, data) {
         if (typeof data.toPage === "string" && JFokus.selEventId === null) {
             var u = $.mobile.path.parseUrl(data.toPage);
@@ -153,23 +177,34 @@
         }
     });
 
-    $('#mainPage').live('pageinit', function () {
-        $("#mainUl").delegate(".listUlItem", "click", function () {
-            JFokus.selEventId = this.id;
-            $('#daynavbar li a').removeClass('ui-btn-active');
-            $('#daynavbar li:eq(0) a').addClass('ui-btn-active');
-            getScheduleList(1, this.id);
-        });
+    $('#loadingPage').live('pageinit', function () {
         getDataForTemplate({
             url: JFokus.baseUrl,
             ul: '#mainUl',
-            template: JFokus.getTemplate('#event-template')
+            template: JFokus.getTemplate('#event-template'),
+            postFnc: function (config, data) {
+                if (data.items.length === 1) {
+                    JFokus.selEventId = data.items[0].id;
+                    getScheduleList(getDayFromLocalStorage(), JFokus.selEventId);
+                } else {
+                    $.mobile.changePage($('#mainPage'));
+                }
+            }
+        });
+    });
+
+    $('#mainPage').live('pageinit', function () {
+        $("#mainUl").delegate(".listUlItem", "click", function () {
+            JFokus.selEventId = this.id;
+            getScheduleList(getDayFromLocalStorage(), this.id);
         });
     });
 
     $('#schedulePage').live('pageinit', function () {
         $("#daynavbar").delegate("li", "click", function () {
-            getScheduleList($(this).data('day'), JFokus.selEventId);
+            var day = $(this).data('day');
+            saveDayToLocalStorage(day);
+            getScheduleList(day, JFokus.selEventId);
         });
         $("#scheduleUl").delegate(".listUlItem", "click", function () {
             var presUri = $(this).find('.hiddenPresUri').text();
