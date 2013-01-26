@@ -170,14 +170,14 @@
     $(document).bind("pagebeforechange", function (e, data) {
         if (typeof data.toPage === "string" && JFokus.selEventId === null) {
             var u = $.mobile.path.parseUrl(data.toPage);
-            if (u.hash === "#aboutPage") {
+            if (u.hash === "#loadingPage") {
                 return;
             }
             data.toPage = u.hrefNoHash;
         }
     });
 
-    $('#loadingPage').live('pageinit', function () {
+    $('#loadingPage').live('pageshow', function () {
         getDataForTemplate({
             url: JFokus.baseUrl,
             ul: '#mainUl',
