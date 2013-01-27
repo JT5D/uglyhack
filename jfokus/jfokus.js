@@ -24,6 +24,7 @@
         },
         compiledTemplates : {},
         initedTemplates: false,
+        loadingPageShown: false,
         ajaxCache: {}
     };
 
@@ -57,7 +58,7 @@
         if (cachedData) {
             handleResponse(cachedData, true);
         } else {
-            $.mobile.showPageLoadingMsg();
+            $.mobile.loading('show');
             $.getJSON(getYql(config.url), function (response) {
                 var data = { items: null };
 
@@ -73,7 +74,7 @@
                 JFokus.ajaxCache[config.url] = data;
                 handleResponse(data, false);
             }).complete(function () {
-                $.mobile.hidePageLoadingMsg();
+                $.mobile.loading('hide');
             });
         }
     }
@@ -116,6 +117,7 @@
             ul: '#scheduleUl',
             template: JFokus.getTemplate('#schedule-template'),
             postFnc: function () {
+                $('.windows8').hide();
                 clearFilter('#schedulePage');
                 $.mobile.changePage($('#schedulePage'));
             },
@@ -168,16 +170,23 @@
     }
 
     $(document).bind("pagebeforechange", function (e, data) {
-        if (typeof data.toPage === "string" && JFokus.selEventId === null) {
-            var u = $.mobile.path.parseUrl(data.toPage);
-            if (u.hash === "#loadingPage") {
-                return;
+        if (typeof data.toPage === "string") {
+            if (JFokus.selEventId === null) {
+                data.toPage = $.mobile.path.parseUrl(data.toPage).hrefNoHash;
             }
-            data.toPage = u.hrefNoHash;
+        } else {
+            if (JFokus.loadingPageShown && data.toPage.attr('id') === 'loadingPage') {
+                if (JFokus.selEventId === null) {
+                    data.toPage = $('#mainPage');
+                } else {
+                    data.toPage = $('#schedulePage');
+                }
+            }
         }
     });
 
-    $('#loadingPage').live('pageshow', function () {
+    $('#loadingPage').live('pagebeforeshow', function (e) {
+        JFokus.loadingPageShown = true;
         getDataForTemplate({
             url: JFokus.baseUrl,
             ul: '#mainUl',
@@ -187,6 +196,7 @@
                     JFokus.selEventId = data.items[0].id;
                     getScheduleList(getDayFromLocalStorage(), JFokus.selEventId);
                 } else {
+                    $('.windows8').hide();
                     $.mobile.changePage($('#mainPage'));
                 }
             }
