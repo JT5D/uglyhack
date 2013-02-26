@@ -3,6 +3,7 @@
 	    <concat destfile="build/application.js">
 	        <filelist dir="js">
 	        	<file name="class.js" />
+	        	<file name="waapisim.js"/>
 	        	<file name="soundVisualizer.js" />
         		<file name="baseNode.js" />
 	        	<file name="biquadFilterNode.js" />
@@ -32,7 +33,7 @@
 	    <apply executable="java" parallel="false">
 	        <filelist dir="build" files="application.js" />
 	        <arg line="-jar" />
-	        <arg path="/home/daniel/yuicompressor-2.4.7/build/yuicompressor-2.4.7.jar" />
+	        <arg path="lib/yuicompressor-2.4.7.jar" />
 	        <srcfile />
 	        <arg line="-o" />
 	        <mapper type="glob" from="*.js" to="build/*-min.js" />
