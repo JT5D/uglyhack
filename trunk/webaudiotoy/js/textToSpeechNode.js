@@ -114,6 +114,7 @@ var TextToSpeechNode = BaseNode.extend({
 		
 		textBox.attr('cols', '30');
 		textBox.attr('rows', '6');
+		textBox.css('height', '105px');
 		textBox.val(this.c.t);
 		
 		speakButton.attr({
