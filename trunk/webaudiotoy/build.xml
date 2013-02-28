@@ -3,7 +3,6 @@
 	    <concat destfile="build/application.js">
 	        <filelist dir="js">
 	        	<file name="class.js" />
-	        	<file name="waapisim.js"/>
 	        	<file name="soundVisualizer.js" />
         		<file name="baseNode.js" />
 	        	<file name="biquadFilterNode.js" />
