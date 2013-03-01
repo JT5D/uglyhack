@@ -993,20 +993,18 @@
 		    	if(context.decodeAudioData) {
 			        context.decodeAudioData(e.target.result, function(buffer) {
 			        	bufferSource.buffer = buffer;
+			        	bufferSource.noteOn(0);
+			        	stopEl.removeAttr('disabled');
+			        	if(thisNode.myConnections.length == 0) {
+			        		info2El.show('fast');
+			        	}
+			        	infoEl.hide('fast');
 			        }, function(e) {
-			        	alert('could not play that audio');
-			            console.log(e);
-			            return;
+			        	alert('Could not play that audio file. Try another file format.');
 			        });
 			    } else {
 			    	bufferSource.buffer = context.createBuffer(e.target.result, false /*mixToMono*/);
 			    }
-	        	bufferSource.noteOn(0);
-	        	stopEl.removeAttr('disabled');
-	        	if(thisNode.myConnections.length == 0) {
-	        		info2El.show('fast');
-	        	}
-	        	infoEl.hide('fast');
 	        	thisNode.loader.fadeOut('fast');
 		    }
 		    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
