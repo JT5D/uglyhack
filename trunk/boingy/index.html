@@ -30,7 +30,7 @@
 	 </div>
    	 <canvas id="canvas" style="background-color:#333333; display:none;" ></canvas>
    </body>
-   <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
+   <script type="text/javascript" src="js/box2d.js"></script>
    <script type="text/javascript" src="js/Three.js"></script>
    <script type="text/javascript" src="js/Detector.js"></script>
    <script type="text/javascript" src="js/Stats.js"></script>
@@ -62,7 +62,7 @@
    var debug = false;
    var drawScale;
    var drawScaleConst = 80;
-   var worldScale=0.65;
+   var worldScale=1.0;
    
    var dyn = {
 		gravity: 9   
@@ -72,19 +72,19 @@
    var draggedSpeak=false;
    var createdSpeak=false;
    
-   var   b2Vec2 = Box2D.Common.Math.b2Vec2
-   ,  b2AABB = Box2D.Collision.b2AABB
-	,	b2BodyDef = Box2D.Dynamics.b2BodyDef
-	,	b2Body = Box2D.Dynamics.b2Body
-	,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-	,	b2Fixture = Box2D.Dynamics.b2Fixture
-	,	b2World = Box2D.Dynamics.b2World
-	,	b2MassData = Box2D.Collision.Shapes.b2MassData
-	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape	
-	 ,       b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-   ,   b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
-   ,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-   ,   b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
+   var   b2Vec2 = Box2D.b2Vec2
+   ,  b2AABB = Box2D.b2AABB
+	,	b2BodyDef = Box2D.b2BodyDef
+	,	b2Body = Box2D.b2Body
+	,	b2FixtureDef = Box2D.b2FixtureDef
+	,	b2Fixture = Box2D.b2Fixture
+	,	b2World = Box2D.b2World
+	,	b2MassData = Box2D.b2MassData
+	,	b2PolygonShape = Box2D.b2PolygonShape	
+	 ,       b2CircleShape = Box2D.b2CircleShape
+   ,   b2MouseJointDef =  Box2D.b2MouseJointDef
+   ,	b2DebugDraw = Box2D.b2DebugDraw
+   ,   b2DistanceJointDef = Box2D.b2DistanceJointDef
    ;
 	   
 	   var camera, scene, renderer, stats,
@@ -178,8 +178,8 @@
 			   var pos = ss.body.GetPosition(); 
 			   var rot = ss.body.GetAngle();
 			   
-			   ss.mesh.position.x = pos.x*drawScale;
-		       ss.mesh.position.y = -pos.y*drawScale;
+			   ss.mesh.position.x = pos.get_x()*drawScale;
+		       ss.mesh.position.y = -pos.get_y()*drawScale;
 		       ss.mesh.rotation.y = -rot;
 		   }
 	   }
@@ -290,13 +290,12 @@
 	        	bodies.push(new Array());
 	        	for(var y = 0; y < bSizeY; ++y) {
 	        		var edgebody = (x == 0 || x == bSizeX - 1 || y == 0 || y == bSizeY - 1);
-		            fixDef.shape = new b2CircleShape(0.39*worldScale);
+		            var shape = new b2CircleShape(0.39*worldScale);
 		            bodyDef.fixedRotation = true;
-		            bodyDef.position.x = x*worldScale+xx;
-		            bodyDef.position.y = y*worldScale+yy;
+		            bodyDef.set_position(x*worldScale+xx, y*worldScale+yy);
 		            bodyDef.bullet = edgebody;
 		            var body = world.CreateBody(bodyDef);
-		            body.CreateFixture(fixDef);
+		            body.CreateFixture(shape, 0.0);
 		            bodies[x][y] = body;
 	        	}
 	         }
@@ -349,21 +348,19 @@
    	        var bodies = new Array();
    		    bodyDef.type = b2Body.b2_dynamicBody;
    		    
-	   		 fixDef.shape = new b2CircleShape(radius*0.4*worldScale);
-	         bodyDef.position.x = xx;
-	         bodyDef.position.y = yy;
+	   		 var shape = new b2CircleShape(radius*0.4*worldScale);
+	         bodyDef.set_position(xx, yy);
 	         bodyDef.bullet = false;
 	         var body = world.CreateBody(bodyDef);
-	         body.CreateFixture(fixDef);
+	         body.CreateFixture(shape, 0.0);
 	         bodies.push(body);
 	         
 	         for(var i = 0 ; i < numSeg; i++) {
-	        	 fixDef.shape = new b2CircleShape(radius*0.15*worldScale);
-		         bodyDef.position.x = xx + Math.cos(i/numSeg*Math.PI*2)*radius*worldScale;
-		         bodyDef.position.y = yy + Math.sin(i/numSeg*Math.PI*2)*radius*worldScale;
+	        	 shape = new b2CircleShape(radius*0.15*worldScale);
+		         bodyDef.set_position(xx + Math.cos(i/numSeg*Math.PI*2)*radius*worldScale, yy + Math.sin(i/numSeg*Math.PI*2)*radius*worldScale);
 		         bodyDef.bullet = true;
 		         var body = world.CreateBody(bodyDef);
-		         body.CreateFixture(fixDef);
+		         body.CreateFixture(shape, 0.0);
 		         bodies.push(body);
 	         }
 	         for(var i = 1 ; i < numSeg+1; i++) {
@@ -448,14 +445,16 @@
         
         function createStatic(xx, yy, sx, sy, material) {
         	bodyDef.type = b2Body.b2_dynamicBody;
-            fixDef.shape = new b2PolygonShape;
-            fixDef.shape.SetAsBox(sx/2, sy/2);
-            fixDef.density = 0.5;
+            var shape = new b2PolygonShape;
+            shape.SetAsBox(sx/2, sy/2);
+            shape.density = 0.5;
             
-            bodyDef.position.Set(xx, yy);
+            bodyDef.set_position(xx, yy);
             bodyDef.bullet = false;
             var bbb = world.CreateBody(bodyDef);
-            bbb.CreateFixture(fixDef);
+
+            
+            bbb.CreateFixture(shape, 5.0);
 	         
             var geo = new THREE.PlaneGeometry(sx*drawScale,sy*drawScale,1,1);
 	        mesh = new THREE.Mesh(geo , material );
@@ -521,27 +520,27 @@
          
          //create ground
          bodyDef.type = b2Body.b2_staticBody;
-         fixDef.shape = new b2PolygonShape;
-         fixDef.shape.SetAsBox(1000, 2);
+         var shape = new b2PolygonShape;
+         shape.SetAsBox(1000, 2);
          
-         bodyDef.position.Set(0, window.innerHeight / drawScale + 2.1);
+         bodyDef.set_position(0, window.innerHeight / drawScale + 2.1);
          bodyDef.bullet = false;
          wallb = world.CreateBody(bodyDef);
-         wallb.CreateFixture(fixDef);
+         wallb.CreateFixture(shape, 0.0);
          
-         bodyDef.position.Set(0, -2.1);
+         bodyDef.set_position(0, -2.1);
          wallt = world.CreateBody(bodyDef);
-         wallt.CreateFixture(fixDef);
+         wallt.CreateFixture(shape, 0.0);
          
-         fixDef.shape.SetAsBox(2, 1000);
+         shape.SetAsBox(2, 1000);
          
-         bodyDef.position.Set(-2.1, 0);
+         bodyDef.set_position(-2.1, 0);
          walll = world.CreateBody(bodyDef);
-         walll.CreateFixture(fixDef);
+         walll.CreateFixture(shape, 0.0);
          
-         bodyDef.position.Set(window.innerWidth / drawScale+2.1, 0);
+         bodyDef.set_position(window.innerWidth / drawScale+2.1, 0);
          wallr = world.CreateBody(bodyDef);
-         wallr.CreateFixture(fixDef);
+         wallr.CreateFixture(shape, 0.0);
          
          for(var i = 0; i < 4; i++) {
         	for(var j = 0; j < (4-i); j++) {
@@ -553,7 +552,7 @@
         	}
          }
 
-         createStickMan(15*worldScale, window.innerHeight / drawScale-41*worldScale);
+         //createStickMan(15*worldScale, window.innerHeight / drawScale-41*worldScale);
          
          if(debug) {
         	//setup debug draw
