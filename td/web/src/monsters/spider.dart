@@ -2,8 +2,10 @@ part of towerdefense;
 
 class Spider extends Monster {
   
-  Spider(JsObject pathGrid, int gridX, int gridY) : super('spider', 35, 25, pathGrid, gridX, gridY) {
-    setSpeed(13.0);
+  Spider(JsObject path) : super('spider', path) {
+    setSpeed(1.0);
   }
+  
+  static create(JsObject path) => new Spider(path);
   
 }

@@ -2,110 +2,31 @@ part of towerdefense;
 
 class Map extends DisplayObjectContainer {
   
-  var monsters = [];
+  List<JsObject> paths = new List();
+  List<Function> monsterConstructors = new List();
+  Random random = new Random();
   
-  var mapData = [
-  
-  '11111111111111111111112222211111111111111111111111',
-  '10000000000000000000100000000000000000000000000001',
-  '10000000000000000000100000000000000000000000000001',
-  '10000000000000000000111111111111111111110000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000011111111111111111111111111111111111111111',
-  '10000000010000000000000000000000000000000000000001',
-  '10000000010000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '11111111111111111111111111111111111111000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000111111111111111111111111111111',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '11111111111111111111111111111111111111000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000111111111111111111111111111111',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '11111111111111111111111111111111111111000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000111111111111111111111111111111',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '10000000000000000000000000000000000000000000000001',
-  '11111111111111111111111111111111111133111111111111' 
-  ];
-  
-  var pathMap;
+  Map(final String bitmapStr) {
+    addChild(new Bitmap(resourceManager.getBitmapData(bitmapStr)));
     
-  Map() {
+    monsterConstructors.add(Spider.create);
+    monsterConstructors.add(Wolf.create);
+    monsterConstructors.add(SwordMan.create);
+    monsterConstructors.add(Troll.create);
+    monsterConstructors.add(Dragon.create);
     
-    
-    JsObject pathGrid = new JsObject(context['PF']['Grid'], [50, 40]);
-    
-    for (var y = 0; y < 40; y++) {
-       String row = mapData[y];
-       
-       for (var x = 0; x < 50; x++) {
-          String cell = row[x];
-          
-          Shape shape = new Shape();
-          shape.graphics.rect(x*20, y*20, 20, 20);
-          
-          switch (cell) {
-            case '0': 
-              shape.graphics.fillColor(Color.White); 
-              pathGrid.callMethod('setWalkableAt', [x, y, true]);
-              break;
-            case '1': 
-              shape.graphics.fillColor(Color.Black); 
-              pathGrid.callMethod('setWalkableAt', [x, y, false]);
-              break;
-            case '2': 
-              shape.graphics.fillColor(Color.Green); 
-              pathGrid.callMethod('setWalkableAt', [x, y, true]);
-              break;
-            case '3': 
-              shape.graphics.fillColor(Color.Red); 
-              pathGrid.callMethod('setWalkableAt', [x, y, true]);
-              break;
-          }
-          
-          stage.addChild(shape);
-         
-       }
-    }
-    
-    addMonster(pathGrid);
-    
-  
-    
+    new Timer(new Duration(milliseconds: 200 + new Random().nextInt(1000)), () {
+      addRandomMonster();
+    });
   }
   
-  void addMonster(JsObject pathGrid) {
-    Monster spider = new Spider(pathGrid, 22, 0);
-    spider.setMonsters(monsters);
-    addChild(spider);
-    spider.moveToGoal(37, 39, (mnst) {
-      removeChild(mnst);
-      monsters.remove(spider);
-    });  
-    monsters.add(spider);
+  void addRandomMonster() {
     
-    new Timer(new Duration(milliseconds: 1000 + new Random().nextInt(4000)), () {
-       addMonster(pathGrid);
+    Function fnc = monsterConstructors[random.nextInt(monsterConstructors.length)];    
+    Monster monster = Function.apply(fnc, [paths[random.nextInt(paths.length)]]);
+    addChild(monster);
+    new Timer(new Duration(milliseconds: 400 + new Random().nextInt(1500)), () {
+      addRandomMonster();
     });
   }
   
