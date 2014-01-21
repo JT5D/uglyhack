@@ -6,14 +6,12 @@ TD.Monster = TD.Displayable.extend({
     }
 
     this.pos = _pos;
-
     this._super(parent, textureSrc, _pos);
 
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 0.5;
 
     this.path = path;
-    
     this.speed = speed;
 
     var that = this;
@@ -22,7 +20,7 @@ TD.Monster = TD.Displayable.extend({
       ease: 'Linear.easeNone',
       onComplete: function() {
         parent.removeChild(that.sprite);
-        monsters.splice(monsters.indexOf(that), 1);
+        TD.monsters.splice(TD.monsters.indexOf(that), 1);
       }
     });
     this.tween.timeScale(speed);
@@ -42,7 +40,7 @@ TD.Dragon = TD.Monster.extend({
 
 TD.OctoDragon = TD.Monster.extend({
   init: function(parent, path) {
-    this._super(parent, 'img/monsters/octodragon/small.png', path, 1.2);
+    this._super(parent, 'img/monsters/octodragon/small.png', path, 1.0);
   }
 });
 
@@ -60,12 +58,36 @@ TD.Troll = TD.Monster.extend({
 
 TD.Swordman = TD.Monster.extend({
   init: function(parent, path) {
-    this._super(parent, 'img/monsters/swordman/small.png', path, 0.8);
+    this._super(parent, 'img/monsters/swordman/small.png', path, 0.75);
   }
 });
 
 TD.Spider = TD.Monster.extend({
   init: function(parent, path) {
     this._super(parent, 'img/monsters/spider/small.png', path, 1.0);
+  }
+});
+
+TD.Bat = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/bat/small.png', path, 0.8);
+  }
+});
+
+TD.Bird = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/bird/small.png', path, 0.6);
+  }
+});
+
+TD.IceTroll = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/icetroll/small.png', path, 0.5);
+  }
+});
+
+TD.Rat = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/rat/small.png', path, 0.85);
   }
 });
