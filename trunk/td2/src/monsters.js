@@ -1,14 +1,19 @@
 TD.Monster = TD.Displayable.extend({
   init: function(parent, textureSrc, path, speed){
-    this._super(parent, textureSrc);
+    var _pos = {
+      x: path[0].x,
+      y: path[0].y
+    }
+
+    this.pos = _pos;
+
+    this._super(parent, textureSrc, _pos);
+
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 0.5;
 
     this.path = path;
-    this.pos = {
-      x: path[0].x,
-      y: path[0].y
-    };
+    
     this.speed = speed;
 
     var that = this;
@@ -35,9 +40,15 @@ TD.Dragon = TD.Monster.extend({
   }
 });
 
+TD.OctoDragon = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/octodragon/small.png', path, 1.2);
+  }
+});
+
 TD.Wolf = TD.Monster.extend({
   init: function(parent, path) {
-    this._super(parent, 'img/monsters/wolf/small.png', path, 1.2);
+    this._super(parent, 'img/monsters/wolf/small.png', path, 1.3);
   }
 });
 
