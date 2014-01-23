@@ -10,8 +10,19 @@ TD.Tower = TD.Displayable.extend({
 
 		setInterval(function() {
 
-			var target = TD.monsters[Math.floor(Math.random() * TD.monsters.length)];
-			TD.createBulletInstance(that.bulletName, that.parent, {x: that.sprite.position.x + bulletOffset.x, y: that.sprite.position.y + bulletOffset.y}, target);
+			var target;
+			for (var i in TD.monsters) {
+				var dist = distance(that.sprite.position, TD.monsters[i].sprite.position);
+				if (dist.d < that.range && TD.monsters[i].dying === false) {
+					if (!target || target.tween.ratio < TD.monsters[i].tween.ratio) {
+						target = TD.monsters[i];
+					}
+				}
+			}
+
+			if (target) {
+				TD.createBulletInstance(that.bulletName, that.parent, {x: that.sprite.position.x + bulletOffset.x, y: that.sprite.position.y + bulletOffset.y}, target);
+			}
 
 		}, this.shotDelay + (Math.random()*100));
 	},

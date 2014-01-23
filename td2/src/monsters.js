@@ -13,14 +13,15 @@ TD.Monster = TD.Displayable.extend({
     
     this.path = path;
     this.speed = speed;
+    this.alive = true;
+    this.dying = false;
 
     var that = this;
     this.tween = TweenMax.to(this.pos, 10, {
       bezier: {'values': path},
       ease: 'Linear.easeNone',
       onComplete: function() {
-        if (that.parent.children.indexOf(that.sprite) != -1) { that.parent.removeChild(that.sprite); }
-        TD.monsters.splice(TD.monsters.indexOf(that), 1);
+        that.alive = false;
       }
     });
     this.tween.timeScale(speed);
@@ -33,6 +34,7 @@ TD.Monster = TD.Displayable.extend({
   hit: function(bullet) {
     
     this.tween.kill();
+    this.dying = true;
 
     var filter = new PIXI.InvertFilter();
     filter.invert = 0;
@@ -41,9 +43,7 @@ TD.Monster = TD.Displayable.extend({
     var that = this;
     TweenMax.to(filter, 0.7, {invert: 1});
     TweenMax.to(this.sprite.scale, 1, {x: 0, y: 0, onComplete: function() {
-      if (that.parent.children.indexOf(that.sprite) != -1) { that.parent.removeChild(that.sprite); }
-      TD.monsters.splice(TD.monsters.indexOf(that), 1);
-      
+      that.alive = false; 
     }});
   }
 });
