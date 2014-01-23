@@ -17,5 +17,9 @@ TD.Map1 = TD.Map.extend({
         {'x': 462, 'y': 461}, {'x': 686, 'y': 523}, {'x': 853, 'y': 850}
       ]
     ]);
+
+    new TD.Tower1(this.sprite, {x: 260, y: 250});
+    new TD.Tower1(this.sprite, {x: 500, y: 520});
+    new TD.Tower1(this.sprite, {x: 570, y: 300});
   }
 });

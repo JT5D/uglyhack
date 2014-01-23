@@ -10,7 +10,7 @@ TD.Monster = TD.Displayable.extend({
 
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 0.5;
-
+    
     this.path = path;
     this.speed = speed;
 
@@ -19,7 +19,7 @@ TD.Monster = TD.Displayable.extend({
       bezier: {'values': path},
       ease: 'Linear.easeNone',
       onComplete: function() {
-        parent.removeChild(that.sprite);
+        if (that.parent.children.indexOf(that.sprite) != -1) { that.parent.removeChild(that.sprite); }
         TD.monsters.splice(TD.monsters.indexOf(that), 1);
       }
     });
@@ -29,6 +29,22 @@ TD.Monster = TD.Displayable.extend({
   updatePosition: function() {
     this.sprite.position.x = this.pos.x;
     this.sprite.position.y = this.pos.y;
+  },
+  hit: function(bullet) {
+    
+    this.tween.kill();
+
+    var filter = new PIXI.InvertFilter();
+    filter.invert = 0;
+    this.sprite.filters= [filter];
+
+    var that = this;
+    TweenMax.to(filter, 0.7, {invert: 1});
+    TweenMax.to(this.sprite.scale, 1, {x: 0, y: 0, onComplete: function() {
+      if (that.parent.children.indexOf(that.sprite) != -1) { that.parent.removeChild(that.sprite); }
+      TD.monsters.splice(TD.monsters.indexOf(that), 1);
+      
+    }});
   }
 });
 
@@ -89,5 +105,11 @@ TD.IceTroll = TD.Monster.extend({
 TD.Rat = TD.Monster.extend({
   init: function(parent, path) {
     this._super(parent, 'img/monsters/rat/small.png', path, 0.85);
+  }
+});
+
+TD.Sheep = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/sheep/small.png', path, 0.65);
   }
 });

@@ -1,23 +1,32 @@
 var TD = {
     pixiStage: null,
-    monsters: []
+    monsters: [],
+    bullets: []
 };
 
 TD.Displayable = Class.extend({
   init: function(parent, textureSrc, pos){
+    this.parent = parent;
     var texture = PIXI.Texture.fromImage(textureSrc);
     this.sprite = new PIXI.Sprite(texture);
     if (pos) {
         this.sprite.position.x = pos.x;
         this.sprite.position.y = pos.y;
     }
-    parent.addChild(this.sprite);
+    if (this instanceof TD.Monster) {
+        parent.addChildAt(this.sprite, 0);
+    } else {
+        parent.addChild(this.sprite);
+    }
   }
 });
 
 $(function() {
-    var renderer = new PIXI.WebGLRenderer(1000, 800);
+    var renderer = new PIXI.autoDetectRenderer(1000, 800);
     document.body.appendChild(renderer.view);
+    renderer.view.style.width = window.innerWidth + "px";
+    renderer.view.style.height = window.innerHeight + "px";
+    
     TD.pixiStage = new PIXI.Stage;
 
     var map1 = new TD.Map1();
@@ -35,6 +44,7 @@ $(function() {
         if (Math.random() < 0.1) TD.monsters.push(new TD.Bird(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         if (Math.random() < 0.1) TD.monsters.push(new TD.IceTroll(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         if (Math.random() < 0.1) TD.monsters.push(new TD.Rat(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
+        if (Math.random() < 0.1) TD.monsters.push(new TD.Sheep(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         
     }, 500);
 
@@ -45,6 +55,10 @@ $(function() {
 
         for(var i in TD.monsters) {
             TD.monsters[i].updatePosition();
+        }
+
+        for(var i in TD.bullets) {
+            TD.bullets[i].updatePosition();
         }
 
         requestAnimationFrame(animate);
