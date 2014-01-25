@@ -22,14 +22,14 @@ TD.Displayable = Class.extend({
 });
 
 $(function() {
-    var renderer = new PIXI.autoDetectRenderer(1000, 800);
+    var renderer = new PIXI.autoDetectRenderer(1000, 735);
     document.body.appendChild(renderer.view);
     renderer.view.style.width = window.innerWidth + "px";
     renderer.view.style.height = window.innerHeight + "px";
     
     TD.pixiStage = new PIXI.Stage;
 
-    var map1 = new TD.Map1();
+    var map1 = new TD.Map2();
     
     setInterval(function() {
         
