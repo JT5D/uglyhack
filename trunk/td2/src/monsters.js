@@ -36,12 +36,7 @@ TD.Monster = TD.Displayable.extend({
     this.tween.kill();
     this.dying = true;
 
-    var filter = new PIXI.InvertFilter();
-    filter.invert = 0;
-    this.sprite.filters= [filter];
-
     var that = this;
-    TweenMax.to(filter, 0.7, {invert: 1});
     TweenMax.to(this.sprite.scale, 1, {x: 0, y: 0, onComplete: function() {
       that.alive = false; 
     }});
