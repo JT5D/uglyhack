@@ -8,8 +8,7 @@ var TD = {
 TD.Displayable = Class.extend({
   init: function(parent, textureSrc, pos){
     this.parent = parent;
-    var texture = PIXI.Texture.fromImage(textureSrc);
-    this.sprite = new PIXI.Sprite(texture);
+    this.sprite = new PIXI.Sprite(PIXI.Texture.fromImage(textureSrc));
     if (pos) {
         this.sprite.position.x = pos.x;
         this.sprite.position.y = pos.y;
@@ -29,7 +28,7 @@ $(function() {
     
     TD.pixiStage = new PIXI.Stage;
 
-    var map1 = new TD.Map1();
+    var map1 = new TD.Map2();
     
     setInterval(function() {
         
@@ -47,7 +46,7 @@ $(function() {
         if (Math.random() < 0.08) TD.monsters.push(new TD.Sheep(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         if (Math.random() < 0.08) TD.monsters.push(new TD.Fireman(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         
-    }, 500);
+    }, 1000);
 
     requestAnimationFrame(animate);
     function animate() {
