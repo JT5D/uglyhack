@@ -1,5 +1,6 @@
 var TD = {
     pixiStage: null,
+    renderer: null,
     monsters: [],
     bullets: []
 };
@@ -17,11 +18,14 @@ TD.Displayable = Class.extend({
   }
 });
 
+
+
 $(function() {
-    var renderer = new PIXI.autoDetectRenderer(1000, 735);
-    document.body.appendChild(renderer.view);
-    renderer.view.style.width = window.innerWidth + "px";
-    renderer.view.style.height = window.innerHeight + "px";
+    TD.renderer = new PIXI.autoDetectRenderer(1000, 735);
+    document.body.appendChild(TD.renderer.view);
+    scaleRenderer();
+
+    $(window).resize(scaleRenderer);
     
     TD.pixiStage = new PIXI.Stage;
 
@@ -72,10 +76,15 @@ $(function() {
 
         map1.zIndex()
         
-        renderer.render(TD.pixiStage);
+        TD.renderer.render(TD.pixiStage);
         requestAnimationFrame(animate);
     }
 });
+
+function scaleRenderer() {
+    TD.renderer.view.style.width = window.innerWidth + "px";
+    TD.renderer.view.style.height = window.innerHeight + "px";
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
