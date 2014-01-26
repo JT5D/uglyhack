@@ -2,13 +2,21 @@ var TD = {
     pixiStage: null,
     renderer: null,
     monsters: [],
-    bullets: []
+    bullets: [],
+    towers: []
 };
 
 TD.Displayable = Class.extend({
   init: function(parent, textureSrc, pos){
     this.parent = parent;
-    this.sprite = new PIXI.Sprite(PIXI.Texture.fromImage(textureSrc));
+
+    if (textureSrc) {
+        this.sprite = new PIXI.Sprite(PIXI.Texture.fromImage(textureSrc));
+    } else {
+        this.sprite = new PIXI.DisplayObjectContainer();
+    }
+    
+
     if (pos) {
         this.sprite.position.x = pos.x;
         this.sprite.position.y = pos.y;
@@ -71,6 +79,10 @@ $(function() {
             } else {
                 b.updatePosition();
             }
+        }
+
+        for(var i in TD.towers) {
+            TD.towers[i].tryshoot();
         }
 
         map1.zIndex()

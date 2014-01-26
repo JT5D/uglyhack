@@ -10,13 +10,14 @@ TD.createBulletInstance = function(name, parent, pos, target) {
 }
 
 TD.Bullet = TD.Displayable.extend({
-	init: function(parent, textureSrc, target, pos, speed) {
+	init: function(parent, textureSrc, target, pos, speed, damage) {
 		this._super(parent, textureSrc, pos);
 		this.target = target;
 		this.speed = speed;
 		this.alive = true;
 		this.sprite.anchor.x = 0.5;
     	this.sprite.anchor.y = 0.5;
+    	this.damage = damage;
 	},
 	updatePosition: function() {
 
@@ -33,7 +34,7 @@ TD.Bullet = TD.Displayable.extend({
 		if (d.d < this.speed * 2) {
 
 			this.alive = false;
-        	this.target.hit(this);
+        	this.target.hit(this.damage);
 
 		} else {
 
@@ -45,6 +46,6 @@ TD.Bullet = TD.Displayable.extend({
 
 TD.CannonBall = TD.Bullet.extend({
 	init: function(parent, pos, target) {
-		this._super(parent, 'img/bullets/cannon_ball.png', target, pos, 7);
+		this._super(parent, 'img/bullets/cannon_ball.png', target, pos, 7, 20);
 	}
 });
