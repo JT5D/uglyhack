@@ -7,17 +7,20 @@ TD.Monster = TD.Displayable.extend({
 
     this.pos = _pos;
     this._super(parent, textureSrc, _pos);
-
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 1.0;
-    
+    this.sprite.pivot.x = 0.5;
+    this.sprite.pivot.y = 1.0;
+
+    var that = this;
     this.path = path;
     this.speed = speed;
     this.alive = true;
     this.dying = false;
 
-    var that = this;
-    this.tween = TweenMax.to(this.pos, path.len / 100, {
+    // Move
+    
+    this.tween = TweenMax.to(this.pos, path.len / 80, {
       bezier: {'values': path.path},
       ease: 'Linear.easeNone',
       onComplete: function() {
@@ -26,10 +29,22 @@ TD.Monster = TD.Displayable.extend({
     });
     this.tween.timeScale(speed);
 
+    // Wiggle
+    this.sprite.rotation = 0.1;
+    var rotateFnc = function() {
+      TweenMax.to(that.sprite, (1/that.speed)/3, {
+        rotation: -that.sprite.rotation,
+        onComplete: function() {
+          rotateFnc();
+        }
+      })
+    }
+    rotateFnc();
+
   },
   updatePosition: function() {
     this.sprite.position.x = this.pos.x;
-    this.sprite.position.y = Math.floor(this.pos.y);
+    this.sprite.position.y = this.pos.y;
   },
   hit: function(bullet) {
     
