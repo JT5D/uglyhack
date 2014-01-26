@@ -25,7 +25,7 @@ $(function() {
     
     TD.pixiStage = new PIXI.Stage;
 
-    var map1 = new TD.Map2();
+    var map1 = new TD.Map1();
     
     setInterval(function() {
         
