@@ -1,6 +1,8 @@
 TD.Map = TD.Displayable.extend({
   init: function(textureSrc, paths){
     this._super(TD.pixiStage, textureSrc);
+
+    var that = this;
     this.paths = paths;
 
     for (var i in this.paths) {
@@ -11,6 +13,11 @@ TD.Map = TD.Displayable.extend({
       }
       this.paths[i].len = len;
     }
+
+    this.sprite.setInteractive(true);
+    this.sprite.click = function(data) {
+      new TD.Tower1(that.sprite, {x: data.global.x, y: data.global.y});
+    };
   },
   zIndex: function() {
 
@@ -37,9 +44,9 @@ TD.Map1 = TD.Map.extend({
       ]}
     ]);
 
-    new TD.Tower1(this.sprite, {x: 290, y: 470});
-    new TD.Tower1(this.sprite, {x: 580, y: 420});
-    new TD.Tower1(this.sprite, {x: 810, y: 400});
+    //new TD.Tower1(this.sprite, {x: 290, y: 470});
+    //new TD.Tower1(this.sprite, {x: 580, y: 420});
+    //new TD.Tower1(this.sprite, {x: 810, y: 400});
   }
 });
 
@@ -59,8 +66,8 @@ TD.Map2 = TD.Map.extend({
       ]}
     ]);
 
-    new TD.Tower1(this.sprite, {x: 185, y: 320});
-    new TD.Tower1(this.sprite, {x: 820, y: 540});
-    new TD.Tower1(this.sprite, {x: 610, y: 280});
+    //new TD.Tower1(this.sprite, {x: 185, y: 320});
+    //new TD.Tower1(this.sprite, {x: 820, y: 540});
+    //new TD.Tower1(this.sprite, {x: 610, y: 280});
   }
 });

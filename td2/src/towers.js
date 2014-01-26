@@ -5,17 +5,19 @@ TD.Tower = TD.Displayable.extend({
 		this.shotDelay = shotDelay;
 		this.bullets = [];
 		this.bulletName = bulletName;
+		this.bulletOffset = bulletOffset;
 		this.sprite.anchor.x = 0.5;
     	this.sprite.anchor.y = 1.0;
+    	this.lastshoottime = 0;
+    	TD.towers.push(this);
+	},
+	tryshoot: function() {
 
-		var that = this;
-
-		setInterval(function() {
-
+		if (performance.now() - this.lastshoottime > this.shotDelay) {
 			var target;
 			for (var i in TD.monsters) {
-				var dist = distance(that.sprite.position, TD.monsters[i].sprite.position);
-				if (dist.d < that.range && TD.monsters[i].dying === false) {
+				var dist = distance(this.sprite.position, TD.monsters[i].sprite.position);
+				if (dist.d < this.range && TD.monsters[i].dying === false) {
 					if (!target || target.tween.ratio < TD.monsters[i].tween.ratio) {
 						target = TD.monsters[i];
 					}
@@ -23,11 +25,22 @@ TD.Tower = TD.Displayable.extend({
 			}
 
 			if (target) {
-				TD.createBulletInstance(that.bulletName, that.parent, {x: that.sprite.position.x + bulletOffset.x, y: that.sprite.position.y + bulletOffset.y}, target);
+				TD.createBulletInstance(
+					this.bulletName, 
+					this.parent, 
+					{
+						x: this.sprite.position.x + this.bulletOffset.x, 
+						y: this.sprite.position.y + this.bulletOffset.y
+					}, 
+					target
+				);
 			}
 
-		}, this.shotDelay + (Math.random()*100));
+			this.lastshoottime = performance.now();
+		}
+
 	}
+	
 
 });
 
