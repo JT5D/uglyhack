@@ -5,7 +5,9 @@ TD.Tower = TD.Displayable.extend({
 		this.shotDelay = shotDelay;
 		this.bullets = [];
 		this.bulletName = bulletName;
-		
+		this.sprite.anchor.x = 0.5;
+    	this.sprite.anchor.y = 1.0;
+
 		var that = this;
 
 		setInterval(function() {
@@ -25,12 +27,12 @@ TD.Tower = TD.Displayable.extend({
 			}
 
 		}, this.shotDelay + (Math.random()*100));
-	},
+	}
 
 });
 
 TD.Tower1 = TD.Tower.extend({
 	init: function(parent, pos) {
-		this._super(parent, 'img/towers/tower1.png', pos, 'CannonBall', {x: 10, y: 10}, 1000, 200);
+		this._super(parent, 'img/towers/tower1.png', pos, 'CannonBall', {x: 10, y: -100}, 1500, 150);
 	}
 });

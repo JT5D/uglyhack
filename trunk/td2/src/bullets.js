@@ -15,6 +15,8 @@ TD.Bullet = TD.Displayable.extend({
 		this.target = target;
 		this.speed = speed;
 		this.alive = true;
+		this.sprite.anchor.x = 0.5;
+    	this.sprite.anchor.y = 0.5;
 	},
 	updatePosition: function() {
 
@@ -22,7 +24,11 @@ TD.Bullet = TD.Displayable.extend({
 			this.alive = false;
 		}
 
-		var d = distance(this.sprite.position, this.target.sprite.position);
+		var targetPos = {};
+		targetPos.x = this.target.sprite.position.x;
+		targetPos.y = this.target.sprite.position.y - this.target.sprite.height / 2;
+
+		var d = distance(this.sprite.position, targetPos);
 
 		if (d.d < this.speed * 2) {
 
