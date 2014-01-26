@@ -13,11 +13,7 @@ TD.Displayable = Class.extend({
         this.sprite.position.x = pos.x;
         this.sprite.position.y = pos.y;
     }
-    if (this instanceof TD.Monster) {
-        parent.addChildAt(this.sprite, 0);
-    } else {
-        parent.addChild(this.sprite);
-    }
+    parent.addChild(this.sprite);
   }
 });
 
@@ -45,6 +41,7 @@ $(function() {
         if (Math.random() < 0.08) TD.monsters.push(new TD.IceTroll(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         if (Math.random() < 0.08) TD.monsters.push(new TD.Rat(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         if (Math.random() < 0.08) TD.monsters.push(new TD.Sheep(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
+        if (Math.random() < 0.08) TD.monsters.push(new TD.Fireman(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
         
     }, 500);
 
@@ -73,6 +70,8 @@ $(function() {
             }
         }
 
+        map1.zIndex()
+        
         renderer.render(TD.pixiStage);
         requestAnimationFrame(animate);
     }

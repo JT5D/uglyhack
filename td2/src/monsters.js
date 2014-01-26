@@ -1,15 +1,15 @@
 TD.Monster = TD.Displayable.extend({
   init: function(parent, textureSrc, path, speed){
     var _pos = {
-      x: path[0].x,
-      y: path[0].y
+      x: path.path[0].x,
+      y: path.path[0].y
     }
 
     this.pos = _pos;
     this._super(parent, textureSrc, _pos);
 
     this.sprite.anchor.x = 0.5;
-    this.sprite.anchor.y = 0.5;
+    this.sprite.anchor.y = 1.0;
     
     this.path = path;
     this.speed = speed;
@@ -17,8 +17,8 @@ TD.Monster = TD.Displayable.extend({
     this.dying = false;
 
     var that = this;
-    this.tween = TweenMax.to(this.pos, 10, {
-      bezier: {'values': path},
+    this.tween = TweenMax.to(this.pos, path.len / 200, {
+      bezier: {'values': path.path},
       ease: 'Linear.easeNone',
       onComplete: function() {
         that.alive = false;
@@ -29,7 +29,7 @@ TD.Monster = TD.Displayable.extend({
   },
   updatePosition: function() {
     this.sprite.position.x = this.pos.x;
-    this.sprite.position.y = this.pos.y;
+    this.sprite.position.y = Math.floor(this.pos.y);
   },
   hit: function(bullet) {
     
@@ -106,5 +106,11 @@ TD.Rat = TD.Monster.extend({
 TD.Sheep = TD.Monster.extend({
   init: function(parent, path) {
     this._super(parent, 'img/monsters/sheep/small.png', path, 0.65);
+  }
+});
+
+TD.Fireman = TD.Monster.extend({
+  init: function(parent, path) {
+    this._super(parent, 'img/monsters/fireman/small.png', path, 0.8);
   }
 });
