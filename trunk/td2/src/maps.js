@@ -16,7 +16,11 @@ TD.Map = TD.Displayable.extend({
 
     this.sprite.setInteractive(true);
     this.sprite.click = function(data) {
-      new TD.Tower1(that.sprite, {x: data.global.x, y: data.global.y});
+      if (Math.random() < 0.5) {
+          new TD.BombTower(that.sprite, {x: data.global.x, y: data.global.y});
+      } else {
+          new TD.AxeTower(that.sprite, {x: data.global.x, y: data.global.y});
+      }
     };
   },
   zIndex: function() {
@@ -26,6 +30,26 @@ TD.Map = TD.Displayable.extend({
     });
   }
 });
+
+TD.mapAdded = function() {
+  
+  setInterval(function() {
+      
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Dragon (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Wolf (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Troll (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Swordman (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Spider (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.OctoDragon (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Bat (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Bird (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.IceTroll (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Rat (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Sheep (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      if (Math.random() < 0.08) TD.monsters.push(new TD.Fireman (TD.map.sprite, TD.map.paths[getRandomInt(0, TD.map.paths.length-1)]));
+      
+  }, 1000);
+};
 
 TD.Map1 = TD.Map.extend({
   init: function(){
@@ -43,10 +67,6 @@ TD.Map1 = TD.Map.extend({
         {'x': 1050, 'y': 157}
       ]}
     ]);
-
-    //new TD.Tower1(this.sprite, {x: 290, y: 470});
-    //new TD.Tower1(this.sprite, {x: 580, y: 420});
-    //new TD.Tower1(this.sprite, {x: 810, y: 400});
   }
 });
 
@@ -65,9 +85,41 @@ TD.Map2 = TD.Map.extend({
         {'x': 740, 'y': 576}, {'x': 855, 'y': 652}, {'x': 909, 'y': 785}
       ]}
     ]);
+  }
+});
 
-    //new TD.Tower1(this.sprite, {x: 185, y: 320});
-    //new TD.Tower1(this.sprite, {x: 820, y: 540});
-    //new TD.Tower1(this.sprite, {x: 610, y: 280});
+TD.Map3 = TD.Map.extend({
+  init: function(){
+    this._super('img/maps/3.jpg', [
+      {path: [
+        {'x': 515, 'y': -50}, {'x': 495, 'y': 270}, {'x': 320, 'y': 322},
+        {'x': 187, 'y': 240}, {'x': 112, 'y': 376}, {'x': 178, 'y': 531},
+        {'x': 398, 'y': 606}, {'x': 663, 'y': 558}, {'x': 864, 'y': 626},
+        {'x': 897, 'y': 785}
+      ]},
+      {path: [
+        {'x': 546, 'y': -50}, {'x': 545, 'y': 130}, {'x': 663, 'y': 215},
+        {'x': 819, 'y': 277}, {'x': 828, 'y': 421}, {'x': 701, 'y': 525},
+        {'x': 740, 'y': 576}, {'x': 855, 'y': 652}, {'x': 909, 'y': 785}
+      ]}
+    ]);
+  }
+});
+
+TD.Map4 = TD.Map.extend({
+  init: function(){
+    this._super('img/maps/4.jpg', [
+      {path: [
+        {'x': 515, 'y': -50}, {'x': 495, 'y': 270}, {'x': 320, 'y': 322},
+        {'x': 187, 'y': 240}, {'x': 112, 'y': 376}, {'x': 178, 'y': 531},
+        {'x': 398, 'y': 606}, {'x': 663, 'y': 558}, {'x': 864, 'y': 626},
+        {'x': 897, 'y': 785}
+      ]},
+      {path: [
+        {'x': 546, 'y': -50}, {'x': 545, 'y': 130}, {'x': 663, 'y': 215},
+        {'x': 819, 'y': 277}, {'x': 828, 'y': 421}, {'x': 701, 'y': 525},
+        {'x': 740, 'y': 576}, {'x': 855, 'y': 652}, {'x': 909, 'y': 785}
+      ]}
+    ]);
   }
 });
