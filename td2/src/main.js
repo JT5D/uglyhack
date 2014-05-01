@@ -3,11 +3,12 @@ var TD = {
     renderer: null,
     monsters: [],
     bullets: [],
-    towers: []
+    towers: [],
+    map: null
 };
 
 TD.Displayable = Class.extend({
-  init: function(parent, textureSrc, pos){
+  init: function(parent, textureSrc, pos, scale){
     this.parent = parent;
 
     if (textureSrc) {
@@ -21,6 +22,12 @@ TD.Displayable = Class.extend({
         this.sprite.position.x = pos.x;
         this.sprite.position.y = pos.y;
     }
+
+    if (scale) {
+        this.sprite.scale.x = scale.x;
+        this.sprite.scale.y = scale.y;
+    }
+
     parent.addChild(this.sprite);
   }
 });
@@ -33,34 +40,22 @@ $(function() {
     scaleRenderer();
 
     $(window).resize(scaleRenderer);
-    
     TD.pixiStage = new PIXI.Stage;
-
-    var map1 = new TD.Map2();
-    
-    setInterval(function() {
-        
-        
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Dragon(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Wolf(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Troll(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Swordman(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Spider(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.OctoDragon(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Bat(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Bird(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.IceTroll(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Rat(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Sheep(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        if (Math.random() < 0.08) TD.monsters.push(new TD.Fireman(map1.sprite, map1.paths[getRandomInt(0, map1.paths.length-1)]));
-        
-    }, 1000);
-
     requestAnimationFrame(animate);
+
+    new TD.Menu();
+
     function animate() {
 
-                
+        if (TD.map !== null) {
+            drawMap();
+        } 
+        
+        TD.renderer.render(TD.pixiStage);
+        requestAnimationFrame(animate);
+    }
 
+    function drawMap() {
         for(var i in TD.monsters) {
             var m = TD.monsters[i];
             if (m.alive === false) {
@@ -85,11 +80,9 @@ $(function() {
             TD.towers[i].tryshoot();
         }
 
-        map1.zIndex()
-        
-        TD.renderer.render(TD.pixiStage);
-        requestAnimationFrame(animate);
+        TD.map.zIndex();
     }
+
 });
 
 function scaleRenderer() {
@@ -102,9 +95,15 @@ function getRandomInt(min, max) {
 }
 
 function distance(pos1, pos2) {
-        var dx = pos1.x-pos2.x;
-        var dy = pos1.y-pos2.y;
-        var d = Math.sqrt(dx*dx + dy*dy);
+    var dx = pos1.x-pos2.x;
+    var dy = pos1.y-pos2.y;
+    var d = Math.sqrt(dx*dx + dy*dy);
 
-        return {d:d, dy:dy, dx:dx};
+    return {d:d, dy:dy, dx:dx};
+}
+
+TD.clearPixiStage = function() {
+    for(var i = TD.pixiStage.children.length - 1;  i >= 0; i--) {
+        TD.pixiStage.removeChild(TD.pixiStage.children[i]);
+    }
 }

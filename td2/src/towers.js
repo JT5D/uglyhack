@@ -44,8 +44,14 @@ TD.Tower = TD.Displayable.extend({
 
 });
 
-TD.Tower1 = TD.Tower.extend({
+TD.AxeTower = TD.Tower.extend({
 	init: function(parent, pos) {
-		this._super(parent, 'img/towers/tower1.png', pos, 'CannonBall', {x: 10, y: -100}, 1500, 150);
+		this._super(parent, 'img/towers/tower1.png', pos, 'Axe', {x: 10, y: -100}, 1000, 200);
+	}
+});
+
+TD.BombTower = TD.Tower.extend({
+	init: function(parent, pos) {
+		this._super(parent, 'img/towers/tower2.png', pos, 'CannonBall', {x: 10, y: -100}, 1500, 150);
 	}
 });

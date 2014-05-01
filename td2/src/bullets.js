@@ -4,6 +4,9 @@ TD.createBulletInstance = function(name, parent, pos, target) {
 	switch (name) {
 		case 'CannonBall':
 			bullet =  new TD.CannonBall(parent, pos, target);
+		case 'Axe':
+			bullet =  new TD.Axe(parent, pos, target);
+
 	}
 
 	TD.bullets.push(bullet);
@@ -47,5 +50,11 @@ TD.Bullet = TD.Displayable.extend({
 TD.CannonBall = TD.Bullet.extend({
 	init: function(parent, pos, target) {
 		this._super(parent, 'img/bullets/cannon_ball.png', target, pos, 7, 20);
+	}
+});
+
+TD.Axe = TD.Bullet.extend({
+	init: function(parent, pos, target) {
+		this._super(parent, 'img/bullets/axe.png', target, pos, 10, 10);
 	}
 });
