@@ -25,6 +25,12 @@ TD.Tower = TD.Displayable.extend({
 			}
 
 			if (target) {
+
+				this.sprite.scale.x = 1.1;
+			    TweenMax.to(this.sprite.scale, 0.2, {x: 1.0});
+			    this.sprite.scale.y = 1.1;
+			    TweenMax.to(this.sprite.scale, 0.2, {y: 1.0});
+
 				TD.createBulletInstance(
 					this.bulletName, 
 					this.parent, 

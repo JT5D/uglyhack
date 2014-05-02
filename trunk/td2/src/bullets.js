@@ -55,6 +55,6 @@ TD.CannonBall = TD.Bullet.extend({
 
 TD.Axe = TD.Bullet.extend({
 	init: function(parent, pos, target) {
-		this._super(parent, 'img/bullets/axe.png', target, pos, 10, 10);
+		this._super(parent, 'img/bullets/axe.png', target, pos, 5, 10);
 	}
 });

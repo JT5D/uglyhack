@@ -56,6 +56,10 @@ TD.Monster = TD.Displayable.extend({
     } 
     this.sprite.tint = 0xFF0000;
     TweenMax.to(this.sprite, 0.3, {tint: 0xFFFFFF});
+    this.sprite.scale.x = 1.4;
+    TweenMax.to(this.sprite.scale, 0.4, {x: 1.0});
+    this.sprite.scale.y = 1.2;
+    TweenMax.to(this.sprite.scale, 0.4, {y: 1.0});
   },
   die: function() {
     this.tween.kill();
