@@ -2,7 +2,7 @@ var VibratoNode = BaseNode.extend({
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "vn";
-		this.thingy = context.createJavaScriptNode(4096, 1, 1);
+		this.thingy = context.createScriptProcessor(4096, 1, 1);
 		this.name = "Vibrato";
 		this.icon = "icon-leaf";
 		this.tooltip = "Adds a vibrato effect to the signal";

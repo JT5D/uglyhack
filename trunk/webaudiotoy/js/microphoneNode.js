@@ -38,11 +38,13 @@ var MicrophoneNode = BaseNode.extend({
 				navigator.getUserMedia({audio: true, video: false}, successFnc, errorFnc);
 			} else if (navigator.webkitGetUserMedia) {
 				navigator.webkitGetUserMedia({audio: true, video: false}, successFnc, errorFnc);
+			} else if (navigator.mozGetUserMedia) {
+				navigator.mozGetUserMedia({audio: true, video: false}, successFnc, errorFnc);
 			} else {
-				status.html('Not yet supported in your browser. Try Chrome Canary with Web Audio Input flag set.');	
+				status.html('Not yet supported in your browser.');	
 			}
 		 } catch(e) {
-		 	status.html('Not yet supported in your browser. Try Chrome Canary with Web Audio Input flag set.');
+		 	status.html('Not yet supported in your browser.');
 		 }
 	},
 

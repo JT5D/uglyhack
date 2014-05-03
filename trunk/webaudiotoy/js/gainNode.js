@@ -2,7 +2,7 @@ var GainNode = BaseNode.extend({
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "gn";
-		this.thingy = context.createGainNode();
+		this.thingy = context.createGain();
 		this.name = "Gain";
 		this.icon = "icon-plus";
 		this.tooltip = "Changes the gain of (scales) the incoming audio signal by a certain amount";

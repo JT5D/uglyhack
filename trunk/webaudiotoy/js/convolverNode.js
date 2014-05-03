@@ -25,7 +25,11 @@ var ConvolverNode = BaseNode.extend({
   		    request.responseType = "arraybuffer";
   		    
   		    request.onload = function() {
-  		    	convN.buffer = context.createBuffer(request.response, false);
+  		    	context.decodeAudioData(request.response, function(buffer) {
+			      convN.buffer = buffer;
+			    }, function() {
+			    	console.log('failed to decode convolver buffer');
+			    });
   		    	thisNode.loader.fadeOut('fast');
   		    }
   		    request.send();

@@ -7,16 +7,7 @@ var PianoNode = BaseNode.extend({
 		this.tooltip = "Play piano on your keyboard. ";
 		this.deleted = false;
 		var el = this.createMainEl(true, false, true, 290);
-		try {
-			this.thingy = context.createOscillator();
-			if(typeof this.thingy.noteOn != 'function') { 
-				throw new Exception();
-			}	
-
-		} catch(e) {
-			el.append($('<p>').html('Not supported by your browser. You probably need to go Chrome Canary.'));
-			return;
-		}
+		this.thingy = context.createOscillator();
   		var thisNode = this;
 
   		if(!config) {
@@ -35,10 +26,9 @@ var PianoNode = BaseNode.extend({
 
   		var shutupFnc = this.shutupFnc = function(note) {
   			if(!note) return;
-  			//note.gain.gain.cancelScheduledValues(context.currentTime);
   			note.gain.gain.linearRampToValueAtTime(0.0, context.currentTime + thisNode.c.re);
   			setTimeout(function() {
-	  			note.osc.noteOff(0);
+	  			note.osc.stop(0);
 	  			note.osc.disconnect(note.gain);
 				for(var i in thisNode.myConnections) {
 					var n = thisNode.myConnections[i];
@@ -53,7 +43,7 @@ var PianoNode = BaseNode.extend({
   		var soundFnc = function() {
   			var note = {};
   			note.osc = context.createOscillator();
-  			note.gain = context.createGainNode();
+  			note.gain = context.createGain();
   			note.osc.connect(note.gain);
   			for(var i in thisNode.myConnections) {
 				var n = thisNode.myConnections[i];
@@ -62,7 +52,7 @@ var PianoNode = BaseNode.extend({
 					note.gain.connect(conns[i]);
 				}
 			}
-			note.osc.noteOn(0);
+			note.osc.start(0);
 			note.gain.gain.linearRampToValueAtTime(0.0, context.currentTime);
 			note.gain.gain.linearRampToValueAtTime(1.0, context.currentTime + thisNode.c.at);
 			setTimeout(function() {

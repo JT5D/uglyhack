@@ -84,10 +84,10 @@ var TextToSpeechNode = BaseNode.extend({
 	    					thisNode.thingy.connect(conns[i]);
 	    				}
 					}
-	    			thisNode.thingy.noteOn(0);
+	    			thisNode.thingy.start(0);
 	    			
 	    			setTimeout(function() {
-	    				thisNode.thingy.noteOff(0);
+	    				thisNode.thingy.stop(0);
 	    				for(var i in thisNode.myConnections) {
 		    				var node = thisNode.myConnections[i];
 		    				var conns = node.getConnections();
