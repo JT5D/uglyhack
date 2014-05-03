@@ -2,7 +2,7 @@ var DelayNode = BaseNode.extend({
   	init: function(index, config){
 	    this._super(index, config);
 	    this.shortName = "deln";
-		this.thingy = context.createDelayNode();
+		this.thingy = context.createDelay();
 		this.name = "Delay";
 		this.icon = "icon-pause";
 		this.tooltip = "Delays the incoming audio signal by a certain amount";

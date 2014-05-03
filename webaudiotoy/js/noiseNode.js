@@ -2,7 +2,7 @@ var NoiseNode = BaseNode.extend({
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "nn";
-		this.thingy = context.createJavaScriptNode(4096, 1, 1);
+		this.thingy = context.createScriptProcessor(4096, 1, 1);
 		this.name = "Noise";
 		this.icon = "icon-question-sign";
 		this.tooltip = "Amplifies each sample in the signal with random amount";

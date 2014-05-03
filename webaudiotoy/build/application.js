@@ -413,17 +413,7 @@
   		
   		var setTypeFnc = function(v) {
   			thisNode.c.type = v;
-  			switch(v) {
-  				case "highpass":
-  					biqN.type = biqN.HIGHPASS;
-  				break;
-  				case "lowpass":
-  					biqN.type = biqN.LOWPASS;
-  				break;
-  				case "bandpass":
-  					biqN.type = biqN.BANDPASS;
-  				break;
-  			}
+  			biqN.type = v;
   		};
   		
   		var setFrequencyFnc = function(el, v) {
@@ -513,7 +503,11 @@
   		    request.responseType = "arraybuffer";
   		    
   		    request.onload = function() {
-  		    	convN.buffer = context.createBuffer(request.response, false);
+  		    	context.decodeAudioData(request.response, function(buffer) {
+			      convN.buffer = buffer;
+			    }, function() {
+			    	console.log('failed to decode convolver buffer');
+			    });
   		    	thisNode.loader.fadeOut('fast');
   		    }
   		    request.send();
@@ -571,7 +565,7 @@
   	init: function(index, config){
 	    this._super(index, config);
 	    this.shortName = "deln";
-		this.thingy = context.createDelayNode();
+		this.thingy = context.createDelay();
 		this.name = "Delay";
 		this.icon = "icon-pause";
 		this.tooltip = "Delays the incoming audio signal by a certain amount";
@@ -796,7 +790,7 @@
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "gn";
-		this.thingy = context.createGainNode();
+		this.thingy = context.createGain();
 		this.name = "Gain";
 		this.icon = "icon-plus";
 		this.tooltip = "Changes the gain of (scales) the incoming audio signal by a certain amount";
@@ -833,11 +827,11 @@
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "scn";
-		this.thingy = context.createJavaScriptNode(4096, 1, 1);
+		this.thingy = context.createScriptProcessor(4096, 1, 1);
 		this.thingy.onaudioprocess = function(event) {	};
 		this.name = "Javascript";
 		this.icon = "icon-filter";
-		this.tooltip = "Can generate or process audio directly using JavaScript. Has inputBuffer inp, outputBuffer out and AudioProcessingEvent ev defined";
+		this.tooltip = "Can generate or process audio directly using JavaScript. Has inputBuffer inp, outputBuffer out and AudioProcessingEvent ev defined. Size of buffer is 4096";
 	    var javaScriptNode = this.thingy;
 	    var thisNode = this;
 
@@ -847,7 +841,7 @@
 	    	};
 	    }
 		
-	    var el = this.createMainEl(true, true, true, 308, 241);
+	    var el = this.createMainEl(true, true, true, 318, 241);
 	    el.css('width', '221px');
 	    
 	    var scriptBox = $('<textarea>');
@@ -915,44 +909,6 @@
 		
 		var el = this.createMainEl(true, false, true, 175);
 		
-		var btnGroupEl = $('<div>');
-		btnGroupEl.addClass('btn-group');
-		btnGroupEl.css('width', '100%');
-		
-		var startEl = $('<input>');
-		startEl.attr({
-			type: 'button',
-			value: 'start',
-			disabled: 'true',
-		});
-		startEl.addClass('btn');
-		startEl.addClass('btn-primary');
-		startEl.css('width', '50%');
-		startEl.click(function() {
-			stopEl.removeAttr('disabled');
-			startEl.attr('disabled', 'true');
-			bufferSource.gain.value = 1;
-		});
-		btnGroupEl.append(startEl);
-		
-		var stopEl = $('<input>');
-		stopEl.attr({
-			type: 'button',
-			value: 'stop',
-			disabled: 'true',
-		});
-		stopEl.addClass('btn');
-		stopEl.addClass('btn-primary');
-		stopEl.css('width', '50%');
-		stopEl.click(function() {
-			startEl.removeAttr('disabled');
-			stopEl.attr('disabled', 'true');
-			bufferSource.gain.value = 0;
-		});
-		btnGroupEl.append(stopEl);
-		el.append(btnGroupEl);
-
-		
 		var setPlaybackRateFnc = function(el, v) {
 			thisNode.c.pr = v.value;
 			bufferSource.playbackRate.value = v.value;
@@ -986,26 +942,26 @@
 		el.parent()[0].addEventListener('drop', function (evt) {
 		    evt.stopPropagation();
 		    evt.preventDefault();
+		    infoEl.hide('slow');
 		    thisNode.loader.fadeIn('fast');
 		    
 		    var reader = new FileReader();
 		    reader.onload = function(e) {
 		    	if(context.decodeAudioData) {
 			        context.decodeAudioData(e.target.result, function(buffer) {
+			        	thisNode.loader.fadeOut('fast');
 			        	bufferSource.buffer = buffer;
-			        	bufferSource.noteOn(0);
-			        	stopEl.removeAttr('disabled');
+			        	bufferSource.start(0);
 			        	if(thisNode.myConnections.length == 0) {
 			        		info2El.show('fast');
 			        	}
-			        	infoEl.hide('fast');
 			        }, function(e) {
 			        	alert('Could not play that audio file. Try another file format.');
 			        });
 			    } else {
 			    	bufferSource.buffer = context.createBuffer(e.target.result, false /*mixToMono*/);
+			    	thisNode.loader.fadeOut('fast');
 			    }
-	        	thisNode.loader.fadeOut('fast');
 		    }
 		    reader.readAsArrayBuffer(evt.dataTransfer.files[0]);		    
 		}, false);
@@ -1025,7 +981,7 @@
 		return new Array();
 	},
 	shutdown: function() {
-		this.thingy.noteOff(0);
+		this.thingy.stop(0);
 	}
 });var WaveShaperNode = BaseNode.extend({
   	init: function(index, config){
@@ -1103,20 +1059,7 @@
   		
   		var setTypeFnc = function(v) {
   			thisNode.c.t = v;
-  			switch(v) {
-  				case "sine":
-  					oscN.type = oscN.SINE;
-  				break;
-  				case "square":
-  					oscN.type = oscN.SQUARE;
-  				break;
-  				case "sawtooth":
-  					oscN.type = oscN.SAWTOOTH;
-  				break;
-  				case "triangle":
-  					oscN.type = oscN.TRIANGLE;
-  				break;
-  			}
+  			oscN.type = v;
   		};
   		
   		var setFrequencyFnc = function(el, v) {
@@ -1179,10 +1122,10 @@
 		el.append(detuneRange);
 		setDetuneFnc(null, {value:this.c.d});
 
-		oscN.noteOn(0);
+		oscN.start(0);
 	},
 	shutdown: function() {
-		this.thingy.noteOff(0);
+		this.thingy.stop(0);
 	}
 });var MicrophoneNode = BaseNode.extend({
   	init: function(index){
@@ -1224,11 +1167,13 @@
 				navigator.getUserMedia({audio: true, video: false}, successFnc, errorFnc);
 			} else if (navigator.webkitGetUserMedia) {
 				navigator.webkitGetUserMedia({audio: true, video: false}, successFnc, errorFnc);
+			} else if (navigator.mozGetUserMedia) {
+				navigator.mozGetUserMedia({audio: true, video: false}, successFnc, errorFnc);
 			} else {
-				status.html('Not yet supported in your browser. Try Chrome Canary with Web Audio Input flag set.');	
+				status.html('Not yet supported in your browser.');	
 			}
 		 } catch(e) {
-		 	status.html('Not yet supported in your browser. Try Chrome Canary with Web Audio Input flag set.');
+		 	status.html('Not yet supported in your browser.');
 		 }
 	},
 
@@ -1371,10 +1316,10 @@
 	    					thisNode.thingy.connect(conns[i]);
 	    				}
 					}
-	    			thisNode.thingy.noteOn(0);
+	    			thisNode.thingy.start(0);
 	    			
 	    			setTimeout(function() {
-	    				thisNode.thingy.noteOff(0);
+	    				thisNode.thingy.stop(0);
 	    				for(var i in thisNode.myConnections) {
 		    				var node = thisNode.myConnections[i];
 		    				var conns = node.getConnections();
@@ -1426,16 +1371,7 @@
 		this.tooltip = "Play piano on your keyboard. ";
 		this.deleted = false;
 		var el = this.createMainEl(true, false, true, 290);
-		try {
-			this.thingy = context.createOscillator();
-			if(typeof this.thingy.noteOn != 'function') { 
-				throw new Exception();
-			}	
-
-		} catch(e) {
-			el.append($('<p>').html('Not supported by your browser. You probably need to go Chrome Canary.'));
-			return;
-		}
+		this.thingy = context.createOscillator();
   		var thisNode = this;
 
   		if(!config) {
@@ -1454,10 +1390,9 @@
 
   		var shutupFnc = this.shutupFnc = function(note) {
   			if(!note) return;
-  			//note.gain.gain.cancelScheduledValues(context.currentTime);
   			note.gain.gain.linearRampToValueAtTime(0.0, context.currentTime + thisNode.c.re);
   			setTimeout(function() {
-	  			note.osc.noteOff(0);
+	  			note.osc.stop(0);
 	  			note.osc.disconnect(note.gain);
 				for(var i in thisNode.myConnections) {
 					var n = thisNode.myConnections[i];
@@ -1472,7 +1407,7 @@
   		var soundFnc = function() {
   			var note = {};
   			note.osc = context.createOscillator();
-  			note.gain = context.createGainNode();
+  			note.gain = context.createGain();
   			note.osc.connect(note.gain);
   			for(var i in thisNode.myConnections) {
 				var n = thisNode.myConnections[i];
@@ -1481,7 +1416,7 @@
 					note.gain.connect(conns[i]);
 				}
 			}
-			note.osc.noteOn(0);
+			note.osc.start(0);
 			note.gain.gain.linearRampToValueAtTime(0.0, context.currentTime);
 			note.gain.gain.linearRampToValueAtTime(1.0, context.currentTime + thisNode.c.at);
 			setTimeout(function() {
@@ -1706,7 +1641,7 @@
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "nn";
-		this.thingy = context.createJavaScriptNode(4096, 1, 1);
+		this.thingy = context.createScriptProcessor(4096, 1, 1);
 		this.name = "Noise";
 		this.icon = "icon-question-sign";
 		this.tooltip = "Amplifies each sample in the signal with random amount";
@@ -1749,7 +1684,7 @@
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "vn";
-		this.thingy = context.createJavaScriptNode(4096, 1, 1);
+		this.thingy = context.createScriptProcessor(4096, 1, 1);
 		this.name = "Vibrato";
 		this.icon = "icon-leaf";
 		this.tooltip = "Adds a vibrato effect to the signal";
@@ -1812,7 +1747,7 @@
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "ptn";
-		this.thingy = context.createJavaScriptNode(8192, 1, 1);
+		this.thingy = context.createScriptProcessor(8192, 1, 1);
 		this.name = "Pitch";
 		this.icon = "icon-resize-full";
 		this.tooltip = "A simple artifact introducing pitch changer";

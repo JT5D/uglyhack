@@ -2,7 +2,7 @@ var PitchNode = BaseNode.extend({
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "ptn";
-		this.thingy = context.createJavaScriptNode(8192, 1, 1);
+		this.thingy = context.createScriptProcessor(8192, 1, 1);
 		this.name = "Pitch";
 		this.icon = "icon-resize-full";
 		this.tooltip = "A simple artifact introducing pitch changer";

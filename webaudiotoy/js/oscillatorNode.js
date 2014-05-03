@@ -25,20 +25,7 @@ var OscillatorNode = BaseNode.extend({
   		
   		var setTypeFnc = function(v) {
   			thisNode.c.t = v;
-  			switch(v) {
-  				case "sine":
-  					oscN.type = oscN.SINE;
-  				break;
-  				case "square":
-  					oscN.type = oscN.SQUARE;
-  				break;
-  				case "sawtooth":
-  					oscN.type = oscN.SAWTOOTH;
-  				break;
-  				case "triangle":
-  					oscN.type = oscN.TRIANGLE;
-  				break;
-  			}
+  			oscN.type = v;
   		};
   		
   		var setFrequencyFnc = function(el, v) {
@@ -101,9 +88,9 @@ var OscillatorNode = BaseNode.extend({
 		el.append(detuneRange);
 		setDetuneFnc(null, {value:this.c.d});
 
-		oscN.noteOn(0);
+		oscN.start(0);
 	},
 	shutdown: function() {
-		this.thingy.noteOff(0);
+		this.thingy.stop(0);
 	}
 });

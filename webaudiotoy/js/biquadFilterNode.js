@@ -20,17 +20,7 @@ var BiquadFilterNode = BaseNode.extend({
   		
   		var setTypeFnc = function(v) {
   			thisNode.c.type = v;
-  			switch(v) {
-  				case "highpass":
-  					biqN.type = biqN.HIGHPASS;
-  				break;
-  				case "lowpass":
-  					biqN.type = biqN.LOWPASS;
-  				break;
-  				case "bandpass":
-  					biqN.type = biqN.BANDPASS;
-  				break;
-  			}
+  			biqN.type = v;
   		};
   		
   		var setFrequencyFnc = function(el, v) {

@@ -2,11 +2,11 @@ var ScriptNode = BaseNode.extend({
   	init: function(index, config){
 		this._super(index, config);
 		this.shortName = "scn";
-		this.thingy = context.createJavaScriptNode(4096, 1, 1);
+		this.thingy = context.createScriptProcessor(4096, 1, 1);
 		this.thingy.onaudioprocess = function(event) {	};
 		this.name = "Javascript";
 		this.icon = "icon-filter";
-		this.tooltip = "Can generate or process audio directly using JavaScript. Has inputBuffer inp, outputBuffer out and AudioProcessingEvent ev defined";
+		this.tooltip = "Can generate or process audio directly using JavaScript. Has inputBuffer inp, outputBuffer out and AudioProcessingEvent ev defined. Size of buffer is 4096";
 	    var javaScriptNode = this.thingy;
 	    var thisNode = this;
 
@@ -16,7 +16,7 @@ var ScriptNode = BaseNode.extend({
 	    	};
 	    }
 		
-	    var el = this.createMainEl(true, true, true, 308, 241);
+	    var el = this.createMainEl(true, true, true, 318, 241);
 	    el.css('width', '221px');
 	    
 	    var scriptBox = $('<textarea>');
