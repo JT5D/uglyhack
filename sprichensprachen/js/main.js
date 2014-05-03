@@ -119,7 +119,8 @@ $(function() {
 		if(sr != null) {	
 			sr.continuous = true;
 		    sr.onresult = function(event) {
-			    var con = event.result[0].confidence;
+		    	var sra = event.results[0][0];
+			    var con = sra.confidence;
 			    
 			    if(con == 0.0) {
 			    	return;
@@ -128,7 +129,7 @@ $(function() {
 			    $('#transP').html('');
 	
 			    if(con > confidence) {
-			      	var tr = event.result[0].transcript;
+			      	var tr = sra.transcript;
 			      	translateAndSpeak(tr, con);
 			      	$('#whatyousaid').html('What you said with ' + Math.floor(con*100) + '% confidence')
 	
